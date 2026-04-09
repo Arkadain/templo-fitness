@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        h1 { font-family: 'Anton', sans-serif; font-style: italic; }
+    </style>
+</head>
+<body class="p-10">
+    <div class="max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-12 border-b border-zinc-900 pb-6">
+            <h1 class="text-4xl tracking-tighter uppercase">GESTIÓN DE <span class="text-zinc-600">TEMPLO</span></h1>
+            <a href="/" class="text-xs font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Salir</a>
+        </header>
+
+        <div class="bg-zinc-950 border border-zinc-900 rounded-sm overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-zinc-900/50 text-zinc-500 text-[10px] uppercase tracking-widest">
+                    <tr>
+                        <th class="p-6">Socio (DNI)</th>
+                        <th class="p-6">Plan</th>
+                        <th class="p-6">Vencimiento</th>
+                        <th class="p-6 text-right">Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-900">
+                    {% for id, socio in socios.items() %}
+                    <tr class="hover:bg-zinc-900/30 transition-colors">
+                        <td class="p-6">
+                            <span class="block font-black italic uppercase text-lg">{{ socio.nombre }}</span>
+                            <span class="text-xs text-zinc-600">DNI: {{ id }}</span>
+                        </td>
+                        <td class="p-6 text-sm text-zinc-400">{{ socio.plan }}</td>
+                        <td class="p-6 text-sm text-zinc-400">{{ socio.vence }}</td>
+                        <td class="p-6 text-right">
+                            <button class="bg-white text-black px-4 py-2 text-[10px] font-black uppercase hover:bg-zinc-300">Editar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
