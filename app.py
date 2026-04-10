@@ -26,18 +26,19 @@ SOCIOS = {
     }
 }
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         dni = request.form.get('dni')
+        
+        # EL ADMIN VA PRIMERO (fuera del diccionario)
         if dni == "0000":
             return redirect(url_for('admin_panel'))
+            
+        # DESPUÉS BUSCAMOS SOCIOS
         if dni in SOCIOS:
             return redirect(url_for('dashboard', id_socio=dni))
+            
         return render_template('login.html', error="DNI no encontrado")
     return render_template('login.html')
 
