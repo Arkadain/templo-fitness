@@ -37,9 +37,9 @@ def utility_processor():
     return dict(restan_dias=restan_dias)
 
 # CONFIGURACIÓN DE BASE DE DATOS
-# Cambiá el inicio a postgresql+pg8000://
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi@@db.outmumjurvsesziislzu.supabase.co:5432/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:5432/postgres?sslmode=verify-full'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 # MODELO DE LA BASE DE DATOS
 class Socio(db.Model):
