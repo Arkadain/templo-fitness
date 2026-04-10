@@ -89,12 +89,28 @@ def nuevo_socio():
 def editar_socio(id_socio):
     socio = SOCIOS.get(id_socio)
     if not socio: return "No encontrado", 404
+
+    # Detectamos qué día es hoy para editar esa rutina específica
+    dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    dia_hoy = dias[datetime.now().weekday()]
+
     if request.method == 'POST':
         socio['nombre'] = request.form.get('nombre').upper()
         socio['plan'] = request.form.get('plan').upper()
         socio['vence'] = request.form.get('vence').upper()
+        
+        # Lógica para guardar la rutina (ejemplo simple de 3 ejercicios)
+        nueva_rutina = []
+        for i in range(1, 4): # Supongamos 3 filas de ejercicios
+            ej = request.form.get(f'ej{i}')
+            sets = request.form.get(f'sets{i}')
+            if ej: # Solo agregamos si el nombre del ejercicio no está vacío
+                nueva_rutina.append({"ej": ej, "sets": sets})
+        
+        socio['rutina'][dia_hoy] = nueva_rutina
         return redirect(url_for('admin_panel'))
-    return render_template('editar_socio.html', socio=socio, id=id_socio)
+
+    return render_template('editar_socio.html', socio=socio, id=id_socio, dia=dia_hoy)
 
 if __name__ == '__main__':
     app.run(debug=True)
