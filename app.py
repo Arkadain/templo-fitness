@@ -1,11 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os # <-- 1. AGREGÁ ESTA LÍNEA ARRIBA DE TODO
 
 app = Flask(__name__)
 
 # CONFIGURACIÓN DE BASE DE DATOS (SQLite)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///templo.db'
+# 2. CAMBIÁ TODA ESTA PARTE:
+if os.environ.get('VERCEL'):
+    # Si estamos en Vercel, usamos la carpeta temporal
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/templo.db'
+else:
+    # Si estás en tu PC (Local), sigue como antes
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///templo.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
