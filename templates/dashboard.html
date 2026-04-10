@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;900&display=swap" rel="stylesheet">
 </head>
+
 <body class="bg-black text-white p-6 font-sans">
     <div class="max-w-md mx-auto">
         <header class="mb-10 text-center">
@@ -12,19 +14,17 @@
             <p class="mt-4 text-zinc-400 uppercase text-xs tracking-widest">{{ socio.nombre }}</p>
         </header>
 
-        <div class="space-y-4">
-            {% if rutina_hoy %}
-                {% for item in rutina_hoy %}
-                <div class="bg-zinc-950 border border-zinc-900 p-6 flex justify-between items-center border-l-4 border-l-white">
-                    <span class="font-black text-lg uppercase italic">{{ item.ej }}</span>
-                    <span class="text-zinc-500 font-mono text-sm">{{ item.sets }}</span>
+        <div class="max-w-md mx-auto">
+            <div class="bg-zinc-950 border border-zinc-900 p-8 shadow-2xl">
+                {% if rutina_hoy and rutina_hoy.strip() %}
+                <p class="text-zinc-300 font-mono leading-relaxed whitespace-pre-wrap">{{ rutina_hoy }}</p>
+                {% else %}
+                <div class="text-center py-10 border border-dashed border-zinc-800">
+                    <p class="text-zinc-600 italic uppercase text-[10px] tracking-widest">Hoy es día de descanso</p>
                 </div>
-                {% endfor %}
-            {% else %}
-                <div class="border border-dashed border-zinc-800 p-12 text-center">
-                    <p class="text-zinc-600 italic uppercase text-[10px] tracking-widest">Día de descanso</p>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
+
         </div>
 
         <div class="mt-12 text-center">
@@ -32,4 +32,5 @@
         </div>
     </div>
 </body>
+
 </html>

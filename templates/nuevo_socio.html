@@ -1,17 +1,34 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
-        h1 { font-family: 'Anton', sans-serif; font-style: italic; }
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        h1 {
+            font-family: 'Anton', sans-serif;
+            font-style: italic;
+        }
+        /* Estilo para que el select se vea igual a los inputs */
+        
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
     </style>
 </head>
+
 <body class="p-10">
     <div class="max-w-md mx-auto">
         <h1 class="text-4xl mb-10 tracking-tighter uppercase text-white">Alta de <span class="text-zinc-600">Nuevo Socio</span></h1>
-        
+
         <form method="POST" class="space-y-6 bg-zinc-950 p-8 border border-zinc-900 shadow-2xl">
             <div>
                 <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">DNI (Será su usuario)</label>
@@ -25,17 +42,23 @@
                 <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Contraseña Inicial</label>
                 <input type="password" name="password" required class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Plan</label>
-                    <input type="text" name="plan" placeholder="MENSUAL" class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
+
+            <div>
+                <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Seleccionar Plan</label>
+                <div class="relative">
+                    <select name="plan" required class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white cursor-pointer italic font-black uppercase text-xs">
+                        <option value="MENSUAL">Plan Mensual</option>
+                        <option value="TRIMESTRAL">Plan Trimestral</option>
+                        <option value="SEMESTRAL">Plan Semestral</option>
+                        <option value="ANUAL">Plan Anual</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-zinc-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Vencimiento</label>
-                    <input type="text" name="vence" placeholder="10 MAY" class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
-                </div>
+                <p class="text-[9px] text-zinc-600 uppercase mt-2 italic tracking-widest">* El vencimiento se calcula solo desde hoy.</p>
             </div>
-            
+
             <div class="pt-4 flex gap-4">
                 <button type="submit" class="flex-1 bg-white text-black font-black py-4 uppercase text-xs tracking-widest hover:bg-zinc-300 transition-all">Crear Socio</button>
                 <a href="/admin" class="flex-1 border border-zinc-800 text-zinc-500 text-center py-4 uppercase text-xs tracking-widest hover:text-white flex items-center justify-center transition-all">Cancelar</a>
@@ -43,4 +66,5 @@
         </form>
     </div>
 </body>
+
 </html>

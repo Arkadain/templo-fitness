@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os # <-- 1. AGREGÁ ESTA LÍNEA ARRIBA DE TODO
+from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 
@@ -80,12 +81,25 @@ def admin_panel():
 @app.route('/admin/nuevo', methods=['GET', 'POST'])
 def nuevo_socio():
     if request.method == 'POST':
+        plan = request.form.get('plan')
+        hoy = datetime.now()
+        
+        # Mapeo exacto: Mensual, Trimestral, Semestral, Anual
+        duracion = {
+            "MENSUAL": relativedelta(months=1),
+            "TRIMESTRAL": relativedelta(months=3),
+            "SEMESTRAL": relativedelta(months=6),
+            "ANUAL": relativedelta(years=1)
+        }
+        
+        vencimiento = hoy + duracion.get(plan, relativedelta(months=1))
+            
         nuevo = Socio(
             dni=request.form.get('dni'),
             nombre=request.form.get('nombre').upper(),
             password=request.form.get('password'),
-            plan=request.form.get('plan').upper(),
-            vence=request.form.get('vence').upper()
+            plan=plan,
+            vence=vencimiento.strftime('%d/%m/%Y')
         )
         db.session.add(nuevo)
         db.session.commit()
@@ -99,6 +113,7 @@ def editar_socio(id_socio):
         socio.nombre = request.form.get('nombre').upper()
         socio.plan = request.form.get('plan').upper()
         socio.vence = request.form.get('vence').upper()
+        # AGREGAMOS TODOS LOS DÍAS AQUÍ:
         socio.rutina_lunes = request.form.get('rutina_lunes')
         socio.rutina_martes = request.form.get('rutina_martes')
         socio.rutina_miercoles = request.form.get('rutina_miercoles')
