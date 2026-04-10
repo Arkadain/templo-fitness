@@ -22,17 +22,19 @@ SOCIOS = {
 def login():
     if request.method == 'POST':
         dni = request.form.get('dni')
-        password = request.form.get('password')
+        password = request.form.get('password') # <--- Captura la clave del HTML
         
-        if dni == "0000": return redirect(url_for('admin_panel'))
-        
+        if dni == "0000": 
+            return redirect(url_for('admin_panel'))
+            
         if dni in SOCIOS:
-            # VALIDACIÓN DE CONTRASEÑA
+            # Compara la clave ingresada con la que está en el diccionario
             if SOCIOS[dni].get('password') == password:
                 return redirect(url_for('dashboard', id_socio=dni))
             else:
                 return render_template('login.html', error="Contraseña incorrecta")
-        return render_template('login.html', error="Socio no registrado")
+                
+        return render_template('login.html', error="DNI no encontrado")
     return render_template('login.html')
 
 @app.route('/dashboard/<id_socio>')

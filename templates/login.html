@@ -13,13 +13,21 @@
                 <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Ingresá tu DNI</label>
                 <input type="text" name="dni" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">
             </div>
+
+            <div>
+                <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Contraseña</label>
+                <input type="password" name="password" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">
+            </div>
+
             {% if error %}
                 <p class="text-red-500 text-xs uppercase font-bold">{{ error }}</p>
             {% endif %}
+
             <button type="submit" class="w-full bg-white text-black font-black py-4 uppercase text-xs tracking-widest hover:bg-zinc-300 transition">
                 Entrar al Templo
             </button>
         </form>
+
         <div class="mt-8 text-center">
             <a href="/" class="text-[10px] uppercase text-zinc-600 hover:text-white transition">Volver al inicio</a>
         </div>
