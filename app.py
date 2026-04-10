@@ -22,8 +22,10 @@ def utility_processor():
 
 # --- CONFIGURACIÓN DE BASE DE DATOS (SUPABASE) ---
 # Usamos el puerto 6543 que es más estable para Vercel
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:6543/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 
 # Esto es para que pg8000 no se queje del SSL
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -32,7 +34,6 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     }
 }
 
-db = SQLAlchemy(app)
 
 # --- MODELO DE LA BASE DE DATOS ---
 class Socio(db.Model):
@@ -48,8 +49,8 @@ class Socio(db.Model):
     rutina_viernes = db.Column(db.Text, default="")
 
 # --- CREAR TABLAS ---
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+ #   db.create_all()
 
 # --- RUTAS ---
 @app.route('/')
