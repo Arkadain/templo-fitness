@@ -37,7 +37,7 @@ def utility_processor():
     return dict(restan_dias=restan_dias)
 
 # CONFIGURACIÓN DE BASE DE DATOS
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:5432/postgres?sslmode=verify-full'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:6543/postgres?sslmode=require'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
