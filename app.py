@@ -6,6 +6,21 @@ from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 
+
+def restan_dias(fecha_str):
+    try:
+        vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
+        hoy = datetime.now()
+        delta = vence_dt - hoy
+        return delta.days + 1
+    except:
+        return 0
+
+@app.context_processor
+def utility_processor():
+    return dict(restan_dias=restan_dias)
+
+
 # Función para calcular días restantes desde el HTML
 def restan_dias(fecha_str):
     try:
@@ -21,17 +36,9 @@ def restan_dias(fecha_str):
 def utility_processor():
     return dict(restan_dias=restan_dias)
 
-# CONFIGURACIÓN DE BASE DE DATOS (SQLite)
-# 2. CAMBIÁ TODA ESTA PARTE:
-if os.environ.get('VERCEL'):
-    # Si estamos en Vercel, usamos la carpeta temporal
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/templo.db'
-else:
-    # Si estás en tu PC (Local), sigue como antes
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///templo.db'
-
+# CONFIGURACIÓN DE BASE DE DATOS
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres312111Santi@@db.outmumjurvsesziislzu.supabase.co:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 # MODELO DE LA BASE DE DATOS
 class Socio(db.Model):
@@ -137,12 +144,13 @@ def editar_socio(id_socio):
         socio.nombre = request.form.get('nombre').upper()
         socio.plan = request.form.get('plan').upper()
         socio.vence = request.form.get('vence').upper()
-        # AGREGAMOS TODOS LOS DÍAS AQUÍ:
+        # AGREGÁ ESTO PARA QUE SE GUARDEN LAS RUTINAS:
         socio.rutina_lunes = request.form.get('rutina_lunes')
         socio.rutina_martes = request.form.get('rutina_martes')
         socio.rutina_miercoles = request.form.get('rutina_miercoles')
         socio.rutina_jueves = request.form.get('rutina_jueves')
         socio.rutina_viernes = request.form.get('rutina_viernes')
+        
         db.session.commit()
         return redirect(url_for('admin_panel'))
     return render_template('editar_socio.html', socio=socio)
