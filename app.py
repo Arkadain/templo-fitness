@@ -6,6 +6,21 @@ from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 
+# Función para calcular días restantes desde el HTML
+def restan_dias(fecha_str):
+    try:
+        vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
+        hoy = datetime.now()
+        delta = vence_dt - hoy
+        return delta.days + 1
+    except:
+        return 0
+
+# Le avisamos a Flask que use esa función en los templates
+@app.context_processor
+def utility_processor():
+    return dict(restan_dias=restan_dias)
+
 # CONFIGURACIÓN DE BASE DE DATOS (SQLite)
 # 2. CAMBIÁ TODA ESTA PARTE:
 if os.environ.get('VERCEL'):
@@ -58,20 +73,29 @@ def dashboard(id_socio):
     socio = Socio.query.get(id_socio)
     if not socio: return redirect(url_for('login'))
     
-    dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
-    dia_hoy = dias[datetime.now().weekday()]
+    # Lógica de días de la semana
+    dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    dia_hoy_nombre = dias_semana[datetime.now().weekday()]
     
-    # Elegimos la rutina según el día
+    # CÁLCULO DE DÍAS RESTANTES
+    vence_dt = datetime.strptime(socio.vence, '%d/%m/%Y')
+    hoy = datetime.now()
+    delta = vence_dt - hoy
+    dias_restantes = delta.days + 1 # +1 para contar el día actual
+    
+    # Rutinas
     rutinas = {
-        "Lunes": socio.rutina_lunes,
-        "Martes": socio.rutina_martes,
-        "Miércoles": socio.rutina_miercoles,
-        "Jueves": socio.rutina_jueves,
+        "Lunes": socio.rutina_lunes, "Martes": socio.rutina_martes,
+        "Miércoles": socio.rutina_miercoles, "Jueves": socio.rutina_jueves,
         "Viernes": socio.rutina_viernes
     }
-    rutina_hoy = rutinas.get(dia_hoy, "Día de descanso")
+    rutina_hoy = rutinas.get(dia_hoy_nombre, "Día de descanso")
     
-    return render_template('dashboard.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_hoy)
+    return render_template('dashboard.html', 
+                           socio=socio, 
+                           rutina_hoy=rutina_hoy, 
+                           dia=dia_hoy_nombre, 
+                           restan=dias_restantes)
 
 @app.route('/admin')
 def admin_panel():

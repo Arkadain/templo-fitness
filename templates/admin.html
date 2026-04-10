@@ -46,12 +46,23 @@
                     <tr class="hover:bg-zinc-900/30 transition-colors">
                         <td class="p-6">
                             <span class="block font-black italic uppercase text-lg">{{ socio.nombre }}</span>
-                            <span class="text-xs text-zinc-600">DNI: {{ socio.dni }}</span>
+                            <span class="text-xs text-zinc-600 font-mono tracking-tighter">ID: {{ socio.dni }}</span>
                         </td>
-                        <td class="p-6 text-sm text-zinc-400">{{ socio.plan }}</td>
-                        <td class="p-6 text-sm text-zinc-400">{{ socio.vence }}</td>
+                        <td class="p-6 text-sm text-zinc-400 font-bold uppercase tracking-widest">{{ socio.plan }}</td>
+
+                        <td class="p-6 text-sm">
+                            <div class="flex flex-col">
+                                <span class="{% if restan_dias(socio.vence) <= 0 %} text-red-500 font-black {% else %} text-zinc-300 {% endif %}">
+                                    {{ socio.vence }}
+                                </span> {% if restan_dias(socio.vence)
+                                <=0 %} <span class="text-[9px] text-red-600 font-black uppercase italic tracking-tighter">Cuota Vencida</span>
+                                    {% else %}
+                                    <span class="text-[9px] text-zinc-600 uppercase italic tracking-tighter">Quedan {{ restan_dias(socio.vence) }} días</span> {% endif %}
+                            </div>
+                        </td>
+
                         <td class="p-6 text-right">
-                            <a href="/admin/editar/{{ socio.dni }}" class="bg-zinc-800 text-white px-4 py-2 text-[10px] font-black uppercase">Editar</a>
+                            <a href="/admin/editar/{{ socio.dni }}" class="bg-zinc-800 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-white hover:text-black transition-all">Editar</a>
                         </td>
                     </tr>
                     {% endfor %}

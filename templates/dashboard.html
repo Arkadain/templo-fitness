@@ -14,8 +14,22 @@
             <p class="mt-4 text-zinc-400 uppercase text-xs tracking-widest">{{ socio.nombre }}</p>
         </header>
 
+        <div class="mb-6 p-5 border {% if restan <= 5 %} border-red-900 bg-red-950/20 {% else %} border-zinc-900 bg-zinc-950 {% endif %} flex justify-between items-center transition-all">
+            <div>
+                <p class="text-[10px] uppercase text-zinc-500 tracking-[0.2em] mb-1">Estado del Plan</p>
+                <p class="text-sm font-black uppercase italic">
+                    {% if restan > 0 %} Vence en <span class="{% if restan <= 5 %} text-red-500 {% else %} text-white {% endif %}">{{ restan }} días</span> {% else %}
+                    <span class="text-red-500 underline">Membresía Vencida</span> {% endif %}
+                </p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] uppercase text-zinc-600 font-bold tracking-widest">{{ socio.plan }}</p>
+                <p class="text-[9px] text-zinc-700">{{ socio.vence }}</p>
+            </div>
+        </div>
+
         <div class="max-w-md mx-auto">
-            <div class="bg-zinc-950 border border-zinc-900 p-8 shadow-2xl">
+            <div class="bg-zinc-950 border border-zinc-900 p-8 shadow-2xl border-l-4 border-l-white">
                 {% if rutina_hoy and rutina_hoy.strip() %}
                 <p class="text-zinc-300 font-mono leading-relaxed whitespace-pre-wrap">{{ rutina_hoy }}</p>
                 {% else %}
@@ -24,7 +38,6 @@
                 </div>
                 {% endif %}
             </div>
-
         </div>
 
         <div class="mt-12 text-center">
