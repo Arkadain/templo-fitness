@@ -8,12 +8,17 @@ app = Flask(__name__)
 
 # --- LÓGICA DE FECHAS ---
 def restan_dias(fecha_str):
+    if not fecha_str:
+        return 0
     try:
+        # Intentamos convertir la fecha
         vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
         hoy = datetime.now()
         delta = vence_dt - hoy
         return delta.days + 1
-    except:
+    except Exception as e:
+        # Si la fecha está mal formateada o es nula, devolvemos 0 en vez de romper todo
+        print(f"Error en fecha: {e}")
         return 0
 
 @app.context_processor
