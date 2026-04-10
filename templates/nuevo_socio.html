@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        h1 { font-family: 'Anton', sans-serif; font-style: italic; }
+    </style>
+</head>
+<body class="p-10">
+    <div class="max-w-md mx-auto">
+        <h1 class="text-4xl mb-10 tracking-tighter uppercase text-white">Alta de <span class="text-zinc-600">Nuevo Socio</span></h1>
+        
+        <form method="POST" class="space-y-6 bg-zinc-950 p-8 border border-zinc-900 shadow-2xl">
+            <div>
+                <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">DNI (Será su usuario)</label>
+                <input type="text" name="dni" required class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
+            </div>
+            <div>
+                <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Nombre Completo</label>
+                <input type="text" name="nombre" required class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
+            </div>
+            <div>
+                <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Contraseña Inicial</label>
+                <input type="password" name="password" required class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Plan</label>
+                    <input type="text" name="plan" placeholder="MENSUAL" class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">Vencimiento</label>
+                    <input type="text" name="vence" placeholder="10 MAY" class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
+                </div>
+            </div>
+            
+            <div class="pt-4 flex gap-4">
+                <button type="submit" class="flex-1 bg-white text-black font-black py-4 uppercase text-xs tracking-widest hover:bg-zinc-300 transition-all">Crear Socio</button>
+                <a href="/admin" class="flex-1 border border-zinc-800 text-zinc-500 text-center py-4 uppercase text-xs tracking-widest hover:text-white flex items-center justify-center transition-all">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

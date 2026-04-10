@@ -34,18 +34,11 @@ def index():
 def login():
     if request.method == 'POST':
         dni = request.form.get('dni')
-        
-        # 1. Chequeamos si es el Admin
         if dni == "0000":
             return redirect(url_for('admin_panel'))
-            
-        # 2. Chequeamos si es un Socio
         if dni in SOCIOS:
             return redirect(url_for('dashboard', id_socio=dni))
-            
-        # 3. Si no es ninguno, error
         return render_template('login.html', error="DNI no encontrado")
-    
     return render_template('login.html')
 
 @app.route('/dashboard/<id_socio>')
@@ -57,9 +50,39 @@ def dashboard(id_socio):
 
 @app.route('/admin')
 def admin_panel():
-    # Esta ruta muestra la lista de todos los socios
     return render_template('admin.html', socios=SOCIOS)
 
-# IMPORTANTE: El run siempre debe ir al final de todo el archivo
+# --- NUEVA RUTA: ALTA DE SOCIO ---
+@app.route('/admin/nuevo', methods=['GET', 'POST'])
+def nuevo_socio():
+    if request.method == 'POST':
+        dni = request.form.get('dni')
+        nombre = request.form.get('nombre').upper()
+        plan = request.form.get('plan').upper()
+        vence = request.form.get('vence').upper()
+        
+        SOCIOS[dni] = {
+            "nombre": nombre,
+            "plan": plan,
+            "vence": vence,
+            "rutina": [] # Se crea vacío para asignarle ejercicios después
+        }
+        return redirect(url_for('admin_panel'))
+    return render_template('nuevo_socio.html')
+
+# --- RUTA: EDITAR SOCIO ---
+@app.route('/admin/editar/<id_socio>', methods=['GET', 'POST'])
+def editar_socio(id_socio):
+    socio = SOCIOS.get(id_socio)
+    if not socio:
+        return "Socio no encontrado", 404
+    if request.method == 'POST':
+        socio['nombre'] = request.form.get('nombre').upper()
+        socio['plan'] = request.form.get('plan').upper()
+        socio['vence'] = request.form.get('vence').upper()
+        return redirect(url_for('admin_panel'))
+    return render_template('editar_socio.html', socio=socio, id=id_socio)
+
+# EL "RUN" SIEMPRE AL FINAL
 if __name__ == '__main__':
     app.run(debug=True)
