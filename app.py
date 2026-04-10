@@ -31,10 +31,21 @@ def index():
 def login():
     if request.method == 'POST':
         dni = request.form.get('dni')
+        password = request.form.get('password') # Capturamos la clave del form
+        
+        # 1. Admin (0000 no necesita password por ahora para facilitar tus pruebas)
         if dni == "0000":
             return redirect(url_for('admin_panel'))
+            
+        # 2. Socios
         if dni in SOCIOS:
-            return redirect(url_for('dashboard', id_socio=dni))
+            # Chequeamos si la contraseña coincide
+            # Usamos .get('password') por si algún socio viejo no tiene clave
+            if SOCIOS[dni].get('password') == password:
+                return redirect(url_for('dashboard', id_socio=dni))
+            else:
+                return render_template('login.html', error="Contraseña incorrecta")
+                
         return render_template('login.html', error="DNI no encontrado")
     return render_template('login.html')
 
