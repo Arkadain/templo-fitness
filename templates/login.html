@@ -6,14 +6,13 @@
 </head>
 <body class="bg-black text-white h-screen flex items-center justify-center font-sans">
     <div class="max-w-md w-full p-10 border border-zinc-900 bg-zinc-950">
-        <h1 style="font-family: 'Anton';" class="text-4xl italic text-center mb-8 uppercase italic">Acceso <span class="text-zinc-600">Socios</span></h1>
+        <h1 style="font-family: 'Anton';" class="text-4xl italic text-center mb-8 uppercase text-white">Acceso <span class="text-zinc-600">Socios</span></h1>
         
         <form action="/login" method="POST" class="space-y-6">
             <div>
                 <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Ingresá tu DNI</label>
                 <input type="text" name="dni" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">
             </div>
-
             <div>
                 <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Contraseña</label>
                 <input type="password" name="password" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">
@@ -27,7 +26,6 @@
                 Entrar al Templo
             </button>
         </form>
-
         <div class="mt-8 text-center">
             <a href="/" class="text-[10px] uppercase text-zinc-600 hover:text-white transition">Volver al inicio</a>
         </div>
