@@ -28,15 +28,8 @@ def utility_processor():
 # --- CONFIGURACIÓN DE BASE DE DATOS (SUPABASE) ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres.outmumjurvsesziislzu:312111Santi%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# ESTE ES EL ESCUDO SSL QUE EXIGE EL POOLER
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    "connect_args": {
-        "ssl_context": True
-    }
-}
-
 db = SQLAlchemy(app)
+
 
 
 # Esto es para que pg8000 no se queje del SSL
