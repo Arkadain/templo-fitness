@@ -1,89 +1,50 @@
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime # Importante para los días
 
 app = Flask(__name__)
 
-# Base de datos simulada
+# Modificamos la estructura para que soporte días
 SOCIOS = {
     "1234": {
-        "nombre": "SANTINO", 
-        "plan": "ANUAL", 
-        "vence": "15 DIC 2026", 
-        "rutina": [
-            {"ej": "Sentadilla con Barra", "sets": "4x8"},
-            {"ej": "Press de Banca Plano", "sets": "3x10"}
-        ]
-    },
-    "4321": {
-        "nombre": "BAUTISTA", 
-        "plan": "MENSUAL", 
-        "vence": "01 MAY 2026", 
-        "rutina": [
-            {"ej": "Prensa 45°", "sets": "4x15"}
-        ]
+        "nombre": "SANTINO",
+        "password": "123",
+        "plan": "ANUAL",
+        "vence": "15 DIC 2026",
+        "rutina": {
+            "Lunes": [{"ej": "Sentadilla", "sets": "4x8"}, {"ej": "Prensa", "sets": "3x12"}],
+            "Miércoles": [{"ej": "Banca", "sets": "3x10"}, {"ej": "Cruces", "sets": "3x15"}],
+            "Viernes": [{"ej": "Peso Muerto", "sets": "4x8"}]
+        }
     }
 }
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         dni = request.form.get('dni')
-        password = request.form.get('password') # Capturamos la clave del form
+        password = request.form.get('password')
         
-        # 1. Admin (0000 no necesita password por ahora para facilitar tus pruebas)
-        if dni == "0000":
-            return redirect(url_for('admin_panel'))
-            
-        # 2. Socios
+        if dni == "0000": return redirect(url_for('admin_panel'))
+        
         if dni in SOCIOS:
-            # Chequeamos si la contraseña coincide
-            # Usamos .get('password') por si algún socio viejo no tiene clave
+            # VALIDACIÓN DE CONTRASEÑA
             if SOCIOS[dni].get('password') == password:
                 return redirect(url_for('dashboard', id_socio=dni))
             else:
                 return render_template('login.html', error="Contraseña incorrecta")
-                
-        return render_template('login.html', error="DNI no encontrado")
+        return render_template('login.html', error="Socio no registrado")
     return render_template('login.html')
 
 @app.route('/dashboard/<id_socio>')
 def dashboard(id_socio):
     socio = SOCIOS.get(id_socio)
-    if not socio:
-        return redirect(url_for('login'))
-    return render_template('dashboard.html', socio=socio)
-
-@app.route('/admin')
-def admin_panel():
-    return render_template('admin.html', socios=SOCIOS)
-
-@app.route('/admin/nuevo', methods=['GET', 'POST'])
-def nuevo_socio():
-    if request.method == 'POST':
-        dni = request.form.get('dni')
-        SOCIOS[dni] = {
-            "nombre": request.form.get('nombre').upper(),
-            "plan": request.form.get('plan').upper(),
-            "vence": request.form.get('vence').upper(),
-            "rutina": []
-        }
-        return redirect(url_for('admin_panel'))
-    return render_template('nuevo_socio.html')
-
-@app.route('/admin/editar/<id_socio>', methods=['GET', 'POST'])
-def editar_socio(id_socio):
-    socio = SOCIOS.get(id_socio)
-    if not socio: return "No encontrado", 404
-    if request.method == 'POST':
-        socio['nombre'] = request.form.get('nombre').upper()
-        socio['plan'] = request.form.get('plan').upper()
-        socio['vence'] = request.form.get('vence').upper()
-        return redirect(url_for('admin_panel'))
-    return render_template('editar_socio.html', socio=socio, id=id_socio)
-
-# IMPORTANTE: Esto siempre al final
-if __name__ == '__main__':
-    app.run(debug=True)
+    if not socio: return redirect(url_for('login'))
+    
+    # LÓGICA DEL DÍA
+    dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    dia_actual = dias_semana[datetime.now().weekday()] # Detecta el día real
+    
+    # Obtenemos la rutina de hoy o mandamos una lista vacía si no entrena hoy
+    rutina_hoy = socio['rutina'].get(dia_actual, [])
+    
+    return render_template('dashboard.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_actual)
