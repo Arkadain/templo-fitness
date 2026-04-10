@@ -26,8 +26,7 @@ def utility_processor():
     return dict(restan_dias=restan_dias)
 
 # --- CONFIGURACIÓN DE BASE DE DATOS (SUPABASE) ---
-# Usamos el puerto 6543 que es más estable para Vercel
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:5432/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
