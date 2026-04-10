@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os # <-- 1. AGREGÁ ESTA LÍNEA ARRIBA DE TODO
+import os
 from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 
-
+# --- LÓGICA DE FECHAS ---
 def restan_dias(fecha_str):
     try:
         vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
@@ -20,45 +20,38 @@ def restan_dias(fecha_str):
 def utility_processor():
     return dict(restan_dias=restan_dias)
 
-
-# Función para calcular días restantes desde el HTML
-def restan_dias(fecha_str):
-    try:
-        vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
-        hoy = datetime.now()
-        delta = vence_dt - hoy
-        return delta.days + 1
-    except:
-        return 0
-
-# Le avisamos a Flask que use esa función en los templates
-@app.context_processor
-def utility_processor():
-    return dict(restan_dias=restan_dias)
-
-# CONFIGURACIÓN DE BASE DE DATOS
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:6543/postgres?sslmode=require'
+# --- CONFIGURACIÓN DE BASE DE DATOS (SUPABASE) ---
+# Usamos el puerto 6543 que es más estable para Vercel
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:312111Santi%40@db.outmumjurvsesziislzu.supabase.co:6543/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Esto es para que pg8000 no se queje del SSL
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    "connect_args": {
+        "ssl": True
+    }
+}
+
 db = SQLAlchemy(app)
 
-# MODELO DE LA BASE DE DATOS
+# --- MODELO DE LA BASE DE DATOS ---
 class Socio(db.Model):
     dni = db.Column(db.String(20), primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     plan = db.Column(db.String(50))
     vence = db.Column(db.String(50))
-    # Rutinas por día (guardamos texto simple)
     rutina_lunes = db.Column(db.Text, default="")
     rutina_martes = db.Column(db.Text, default="")
     rutina_miercoles = db.Column(db.Text, default="")
     rutina_jueves = db.Column(db.Text, default="")
     rutina_viernes = db.Column(db.Text, default="")
 
-# CREAR LA BASE DE DATOS SI NO EXISTE
+# --- CREAR TABLAS ---
 with app.app_context():
     db.create_all()
 
+# --- RUTAS ---
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -81,17 +74,11 @@ def dashboard(id_socio):
     socio = Socio.query.get(id_socio)
     if not socio: return redirect(url_for('login'))
     
-    # Lógica de días de la semana
     dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
     dia_hoy_nombre = dias_semana[datetime.now().weekday()]
     
-    # CÁLCULO DE DÍAS RESTANTES
-    vence_dt = datetime.strptime(socio.vence, '%d/%m/%Y')
-    hoy = datetime.now()
-    delta = vence_dt - hoy
-    dias_restantes = delta.days + 1 # +1 para contar el día actual
+    dias_restantes = restan_dias(socio.vence)
     
-    # Rutinas
     rutinas = {
         "Lunes": socio.rutina_lunes, "Martes": socio.rutina_martes,
         "Miércoles": socio.rutina_miercoles, "Jueves": socio.rutina_jueves,
@@ -116,7 +103,6 @@ def nuevo_socio():
         plan = request.form.get('plan')
         hoy = datetime.now()
         
-        # Mapeo exacto: Mensual, Trimestral, Semestral, Anual
         duracion = {
             "MENSUAL": relativedelta(months=1),
             "TRIMESTRAL": relativedelta(months=3),
@@ -145,7 +131,6 @@ def editar_socio(id_socio):
         socio.nombre = request.form.get('nombre').upper()
         socio.plan = request.form.get('plan').upper()
         socio.vence = request.form.get('vence').upper()
-        # AGREGÁ ESTO PARA QUE SE GUARDEN LAS RUTINAS:
         socio.rutina_lunes = request.form.get('rutina_lunes')
         socio.rutina_martes = request.form.get('rutina_martes')
         socio.rutina_miercoles = request.form.get('rutina_miercoles')
