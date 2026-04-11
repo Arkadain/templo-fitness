@@ -79,8 +79,10 @@
 
                         <td class="p-6 text-right">
                             <div class="flex justify-end gap-2">
+                                <button onclick="abrirModalRenovar('{{ socio.dni }}', '{{ socio.nombre }}')" class="bg-green-900/20 text-green-500 border border-green-900/50 px-4 py-2 text-[10px] font-black uppercase hover:bg-green-600 hover:text-white transition-all">Renovar</button>
+                                
                                 <a href="/admin/editar/{{ socio.dni }}" class="bg-zinc-800 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-white hover:text-black transition-all">Editar</a>
-                                <a href="/eliminar/{{ socio.dni }}" onclick="return confirm('¿Estás seguro de que querés eliminar a {{ socio.nombre }}?');" class="bg-red-900/50 text-red-500 border border-red-900/50 px-4 py-2 text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition-all">Eliminar</a>
+                                <a href="/eliminar/{{ socio.dni }}" onclick="return confirm('¿Estás seguro de que querés eliminar a {{ socio.nombre }}?');" class="bg-red-900/20 text-red-500 border border-red-900/50 px-4 py-2 text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition-all">Eliminar</a>
                             </div>
                         </td>
                     </tr>
@@ -90,7 +92,40 @@
         </div>
     </div>
 
+    <div id="modalRenovar" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-zinc-950 border border-zinc-900 p-8 w-full max-w-md shadow-2xl relative">
+            <button onclick="cerrarModalRenovar()" class="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl">✕</button>
+            <h2 class="text-2xl font-black italic uppercase mb-1">Registrar <span class="text-green-500">Pago</span></h2>
+            <p class="text-[10px] uppercase text-zinc-500 tracking-widest mb-6">Socio: <span id="nombreRenovarTexto" class="text-white font-bold"></span></p>
+            
+            <form id="formRenovar" method="POST" action="" class="space-y-6">
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Fecha del Pago</label>
+                    <input type="date" name="fecha_pago" id="fechaPagoInput" required style="color-scheme: dark;" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white cursor-pointer">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Plan Abonado</label>
+                    <div class="relative">
+                        <select name="plan" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white appearance-none cursor-pointer">
+                            <option value="MENSUAL">Plan Mensual</option>
+                            <option value="TRIMESTRAL">Plan Trimestral</option>
+                            <option value="SEMESTRAL">Plan Semestral</option>
+                            <option value="ANUAL">Plan Anual</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white font-black py-4 uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                    Confirmar Renovación
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // Funcionalidad del Buscador
         document.getElementById('buscador').addEventListener('keyup', function() {
             let filtro = this.value.toLowerCase();
             let filas = document.querySelectorAll('tbody tr'); 
@@ -104,6 +139,26 @@
                 }
             });
         });
+
+        // Funcionalidad del Modal de Renovación
+        function abrirModalRenovar(dni, nombre) {
+            document.getElementById('modalRenovar').style.display = 'flex';
+            document.getElementById('nombreRenovarTexto').innerText = nombre;
+            
+            // Setear la fecha de HOY por defecto en el almanaque
+            let hoy = new Date();
+            let dd = String(hoy.getDate()).padStart(2, '0');
+            let mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            let yyyy = hoy.getFullYear();
+            document.getElementById('fechaPagoInput').value = yyyy + '-' + mm + '-' + dd;
+            
+            // Apuntar el formulario a la ruta correcta con el DNI del socio
+            document.getElementById('formRenovar').action = '/admin/renovar/' + dni;
+        }
+
+        function cerrarModalRenovar() {
+            document.getElementById('modalRenovar').style.display = 'none';
+        }
     </script>
 </body>
 

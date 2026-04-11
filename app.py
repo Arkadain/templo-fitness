@@ -147,6 +147,38 @@ def nuevo_socio():
         return redirect(url_for('admin_panel'))
     return render_template('nuevo_socio.html')
 
+@app.route('/admin/renovar/<id_socio>', methods=['POST'])
+def renovar_socio(id_socio):
+    socio = Socio.query.get(id_socio)
+    if socio:
+        nuevo_plan = request.form.get('plan').upper()
+        fecha_pago_str = request.form.get('fecha_pago') # Viene del almanaque HTML
+        
+        try:
+            # Convertimos la fecha de pago a algo que Python entienda
+            fecha_pago = datetime.strptime(fecha_pago_str, '%Y-%m-%d')
+            
+            duracion = {
+                "MENSUAL": relativedelta(months=1),
+                "TRIMESTRAL": relativedelta(months=3),
+                "SEMESTRAL": relativedelta(months=6),
+                "ANUAL": relativedelta(years=1)
+            }
+            
+            # Calculamos el nuevo vencimiento sumándole los meses al día del pago
+            nuevo_vencimiento = fecha_pago + duracion.get(nuevo_plan, relativedelta(months=1))
+            
+            # Guardamos los cambios
+            socio.plan = nuevo_plan
+            socio.vence = nuevo_vencimiento.strftime('%d/%m/%Y')
+            db.session.commit()
+            
+            flash(f"¡Pago registrado! Membresía de {socio.nombre} renovada.", "success")
+        except Exception as e:
+            flash("Error al procesar la fecha de pago.", "error")
+            
+    return redirect(url_for('admin_panel'))
+
 @app.route('/admin/editar/<id_socio>', methods=['GET', 'POST'])
 def editar_socio(id_socio):
     socio = Socio.query.get(id_socio)
