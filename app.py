@@ -54,10 +54,8 @@ class Socio(db.Model):
     rutina_miercoles = db.Column(db.Text, default="")
     rutina_jueves = db.Column(db.Text, default="")
     rutina_viernes = db.Column(db.Text, default="")
+    rutina_sabado = db.Column(db.Text, default="")
 
-# --- CREAR TABLAS ---
-#with app.app_context():
- #   db.create_all()
 
 # --- RUTAS ---
 @app.route('/')
@@ -90,7 +88,7 @@ def dashboard(id_socio):
     rutinas = {
         "Lunes": socio.rutina_lunes, "Martes": socio.rutina_martes,
         "Miércoles": socio.rutina_miercoles, "Jueves": socio.rutina_jueves,
-        "Viernes": socio.rutina_viernes
+        "Viernes": socio.rutina_viernes, "Sábado": socio.rutina_sabado
     }
     rutina_hoy = rutinas.get(dia_hoy_nombre, "Día de descanso")
     
@@ -157,6 +155,7 @@ def editar_socio(id_socio):
         socio.rutina_miercoles = request.form.get('rutina_miercoles')
         socio.rutina_jueves = request.form.get('rutina_jueves')
         socio.rutina_viernes = request.form.get('rutina_viernes')
+        socio.rutina_sabado = request.form.get('rutina_sabado')
         
         db.session.commit()
         return redirect(url_for('admin_panel'))
