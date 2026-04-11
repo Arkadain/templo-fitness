@@ -31,6 +31,20 @@
             </div>
         </header>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-6 bg-zinc-800 border-l-4 border-white text-white px-4 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="mb-6">
+            <input type="text" id="buscador" placeholder="🔍 BUSCAR SOCIO POR NOMBRE O DNI..." class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-zinc-400 focus:text-white text-[10px] uppercase tracking-[0.2em] transition-all font-bold">
+        </div>
+
         <div class="bg-zinc-950 border border-zinc-900 rounded-sm overflow-hidden">
             <table class="w-full text-left">
                 <thead class="bg-zinc-900/50 text-zinc-500 text-[10px] uppercase tracking-widest">
@@ -54,10 +68,12 @@
                             <div class="flex flex-col">
                                 <span class="{% if restan_dias(socio.vence) <= 0 %} text-red-500 font-black {% else %} text-zinc-300 {% endif %}">
                                     {{ socio.vence }}
-                                </span> {% if restan_dias(socio.vence)
-                                <=0 %} <span class="text-[9px] text-red-600 font-black uppercase italic tracking-tighter">Cuota Vencida</span>
-                                    {% else %}
-                                    <span class="text-[9px] text-zinc-600 uppercase italic tracking-tighter">Quedan {{ restan_dias(socio.vence) }} días</span> {% endif %}
+                                </span> 
+                                {% if restan_dias(socio.vence) <= 0 %} 
+                                    <span class="text-[9px] text-red-600 font-black uppercase italic tracking-tighter">Cuota Vencida</span>
+                                {% else %}
+                                    <span class="text-[9px] text-zinc-600 uppercase italic tracking-tighter">Quedan {{ restan_dias(socio.vence) }} días</span> 
+                                {% endif %}
                             </div>
                         </td>
 
@@ -73,6 +89,22 @@
             </table>
         </div>
     </div>
+
+    <script>
+        document.getElementById('buscador').addEventListener('keyup', function() {
+            let filtro = this.value.toLowerCase();
+            let filas = document.querySelectorAll('tbody tr'); 
+            
+            filas.forEach(function(fila) {
+                let textoFila = fila.textContent.toLowerCase();
+                if(textoFila.includes(filtro)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

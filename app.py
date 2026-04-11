@@ -1,23 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
+# Necesario para usar los mensajes "flash"
+app.secret_key = os.environ.get('SECRET_KEY', 'templo_fitness_secreto_2024')
 
 # --- LÓGICA DE FECHAS ---
 def restan_dias(fecha_str):
     if not fecha_str:
         return 0
     try:
-        # Intentamos convertir la fecha
         vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
         hoy = datetime.now()
         delta = vence_dt - hoy
         return delta.days + 1
     except Exception as e:
-        # Si la fecha está mal formateada o es nula, devolvemos 0 en vez de romper todo
         print(f"Error en fecha: {e}")
         return 0
 
@@ -31,10 +31,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-
-
-
-# Esto es para que pg8000 no se queje del SSL
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "connect_args": {
         "ssl": True
@@ -67,8 +63,14 @@ def login():
     if request.method == 'POST':
         dni = request.form.get('dni')
         password = request.form.get('password')
-        if dni == "0000": return redirect(url_for('admin_panel'))
         
+        # --- SEGURIDAD DEL ADMINISTRADOR ---
+        ADMIN_USER = os.environ.get('ADMIN_USER', '0000') 
+        ADMIN_PASS = os.environ.get('ADMIN_PASS', 'admin123') 
+        
+        if dni == ADMIN_USER and password == ADMIN_PASS:
+            return redirect(url_for('admin_panel'))
+            
         socio = Socio.query.get(dni)
         if socio and socio.password == password:
             return redirect(url_for('dashboard', id_socio=dni))
@@ -112,6 +114,7 @@ def eliminar_socio(dni):
     if socio_a_borrar:
         db.session.delete(socio_a_borrar)
         db.session.commit()
+        flash(f'Socio con DNI {dni} eliminado correctamente.', 'success')
         
     # Recargamos el panel de administrador
     return redirect('/admin')
@@ -140,6 +143,7 @@ def nuevo_socio():
         )
         db.session.add(nuevo)
         db.session.commit()
+        flash(f'Socio {nuevo.nombre} agregado correctamente.', 'success')
         return redirect(url_for('admin_panel'))
     return render_template('nuevo_socio.html')
 
@@ -158,6 +162,7 @@ def editar_socio(id_socio):
         socio.rutina_sabado = request.form.get('rutina_sabado')
         
         db.session.commit()
+        flash(f'Socio {socio.nombre} actualizado correctamente.', 'success')
         return redirect(url_for('admin_panel'))
     return render_template('editar_socio.html', socio=socio)
 
