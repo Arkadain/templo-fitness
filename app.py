@@ -105,6 +105,19 @@ def admin_panel():
     socios = Socio.query.all()
     return render_template('admin.html', socios=socios)
 
+@app.route('/eliminar/<dni>')
+def eliminar_socio(dni):
+    # Buscamos al socio en la base de datos usando su DNI
+    socio_a_borrar = Socio.query.get(dni)
+    
+    # Si existe, lo borramos y guardamos los cambios
+    if socio_a_borrar:
+        db.session.delete(socio_a_borrar)
+        db.session.commit()
+        
+    # Recargamos el panel de administrador
+    return redirect('/admin')
+
 @app.route('/admin/nuevo', methods=['GET', 'POST'])
 def nuevo_socio():
     if request.method == 'POST':
