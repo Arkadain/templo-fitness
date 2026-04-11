@@ -41,13 +41,25 @@
                     <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Nombre Completo</label>
                     <input type="text" name="nombre" value="{{ socio.nombre }}" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white italic font-bold transition-all">
                 </div>
+                
                 <div>
                     <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Plan</label>
-                    <input type="text" name="plan" value="{{ socio.plan }}" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all">
+                    <div class="relative">
+                        <select name="plan" id="planSelect" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all appearance-none cursor-pointer">
+                            <option value="MENSUAL" {% if socio.plan == 'MENSUAL' %}selected{% endif %}>Plan Mensual</option>
+                            <option value="TRIMESTRAL" {% if socio.plan == 'TRIMESTRAL' %}selected{% endif %}>Plan Trimestral</option>
+                            <option value="SEMESTRAL" {% if socio.plan == 'SEMESTRAL' %}selected{% endif %}>Plan Semestral</option>
+                            <option value="ANUAL" {% if socio.plan == 'ANUAL' %}selected{% endif %}>Plan Anual</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="md:col-span-2">
                     <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Fecha de Vencimiento</label>
-                    <input type="text" name="vence" value="{{ socio.vence }}" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all">
+                    <input type="date" name="vence" id="venceInput" value="{{ vence_html }}" required style="color-scheme: dark;" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all cursor-pointer">
                 </div>
             </div>
 
@@ -71,6 +83,32 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('planSelect').addEventListener('change', function() {
+            let planElegido = this.value;
+            let hoy = new Date();
+            let mesesAAgregar = {
+                'MENSUAL': 1,
+                'TRIMESTRAL': 3,
+                'SEMESTRAL': 6,
+                'ANUAL': 12
+            };
+            
+            if(mesesAAgregar[planElegido]) {
+                // Le sumamos los meses correspondientes a la fecha de HOY
+                hoy.setMonth(hoy.getMonth() + mesesAAgregar[planElegido]);
+                
+                // Le damos el formato YYYY-MM-DD que exige el almanaque HTML
+                let dd = String(hoy.getDate()).padStart(2, '0');
+                let mm = String(hoy.getMonth() + 1).padStart(2, '0'); 
+                let yyyy = hoy.getFullYear();
+                
+                // Actualizamos el almanaque en pantalla
+                document.getElementById('venceInput').value = yyyy + '-' + mm + '-' + dd;
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -153,7 +153,19 @@ def editar_socio(id_socio):
     if request.method == 'POST':
         socio.nombre = request.form.get('nombre').upper()
         socio.plan = request.form.get('plan').upper()
-        socio.vence = request.form.get('vence').upper()
+        
+        # --- TRADUCTOR DE FECHAS (Del almanaque a nuestra base de datos) ---
+        fecha_html = request.form.get('vence')
+        if fecha_html and "-" in fecha_html:
+            try:
+                # Transforma YYYY-MM-DD a DD/MM/YYYY
+                fecha_obj = datetime.strptime(fecha_html, '%Y-%m-%d')
+                socio.vence = fecha_obj.strftime('%d/%m/%Y')
+            except:
+                socio.vence = fecha_html
+        else:
+            socio.vence = fecha_html
+
         socio.rutina_lunes = request.form.get('rutina_lunes')
         socio.rutina_martes = request.form.get('rutina_martes')
         socio.rutina_miercoles = request.form.get('rutina_miercoles')
@@ -162,9 +174,20 @@ def editar_socio(id_socio):
         socio.rutina_sabado = request.form.get('rutina_sabado')
         
         db.session.commit()
-        flash(f'Socio {socio.nombre} actualizado correctamente.', 'success')
+        flash("Datos actualizados correctamente.", "success")
         return redirect(url_for('admin_panel'))
-    return render_template('editar_socio.html', socio=socio)
+        
+    # --- TRADUCTOR DE FECHAS (De nuestra base de datos al almanaque) ---
+    vence_html = ""
+    if socio.vence:
+        try:
+            # Transforma DD/MM/YYYY a YYYY-MM-DD para que el almanaque lo entienda
+            vence_html = datetime.strptime(socio.vence, '%d/%m/%Y').strftime('%Y-%m-%d')
+        except:
+            pass
+            
+    # Le pasamos la fecha traducida al HTML (vence_html)
+    return render_template('editar_socio.html', socio=socio, vence_html=vence_html)
 
 if __name__ == '__main__':
     app.run(debug=True)
