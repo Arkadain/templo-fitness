@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
-# Necesario para usar los mensajes "flash"
+# Necesario para usar los mensajes "flash" y la seguridad de sesiones
 app.secret_key = os.environ.get('SECRET_KEY', 'templo_fitness_secreto_2024')
 
 # --- LÓGICA DE FECHAS ---
@@ -69,16 +69,28 @@ def login():
         ADMIN_PASS = os.environ.get('ADMIN_PASS', 'admin123') 
         
         if dni == ADMIN_USER and password == ADMIN_PASS:
+            session['admin'] = True  # Creamos la sesión de administrador
             return redirect(url_for('admin_panel'))
             
         socio = Socio.query.get(dni)
         if socio and socio.password == password:
+            session['user_id'] = dni # Creamos la sesión del alumno
             return redirect(url_for('dashboard', id_socio=dni))
+            
         return render_template('login.html', error="Datos incorrectos")
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear() # Destruye la sesión de forma segura
+    return redirect(url_for('login'))
+
 @app.route('/dashboard/<id_socio>')
 def dashboard(id_socio):
+    # Seguridad: Solo pasa si es el dueño del DNI o si es el admin
+    if session.get('user_id') != id_socio and not session.get('admin'):
+        return redirect(url_for('login'))
+        
     socio = Socio.query.get(id_socio)
     if not socio: return redirect(url_for('login'))
     
@@ -102,25 +114,28 @@ def dashboard(id_socio):
 
 @app.route('/admin')
 def admin_panel():
+    # Seguridad: Si no hay sesión de admin, lo patea al login
+    if not session.get('admin'): return redirect(url_for('login'))
+    
     socios = Socio.query.all()
     return render_template('admin.html', socios=socios)
 
 @app.route('/eliminar/<dni>')
 def eliminar_socio(dni):
-    # Buscamos al socio en la base de datos usando su DNI
-    socio_a_borrar = Socio.query.get(dni)
+    if not session.get('admin'): return redirect(url_for('login'))
     
-    # Si existe, lo borramos y guardamos los cambios
+    socio_a_borrar = Socio.query.get(dni)
     if socio_a_borrar:
         db.session.delete(socio_a_borrar)
         db.session.commit()
         flash(f'Socio con DNI {dni} eliminado correctamente.', 'success')
         
-    # Recargamos el panel de administrador
     return redirect('/admin')
 
 @app.route('/admin/nuevo', methods=['GET', 'POST'])
 def nuevo_socio():
+    if not session.get('admin'): return redirect(url_for('login'))
+    
     if request.method == 'POST':
         plan = request.form.get('plan')
         hoy = datetime.now()
@@ -149,13 +164,14 @@ def nuevo_socio():
 
 @app.route('/admin/renovar/<id_socio>', methods=['POST'])
 def renovar_socio(id_socio):
+    if not session.get('admin'): return redirect(url_for('login'))
+    
     socio = Socio.query.get(id_socio)
     if socio:
         nuevo_plan = request.form.get('plan').upper()
-        fecha_pago_str = request.form.get('fecha_pago') # Viene del almanaque HTML
+        fecha_pago_str = request.form.get('fecha_pago') 
         
         try:
-            # Convertimos la fecha de pago a algo que Python entienda
             fecha_pago = datetime.strptime(fecha_pago_str, '%Y-%m-%d')
             
             duracion = {
@@ -165,10 +181,8 @@ def renovar_socio(id_socio):
                 "ANUAL": relativedelta(years=1)
             }
             
-            # Calculamos el nuevo vencimiento sumándole los meses al día del pago
             nuevo_vencimiento = fecha_pago + duracion.get(nuevo_plan, relativedelta(months=1))
             
-            # Guardamos los cambios
             socio.plan = nuevo_plan
             socio.vence = nuevo_vencimiento.strftime('%d/%m/%Y')
             db.session.commit()
@@ -181,16 +195,16 @@ def renovar_socio(id_socio):
 
 @app.route('/admin/editar/<id_socio>', methods=['GET', 'POST'])
 def editar_socio(id_socio):
+    if not session.get('admin'): return redirect(url_for('login'))
+    
     socio = Socio.query.get(id_socio)
     if request.method == 'POST':
         socio.nombre = request.form.get('nombre').upper()
         socio.plan = request.form.get('plan').upper()
         
-        # --- TRADUCTOR DE FECHAS (Del almanaque a nuestra base de datos) ---
         fecha_html = request.form.get('vence')
         if fecha_html and "-" in fecha_html:
             try:
-                # Transforma YYYY-MM-DD a DD/MM/YYYY
                 fecha_obj = datetime.strptime(fecha_html, '%Y-%m-%d')
                 socio.vence = fecha_obj.strftime('%d/%m/%Y')
             except:
@@ -209,16 +223,13 @@ def editar_socio(id_socio):
         flash("Datos actualizados correctamente.", "success")
         return redirect(url_for('admin_panel'))
         
-    # --- TRADUCTOR DE FECHAS (De nuestra base de datos al almanaque) ---
     vence_html = ""
     if socio.vence:
         try:
-            # Transforma DD/MM/YYYY a YYYY-MM-DD para que el almanaque lo entienda
             vence_html = datetime.strptime(socio.vence, '%d/%m/%Y').strftime('%Y-%m-%d')
         except:
             pass
             
-    # Le pasamos la fecha traducida al HTML (vence_html)
     return render_template('editar_socio.html', socio=socio, vence_html=vence_html)
 
 if __name__ == '__main__':
