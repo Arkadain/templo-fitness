@@ -21,7 +21,6 @@ _raw_db_url = os.environ.get(
     'DATABASE_URL',
     'postgresql://postgres.outmumjurvsesziislzu:312111Santi%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
 )
-# Vercel requiere pg8000 (driver Python puro). Ajustamos el prefijo si hace falta.
 if _raw_db_url.startswith('postgresql://') or _raw_db_url.startswith('postgres://'):
     _raw_db_url = _raw_db_url.replace('postgresql://', 'postgresql+pg8000://', 1).replace('postgres://', 'postgresql+pg8000://', 1)
 
@@ -88,7 +87,7 @@ class RegistroPesos(db.Model):
 # --- RUTAS PÚBLICAS ---
 @app.route('/')
 def index():
-    return render_template('public/index.html')
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -121,9 +120,9 @@ def login():
             session['user_id'] = dni
             return redirect(url_for('dashboard', id_socio=dni))
 
-        return render_template('public/login.html', error="Datos incorrectos")
+        return render_template('login.html', error="Datos incorrectos")
 
-    return render_template('public/login.html')
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -166,7 +165,7 @@ def dashboard(id_socio):
             'es_hoy': d == hoy
         })
 
-    return render_template('socio/dashboard.html', socio=socio, racha=racha, historial_strava=historial_strava)
+    return render_template('dashboard.html', socio=socio, racha=racha, historial_strava=historial_strava)
 
 @app.route('/asistencia/presente', methods=['POST'])
 def dar_presente():
@@ -201,7 +200,7 @@ def rutina(id_socio):
     }
     rutina_hoy = rutinas.get(dia_hoy_nombre, "")
     
-    return render_template('socio/rutina.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_hoy_nombre)
+    return render_template('rutina.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_hoy_nombre)
 
 @app.route('/fuerza/<id_socio>', methods=['GET', 'POST'])
 def fuerza(id_socio):
@@ -227,14 +226,14 @@ def fuerza(id_socio):
     registros = RegistroPesos.query.filter_by(dni_socio=id_socio).order_by(RegistroPesos.fecha.desc(), RegistroPesos.id.desc()).all()
     prs = db.session.query(RegistroPesos.ejercicio, db.func.max(RegistroPesos.peso).label('max_peso')).filter_by(dni_socio=id_socio).group_by(RegistroPesos.ejercicio).all()
 
-    return render_template('socio/fuerza.html', socio=socio, registros=registros, prs=prs)
+    return render_template('fuerza.html', socio=socio, registros=registros, prs=prs)
 
 @app.route('/perfil/<id_socio>')
 def perfil(id_socio):
     if session.get('user_id') != id_socio and not session.get('admin'):
         return redirect(url_for('login'))
     socio = Socio.query.get(id_socio)
-    return render_template('socio/perfil.html', socio=socio, restan=restan_dias(socio.vence))
+    return render_template('perfil.html', socio=socio, restan=restan_dias(socio.vence))
 
 
 # --- RUTAS DE ADMINISTRACIÓN ---
@@ -243,7 +242,7 @@ def admin_panel():
     if not session.get('admin'):
         return redirect(url_for('login'))
     socios = Socio.query.all()
-    return render_template('admin/admin.html', socios=socios)
+    return render_template('admin.html', socios=socios)
 
 @app.route('/eliminar/<dni>', methods=['POST'])
 def eliminar_socio(dni):
@@ -269,11 +268,11 @@ def nuevo_socio():
 
         if not dni or not nombre or not password_raw or not plan:
             flash("Todos los campos son obligatorios.", "error")
-            return render_template('admin/nuevo_socio.html')
+            return render_template('nuevo_socio.html')
 
         if Socio.query.get(dni):
             flash(f"Ya existe un socio con el DNI {dni}.", "error")
-            return render_template('admin/nuevo_socio.html')
+            return render_template('nuevo_socio.html')
 
         duracion = {"MENSUAL": 1, "TRIMESTRAL": 3, "SEMESTRAL": 6, "ANUAL": 12}
         vencimiento = fecha_hoy_argentina() + relativedelta(months=duracion.get(plan.upper(), 1))
@@ -287,7 +286,7 @@ def nuevo_socio():
         flash(f'Socio {nuevo.nombre} agregado.', 'success')
         return redirect(url_for('admin_panel'))
 
-    return render_template('admin/nuevo_socio.html')
+    return render_template('nuevo_socio.html')
 
 @app.route('/admin/renovar/<id_socio>', methods=['POST'])
 def renovar_socio(id_socio):
@@ -357,7 +356,7 @@ def editar_socio(id_socio):
         except:
             pass
 
-    return render_template('admin/editar_socio.html', socio=socio, vence_html=vence_html)
+    return render_template('editar_socio.html', socio=socio, vence_html=vence_html)
 
 if __name__ == '__main__':
     app.run(debug=False)
