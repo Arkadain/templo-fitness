@@ -1,27 +1,19 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "app.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": [
-          "templates/public/**",
-          "templates/admin/**",
-          "templates/socio/**",
-          "static/**"
-        ]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "app.py"
-    }
-  ]
+    "version": 2,
+    "builds": [{
+        "src": "app.py",
+        "use": "@vercel/python",
+        "config": {
+            "includeFiles": "templates/**"
+        }
+    }],
+    "routes": [{
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "app.py"
+        }
+    ]
 }
