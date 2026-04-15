@@ -39,10 +39,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "connect_args": {
-        "ssl": True
+        "sslmode": "require"
     }
 }
-
 db = SQLAlchemy(app)
 
 # --- MODELO DE LA BASE DE DATOS ---
