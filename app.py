@@ -7,7 +7,9 @@ import os
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.exc import IntegrityError
 
-app = Flask(__name__)
+# Le decimos a Vercel EXACTAMENTE dónde buscar las plantillas
+base_dir = os.path.abspath(os.path.dirname(__file__))
+app = Flask(__name__, template_folder=os.path.join(base_dir, 'templates'))
 
 # --- SECRET KEY (Fija para evitar errores CSRF en Vercel) ---
 app.secret_key = "TemploBaraderoSeguro2026!"
