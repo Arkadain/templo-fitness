@@ -1,12 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
-# Necesario para usar los mensajes "flash" y la seguridad de sesiones
-app.secret_key = os.environ.get('SECRET_KEY', 'templo_fitness_secreto_2024')
+
+# --- SECRET KEY desde variable de entorno ---
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(32))
+
+# --- PROTECCIÓN CSRF ---
+csrf = CSRFProtect(app)
 
 # --- LÓGICA DE FECHAS ---
 def restan_dias(fecha_str):
@@ -25,24 +31,25 @@ def restan_dias(fecha_str):
 def utility_processor():
     return dict(restan_dias=restan_dias)
 
-# --- CONFIGURACIÓN DE BASE DE DATOS (SUPABASE) ---
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres.outmumjurvsesziislzu:312111Santi%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
+# --- CONFIGURACIÓN DE BASE DE DATOS ---
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL',
+    'postgresql://postgres.outmumjurvsesziislzu:312111Santi%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "connect_args": {
         "ssl": True
     }
 }
 
+db = SQLAlchemy(app)
 
 # --- MODELO DE LA BASE DE DATOS ---
 class Socio(db.Model):
     dni = db.Column(db.String(20), primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(256), nullable=False)
     plan = db.Column(db.String(50))
     vence = db.Column(db.String(50))
     rutina_lunes = db.Column(db.Text, default="")
@@ -52,7 +59,6 @@ class Socio(db.Model):
     rutina_viernes = db.Column(db.Text, default="")
     rutina_sabado = db.Column(db.Text, default="")
 
-
 # --- RUTAS ---
 @app.route('/')
 def index():
@@ -61,148 +67,181 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        dni = request.form.get('dni')
-        password = request.form.get('password')
-        
-        # --- SEGURIDAD DEL ADMINISTRADOR ---
-        ADMIN_USER = os.environ.get('ADMIN_USER', '0000') 
-        ADMIN_PASS = os.environ.get('ADMIN_PASS', 'admin123') 
-        
+        dni = request.form.get('dni', '').strip()
+        password = request.form.get('password', '')
+
+        ADMIN_USER = os.environ.get('ADMIN_USER', '0000')
+        ADMIN_PASS = os.environ.get('ADMIN_PASS', 'admin123')
+
         if dni == ADMIN_USER and password == ADMIN_PASS:
-            session['admin'] = True  # Creamos la sesión de administrador
+            session.clear()
+            session['admin'] = True
             return redirect(url_for('admin_panel'))
-            
+
         socio = Socio.query.get(dni)
-        if socio and socio.password == password:
-            session['user_id'] = dni # Creamos la sesión del alumno
+
+        # Compatible con contraseñas viejas (texto plano) y nuevas (hash).
+        # La primera vez que un socio viejo se loguea, su contraseña se hashea automáticamente.
+        password_ok = False
+        if socio:
+            if socio.password.startswith('pbkdf2:') or socio.password.startswith('scrypt:'):
+                password_ok = check_password_hash(socio.password, password)
+            else:
+                if socio.password == password:
+                    password_ok = True
+                    socio.password = generate_password_hash(password)
+                    db.session.commit()
+
+        if password_ok:
+            session.clear()
+            session['user_id'] = dni
             return redirect(url_for('dashboard', id_socio=dni))
-            
+
         return render_template('login.html', error="Datos incorrectos")
+
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session.clear() # Destruye la sesión de forma segura
+    session.clear()
     return redirect(url_for('login'))
 
 @app.route('/dashboard/<id_socio>')
 def dashboard(id_socio):
-    # Seguridad: Solo pasa si es el dueño del DNI o si es el admin
     if session.get('user_id') != id_socio and not session.get('admin'):
         return redirect(url_for('login'))
-        
+
     socio = Socio.query.get(id_socio)
-    if not socio: return redirect(url_for('login'))
-    
+    if not socio:
+        return redirect(url_for('login'))
+
     dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
     dia_hoy_nombre = dias_semana[datetime.now().weekday()]
-    
     dias_restantes = restan_dias(socio.vence)
-    
+
     rutinas = {
-        "Lunes": socio.rutina_lunes, "Martes": socio.rutina_martes,
-        "Miércoles": socio.rutina_miercoles, "Jueves": socio.rutina_jueves,
-        "Viernes": socio.rutina_viernes, "Sábado": socio.rutina_sabado
+        "Lunes": socio.rutina_lunes,
+        "Martes": socio.rutina_martes,
+        "Miércoles": socio.rutina_miercoles,
+        "Jueves": socio.rutina_jueves,
+        "Viernes": socio.rutina_viernes,
+        "Sábado": socio.rutina_sabado
     }
     rutina_hoy = rutinas.get(dia_hoy_nombre, "Día de descanso")
-    
-    return render_template('dashboard.html', 
-                           socio=socio, 
-                           rutina_hoy=rutina_hoy, 
-                           dia=dia_hoy_nombre, 
+
+    return render_template('dashboard.html',
+                           socio=socio,
+                           rutina_hoy=rutina_hoy,
+                           dia=dia_hoy_nombre,
                            restan=dias_restantes)
 
 @app.route('/admin')
 def admin_panel():
-    # Seguridad: Si no hay sesión de admin, lo patea al login
-    if not session.get('admin'): return redirect(url_for('login'))
-    
+    if not session.get('admin'):
+        return redirect(url_for('login'))
     socios = Socio.query.all()
     return render_template('admin.html', socios=socios)
 
-@app.route('/eliminar/<dni>')
+# CORREGIDO: POST en lugar de GET
+@app.route('/eliminar/<dni>', methods=['POST'])
 def eliminar_socio(dni):
-    if not session.get('admin'): return redirect(url_for('login'))
-    
+    if not session.get('admin'):
+        return redirect(url_for('login'))
     socio_a_borrar = Socio.query.get(dni)
     if socio_a_borrar:
         db.session.delete(socio_a_borrar)
         db.session.commit()
         flash(f'Socio con DNI {dni} eliminado correctamente.', 'success')
-        
     return redirect('/admin')
 
 @app.route('/admin/nuevo', methods=['GET', 'POST'])
 def nuevo_socio():
-    if not session.get('admin'): return redirect(url_for('login'))
-    
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
-        plan = request.form.get('plan')
+        dni = request.form.get('dni', '').strip()
+        nombre = request.form.get('nombre', '').strip()
+        password_raw = request.form.get('password', '')
+        plan = request.form.get('plan', '')
+
+        if not dni or not nombre or not password_raw or not plan:
+            flash("Todos los campos son obligatorios.", "error")
+            return render_template('nuevo_socio.html')
+
+        if Socio.query.get(dni):
+            flash(f"Ya existe un socio con el DNI {dni}.", "error")
+            return render_template('nuevo_socio.html')
+
         hoy = datetime.now()
-        
         duracion = {
             "MENSUAL": relativedelta(months=1),
             "TRIMESTRAL": relativedelta(months=3),
             "SEMESTRAL": relativedelta(months=6),
             "ANUAL": relativedelta(years=1)
         }
-        
-        vencimiento = hoy + duracion.get(plan, relativedelta(months=1))
-            
+        vencimiento = hoy + duracion.get(plan.upper(), relativedelta(months=1))
+
         nuevo = Socio(
-            dni=request.form.get('dni'),
-            nombre=request.form.get('nombre').upper(),
-            password=request.form.get('password'),
-            plan=plan,
+            dni=dni,
+            nombre=nombre.upper(),
+            password=generate_password_hash(password_raw),
+            plan=plan.upper(),
             vence=vencimiento.strftime('%d/%m/%Y')
         )
         db.session.add(nuevo)
         db.session.commit()
         flash(f'Socio {nuevo.nombre} agregado correctamente.', 'success')
         return redirect(url_for('admin_panel'))
+
     return render_template('nuevo_socio.html')
 
 @app.route('/admin/renovar/<id_socio>', methods=['POST'])
 def renovar_socio(id_socio):
-    if not session.get('admin'): return redirect(url_for('login'))
-    
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+
     socio = Socio.query.get(id_socio)
     if socio:
-        nuevo_plan = request.form.get('plan').upper()
-        fecha_pago_str = request.form.get('fecha_pago') 
-        
+        nuevo_plan = request.form.get('plan', '').upper()
+        fecha_pago_str = request.form.get('fecha_pago', '')
         try:
             fecha_pago = datetime.strptime(fecha_pago_str, '%Y-%m-%d')
-            
             duracion = {
                 "MENSUAL": relativedelta(months=1),
                 "TRIMESTRAL": relativedelta(months=3),
                 "SEMESTRAL": relativedelta(months=6),
                 "ANUAL": relativedelta(years=1)
             }
-            
             nuevo_vencimiento = fecha_pago + duracion.get(nuevo_plan, relativedelta(months=1))
-            
             socio.plan = nuevo_plan
             socio.vence = nuevo_vencimiento.strftime('%d/%m/%Y')
             db.session.commit()
-            
             flash(f"¡Pago registrado! Membresía de {socio.nombre} renovada.", "success")
         except Exception as e:
             flash("Error al procesar la fecha de pago.", "error")
-            
+
     return redirect(url_for('admin_panel'))
 
 @app.route('/admin/editar/<id_socio>', methods=['GET', 'POST'])
 def editar_socio(id_socio):
-    if not session.get('admin'): return redirect(url_for('login'))
-    
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+
     socio = Socio.query.get(id_socio)
+    if not socio:
+        flash("Socio no encontrado.", "error")
+        return redirect(url_for('admin_panel'))
+
     if request.method == 'POST':
-        socio.nombre = request.form.get('nombre').upper()
-        socio.plan = request.form.get('plan').upper()
-        
-        fecha_html = request.form.get('vence')
+        socio.nombre = request.form.get('nombre', '').upper()
+        socio.plan = request.form.get('plan', '').upper()
+
+        nueva_password = request.form.get('password', '').strip()
+        if nueva_password:
+            socio.password = generate_password_hash(nueva_password)
+
+        fecha_html = request.form.get('vence', '')
         if fecha_html and "-" in fecha_html:
             try:
                 fecha_obj = datetime.strptime(fecha_html, '%Y-%m-%d')
@@ -212,25 +251,25 @@ def editar_socio(id_socio):
         else:
             socio.vence = fecha_html
 
-        socio.rutina_lunes = request.form.get('rutina_lunes')
-        socio.rutina_martes = request.form.get('rutina_martes')
-        socio.rutina_miercoles = request.form.get('rutina_miercoles')
-        socio.rutina_jueves = request.form.get('rutina_jueves')
-        socio.rutina_viernes = request.form.get('rutina_viernes')
-        socio.rutina_sabado = request.form.get('rutina_sabado')
-        
+        socio.rutina_lunes = request.form.get('rutina_lunes', '')
+        socio.rutina_martes = request.form.get('rutina_martes', '')
+        socio.rutina_miercoles = request.form.get('rutina_miercoles', '')
+        socio.rutina_jueves = request.form.get('rutina_jueves', '')
+        socio.rutina_viernes = request.form.get('rutina_viernes', '')
+        socio.rutina_sabado = request.form.get('rutina_sabado', '')
+
         db.session.commit()
         flash("Datos actualizados correctamente.", "success")
         return redirect(url_for('admin_panel'))
-        
+
     vence_html = ""
     if socio.vence:
         try:
             vence_html = datetime.strptime(socio.vence, '%d/%m/%Y').strftime('%Y-%m-%d')
         except:
             pass
-            
+
     return render_template('editar_socio.html', socio=socio, vence_html=vence_html)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

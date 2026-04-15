@@ -9,6 +9,7 @@
         <h1 style="font-family: 'Anton';" class="text-4xl italic text-center mb-8 uppercase text-white">Acceso <span class="text-zinc-600">Socios</span></h1>
         
         <form action="/login" method="POST" class="space-y-6">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div>
                 <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Ingresá tu DNI</label>
                 <input type="text" name="dni" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">

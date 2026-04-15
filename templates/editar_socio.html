@@ -36,6 +36,7 @@
         </header>
 
         <form method="POST" class="space-y-8 bg-zinc-950 p-8 border border-zinc-900 shadow-2xl">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Nombre Completo</label>
@@ -61,13 +62,19 @@
                     <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Fecha de Vencimiento</label>
                     <input type="date" name="vence" id="venceInput" value="{{ vence_html }}" required style="color-scheme: dark;" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all cursor-pointer">
                 </div>
+
+                <div class="md:col-span-2">
+                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Nueva Contraseña <span class="text-zinc-700">(dejar vacío para no cambiar)</span></label>
+                    <input type="password" name="password" placeholder="••••••••" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all">
+                </div>
             </div>
 
             <div class="border-t border-zinc-900 pt-8">
                 <h3 class="text-zinc-400 text-xs font-black uppercase italic tracking-[0.3em] mb-6 underline decoration-zinc-800 underline-offset-8">Planificación de Rutinas</h3>
 
                 <div class="space-y-6">
-                    {% set dias = [ ('lunes', socio.rutina_lunes), ('martes', socio.rutina_martes), ('miercoles', socio.rutina_miercoles), ('jueves', socio.rutina_jueves), ('viernes', socio.rutina_viernes), ('sabado', socio.rutina_sabado) ] %} {% for nombre, valor in dias %}
+                    {% set dias = [ ('lunes', socio.rutina_lunes), ('martes', socio.rutina_martes), ('miercoles', socio.rutina_miercoles), ('jueves', socio.rutina_jueves), ('viernes', socio.rutina_viernes), ('sabado', socio.rutina_sabado) ] %}
+                    {% for nombre, valor in dias %}
                     <div class="group">
                         <label class="text-[10px] text-zinc-600 uppercase tracking-[0.2em] block mb-2 group-focus-within:text-white transition-all">{{ nombre }}</label>
                         <textarea name="rutina_{{ nombre }}" placeholder="Escribí los ejercicios aquí..." class="w-full bg-black border border-zinc-900 p-4 text-sm text-zinc-400 outline-none focus:border-zinc-500 transition-all h-32 font-mono leading-relaxed resize-none">{{ valor if valor else '' }}</textarea>
@@ -96,15 +103,10 @@
             };
             
             if(mesesAAgregar[planElegido]) {
-                // Le sumamos los meses correspondientes a la fecha de HOY
                 hoy.setMonth(hoy.getMonth() + mesesAAgregar[planElegido]);
-                
-                // Le damos el formato YYYY-MM-DD que exige el almanaque HTML
                 let dd = String(hoy.getDate()).padStart(2, '0');
                 let mm = String(hoy.getMonth() + 1).padStart(2, '0'); 
                 let yyyy = hoy.getFullYear();
-                
-                // Actualizamos el almanaque en pantalla
                 document.getElementById('venceInput').value = yyyy + '-' + mm + '-' + dd;
             }
         });

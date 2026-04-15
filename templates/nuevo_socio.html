@@ -15,8 +15,7 @@
             font-family: 'Anton', sans-serif;
             font-style: italic;
         }
-        /* Estilo para que el select se vea igual a los inputs */
-        
+
         select {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -29,7 +28,18 @@
     <div class="max-w-md mx-auto">
         <h1 class="text-4xl mb-10 tracking-tighter uppercase text-white">Alta de <span class="text-zinc-600">Nuevo Socio</span></h1>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-6 bg-zinc-800 border-l-4 {% if category == 'error' %}border-red-500{% else %}border-white{% endif %} text-white px-4 py-3 text-[10px] font-black uppercase tracking-widest">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         <form method="POST" class="space-y-6 bg-zinc-950 p-8 border border-zinc-900 shadow-2xl">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div>
                 <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2">DNI (Será su usuario)</label>
                 <input type="text" name="dni" required class="w-full bg-black border border-zinc-800 p-3 outline-none focus:border-white text-white">
