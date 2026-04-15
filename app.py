@@ -18,14 +18,19 @@ app.secret_key = "TemploBaraderoSeguro2026!"
 csrf = CSRFProtect(app)
 
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+_raw_db_url = os.environ.get(
     'DATABASE_URL',
     'postgresql://postgres.outmumjurvsesziislzu:312111Santi%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
 )
+# Vercel requiere pg8000 (driver Python puro). Ajustamos el prefijo si hace falta.
+if _raw_db_url.startswith('postgresql://') or _raw_db_url.startswith('postgres://'):
+    _raw_db_url = _raw_db_url.replace('postgresql://', 'postgresql+pg8000://', 1).replace('postgres://', 'postgresql+pg8000://', 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = _raw_db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "connect_args": {
-        "sslmode": "require"
+        "ssl_context": True
     }
 }
 db = SQLAlchemy(app)
