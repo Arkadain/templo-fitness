@@ -7,16 +7,8 @@ import os
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.exc import IntegrityError
 
-# Buscamos la carpeta templates de forma robusta para entornos serverless
-_file_dir = os.path.dirname(os.path.abspath(__file__))
-_template_candidates = [
-    os.path.join(_file_dir, 'templates'),
-    os.path.join(os.getcwd(), 'templates'),
-    '/var/task/templates',
-]
-_template_folder = next((p for p in _template_candidates if os.path.isdir(p)), 'templates')
-base_dir = _file_dir
-app = Flask(__name__, template_folder=_template_folder, static_folder=os.path.join(_file_dir, 'static'))
+base_dir = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, template_folder=os.path.join(base_dir, 'templates'), static_folder=os.path.join(base_dir, 'static'))
 
 # --- SECRET KEY (Fija para evitar errores CSRF en Vercel) ---
 app.secret_key = "TemploBaraderoSeguro2026!"
