@@ -6,7 +6,9 @@
       "use": "@vercel/python",
       "config": {
         "includeFiles": [
-          "templates/**",
+          "templates/public/**",
+          "templates/admin/**",
+          "templates/socio/**",
           "static/**"
         ]
       }
