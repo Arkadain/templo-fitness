@@ -2,34 +2,18 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, date
 import os
 from dateutil.relativedelta import relativedelta
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 
-# --- SECRET KEY desde variable de entorno ---
-app.secret_key = os.environ.get('SECRET_KEY', os.urandom(32))
+# --- SECRET KEY (Fija para evitar errores CSRF en Vercel) ---
+app.secret_key = "TemploBaraderoSeguro2026!"
 
 # --- PROTECCIÓN CSRF ---
 csrf = CSRFProtect(app)
-
-# --- LÓGICA DE FECHAS ---
-def restan_dias(fecha_str):
-    if not fecha_str:
-        return 0
-    try:
-        vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y')
-        hoy = datetime.now()
-        delta = vence_dt - hoy
-        return delta.days + 1
-    except Exception as e:
-        print(f"Error en fecha: {e}")
-        return 0
-
-@app.context_processor
-def utility_processor():
-    return dict(restan_dias=restan_dias)
 
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -44,8 +28,29 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 }
 db = SQLAlchemy(app)
 
-# --- MODELO DE LA BASE DE DATOS ---
+# --- LÓGICA DE FECHAS (Escudo Horario Argentina UTC-3) ---
+def fecha_hoy_argentina():
+    return (datetime.utcnow() - relativedelta(hours=3)).date()
+
+def restan_dias(fecha_str):
+    if not fecha_str:
+        return 0
+    try:
+        vence_dt = datetime.strptime(fecha_str, '%d/%m/%Y').date()
+        hoy = fecha_hoy_argentina()
+        delta = vence_dt - hoy
+        return delta.days
+    except Exception as e:
+        print(f"Error en fecha: {e}")
+        return 0
+
+@app.context_processor
+def utility_processor():
+    return dict(restan_dias=restan_dias)
+
+# --- MODELOS DE LA BASE DE DATOS ---
 class Socio(db.Model):
+    __tablename__ = 'socio'
     dni = db.Column(db.String(20), primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(256), nullable=False)
@@ -58,10 +63,26 @@ class Socio(db.Model):
     rutina_viernes = db.Column(db.Text, default="")
     rutina_sabado = db.Column(db.Text, default="")
 
-# --- RUTAS ---
+class Asistencia(db.Model):
+    __tablename__ = 'asistencia'
+    id = db.Column(db.Integer, primary_key=True)
+    dni_socio = db.Column(db.String(20), db.ForeignKey('socio.dni', ondelete='CASCADE'), nullable=False)
+    fecha = db.Column(db.Date, nullable=False)
+    __table_args__ = (db.UniqueConstraint('dni_socio', 'fecha', name='uq_asistencia_diaria'),)
+
+class RegistroPesos(db.Model):
+    __tablename__ = 'registro_pesos'
+    id = db.Column(db.Integer, primary_key=True)
+    dni_socio = db.Column(db.String(20), db.ForeignKey('socio.dni', ondelete='CASCADE'), nullable=False)
+    ejercicio = db.Column(db.String(100), nullable=False)
+    peso = db.Column(db.Numeric(5, 2), nullable=False)
+    repeticiones = db.Column(db.Integer, nullable=False)
+    fecha = db.Column(db.Date, nullable=False)
+
+# --- RUTAS PÚBLICAS ---
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('public/index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,8 +100,6 @@ def login():
 
         socio = Socio.query.get(dni)
 
-        # Compatible con contraseñas viejas (texto plano) y nuevas (hash).
-        # La primera vez que un socio viejo se loguea, su contraseña se hashea automáticamente.
         password_ok = False
         if socio:
             if socio.password.startswith('pbkdf2:') or socio.password.startswith('scrypt:'):
@@ -96,14 +115,16 @@ def login():
             session['user_id'] = dni
             return redirect(url_for('dashboard', id_socio=dni))
 
-        return render_template('login.html', error="Datos incorrectos")
+        return render_template('public/login.html', error="Datos incorrectos")
 
-    return render_template('login.html')
+    return render_template('public/login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+# --- RUTAS DEL ALUMNO ---
 
 @app.route('/dashboard/<id_socio>')
 def dashboard(id_socio):
@@ -114,34 +135,110 @@ def dashboard(id_socio):
     if not socio:
         return redirect(url_for('login'))
 
+    hoy = fecha_hoy_argentina()
+    
+    asistencias = Asistencia.query.filter_by(dni_socio=id_socio).all()
+    fechas_asistidas = [a.fecha for a in asistencias]
+    
+    racha = 0
+    fecha_check = hoy
+    if fecha_check not in fechas_asistidas:
+        fecha_check -= relativedelta(days=1)
+        
+    while fecha_check in fechas_asistidas:
+        racha += 1
+        fecha_check -= relativedelta(days=1)
+        
+    dias_semana_corto = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
+    ultimos_7_dias = [hoy - relativedelta(days=i) for i in range(6, -1, -1)]
+    
+    historial_strava = []
+    for d in ultimos_7_dias:
+        historial_strava.append({
+            'nombre': dias_semana_corto[d.weekday()],
+            'asistio': d in fechas_asistidas,
+            'es_hoy': d == hoy
+        })
+
+    return render_template('socio/dashboard.html', socio=socio, racha=racha, historial_strava=historial_strava)
+
+@app.route('/asistencia/presente', methods=['POST'])
+def dar_presente():
+    dni = session.get('user_id')
+    if not dni:
+        return redirect(url_for('login'))
+        
+    try:
+        nueva_asistencia = Asistencia(dni_socio=dni, fecha=fecha_hoy_argentina())
+        db.session.add(nueva_asistencia)
+        db.session.commit()
+        flash("¡Entrenamiento registrado! Que sea un gran día.", "success")
+    except IntegrityError:
+        db.session.rollback()
+        flash("Ya te diste el presente hoy. ¡A entrenar duro!", "error")
+        
+    return redirect(url_for('dashboard', id_socio=dni))
+
+@app.route('/rutina/<id_socio>')
+def rutina(id_socio):
+    if session.get('user_id') != id_socio and not session.get('admin'):
+        return redirect(url_for('login'))
+        
+    socio = Socio.query.get(id_socio)
     dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
-    dia_hoy_nombre = dias_semana[datetime.now().weekday()]
-    dias_restantes = restan_dias(socio.vence)
+    dia_hoy_nombre = dias_semana[fecha_hoy_argentina().weekday()]
 
     rutinas = {
-        "Lunes": socio.rutina_lunes,
-        "Martes": socio.rutina_martes,
-        "Miércoles": socio.rutina_miercoles,
-        "Jueves": socio.rutina_jueves,
-        "Viernes": socio.rutina_viernes,
-        "Sábado": socio.rutina_sabado
+        "Lunes": socio.rutina_lunes, "Martes": socio.rutina_martes,
+        "Miércoles": socio.rutina_miercoles, "Jueves": socio.rutina_jueves,
+        "Viernes": socio.rutina_viernes, "Sábado": socio.rutina_sabado
     }
-    rutina_hoy = rutinas.get(dia_hoy_nombre, "Día de descanso")
+    rutina_hoy = rutinas.get(dia_hoy_nombre, "")
+    
+    return render_template('socio/rutina.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_hoy_nombre)
 
-    return render_template('dashboard.html',
-                           socio=socio,
-                           rutina_hoy=rutina_hoy,
-                           dia=dia_hoy_nombre,
-                           restan=dias_restantes)
+@app.route('/fuerza/<id_socio>', methods=['GET', 'POST'])
+def fuerza(id_socio):
+    if session.get('user_id') != id_socio and not session.get('admin'):
+        return redirect(url_for('login'))
+        
+    socio = Socio.query.get(id_socio)
 
+    if request.method == 'POST':
+        ejercicio = request.form.get('ejercicio')
+        peso = request.form.get('peso')
+        repeticiones = request.form.get('repeticiones')
+        
+        nuevo_registro = RegistroPesos(
+            dni_socio=id_socio, ejercicio=ejercicio, peso=peso,
+            repeticiones=repeticiones, fecha=fecha_hoy_argentina()
+        )
+        db.session.add(nuevo_registro)
+        db.session.commit()
+        flash("¡Registro guardado con éxito!", "success")
+        return redirect(url_for('fuerza', id_socio=id_socio))
+
+    registros = RegistroPesos.query.filter_by(dni_socio=id_socio).order_by(RegistroPesos.fecha.desc(), RegistroPesos.id.desc()).all()
+    prs = db.session.query(RegistroPesos.ejercicio, db.func.max(RegistroPesos.peso).label('max_peso')).filter_by(dni_socio=id_socio).group_by(RegistroPesos.ejercicio).all()
+
+    return render_template('socio/fuerza.html', socio=socio, registros=registros, prs=prs)
+
+@app.route('/perfil/<id_socio>')
+def perfil(id_socio):
+    if session.get('user_id') != id_socio and not session.get('admin'):
+        return redirect(url_for('login'))
+    socio = Socio.query.get(id_socio)
+    return render_template('socio/perfil.html', socio=socio, restan=restan_dias(socio.vence))
+
+
+# --- RUTAS DE ADMINISTRACIÓN ---
 @app.route('/admin')
 def admin_panel():
     if not session.get('admin'):
         return redirect(url_for('login'))
     socios = Socio.query.all()
-    return render_template('admin.html', socios=socios)
+    return render_template('admin/admin.html', socios=socios)
 
-# CORREGIDO: POST en lugar de GET
 @app.route('/eliminar/<dni>', methods=['POST'])
 def eliminar_socio(dni):
     if not session.get('admin'):
@@ -150,7 +247,7 @@ def eliminar_socio(dni):
     if socio_a_borrar:
         db.session.delete(socio_a_borrar)
         db.session.commit()
-        flash(f'Socio con DNI {dni} eliminado correctamente.', 'success')
+        flash(f'Socio eliminado correctamente.', 'success')
     return redirect('/admin')
 
 @app.route('/admin/nuevo', methods=['GET', 'POST'])
@@ -166,34 +263,25 @@ def nuevo_socio():
 
         if not dni or not nombre or not password_raw or not plan:
             flash("Todos los campos son obligatorios.", "error")
-            return render_template('nuevo_socio.html')
+            return render_template('admin/nuevo_socio.html')
 
         if Socio.query.get(dni):
             flash(f"Ya existe un socio con el DNI {dni}.", "error")
-            return render_template('nuevo_socio.html')
+            return render_template('admin/nuevo_socio.html')
 
-        hoy = datetime.now()
-        duracion = {
-            "MENSUAL": relativedelta(months=1),
-            "TRIMESTRAL": relativedelta(months=3),
-            "SEMESTRAL": relativedelta(months=6),
-            "ANUAL": relativedelta(years=1)
-        }
-        vencimiento = hoy + duracion.get(plan.upper(), relativedelta(months=1))
+        duracion = {"MENSUAL": 1, "TRIMESTRAL": 3, "SEMESTRAL": 6, "ANUAL": 12}
+        vencimiento = fecha_hoy_argentina() + relativedelta(months=duracion.get(plan.upper(), 1))
 
         nuevo = Socio(
-            dni=dni,
-            nombre=nombre.upper(),
-            password=generate_password_hash(password_raw),
-            plan=plan.upper(),
-            vence=vencimiento.strftime('%d/%m/%Y')
+            dni=dni, nombre=nombre.upper(), password=generate_password_hash(password_raw),
+            plan=plan.upper(), vence=vencimiento.strftime('%d/%m/%Y')
         )
         db.session.add(nuevo)
         db.session.commit()
-        flash(f'Socio {nuevo.nombre} agregado correctamente.', 'success')
+        flash(f'Socio {nuevo.nombre} agregado.', 'success')
         return redirect(url_for('admin_panel'))
 
-    return render_template('nuevo_socio.html')
+    return render_template('admin/nuevo_socio.html')
 
 @app.route('/admin/renovar/<id_socio>', methods=['POST'])
 def renovar_socio(id_socio):
@@ -205,20 +293,15 @@ def renovar_socio(id_socio):
         nuevo_plan = request.form.get('plan', '').upper()
         fecha_pago_str = request.form.get('fecha_pago', '')
         try:
-            fecha_pago = datetime.strptime(fecha_pago_str, '%Y-%m-%d')
-            duracion = {
-                "MENSUAL": relativedelta(months=1),
-                "TRIMESTRAL": relativedelta(months=3),
-                "SEMESTRAL": relativedelta(months=6),
-                "ANUAL": relativedelta(years=1)
-            }
-            nuevo_vencimiento = fecha_pago + duracion.get(nuevo_plan, relativedelta(months=1))
+            fecha_pago = datetime.strptime(fecha_pago_str, '%Y-%m-%d').date()
+            duracion = {"MENSUAL": 1, "TRIMESTRAL": 3, "SEMESTRAL": 6, "ANUAL": 12}
+            nuevo_vencimiento = fecha_pago + relativedelta(months=duracion.get(nuevo_plan, 1))
             socio.plan = nuevo_plan
             socio.vence = nuevo_vencimiento.strftime('%d/%m/%Y')
             db.session.commit()
-            flash(f"¡Pago registrado! Membresía de {socio.nombre} renovada.", "success")
+            flash(f"Membresía renovada.", "success")
         except Exception as e:
-            flash("Error al procesar la fecha de pago.", "error")
+            flash("Error en la fecha.", "error")
 
     return redirect(url_for('admin_panel'))
 
@@ -258,7 +341,7 @@ def editar_socio(id_socio):
         socio.rutina_sabado = request.form.get('rutina_sabado', '')
 
         db.session.commit()
-        flash("Datos actualizados correctamente.", "success")
+        flash("Datos actualizados.", "success")
         return redirect(url_for('admin_panel'))
 
     vence_html = ""
@@ -268,7 +351,7 @@ def editar_socio(id_socio):
         except:
             pass
 
-    return render_template('editar_socio.html', socio=socio, vence_html=vence_html)
+    return render_template('admin/editar_socio.html', socio=socio, vence_html=vence_html)
 
 if __name__ == '__main__':
     app.run(debug=False)
