@@ -1,12 +1,11 @@
 {
     "version": 2,
-    "builds": [{
-        "src": "app.py",
-        "use": "@vercel/python",
-        "config": {
+    "functions": {
+        "app.py": {
+            "runtime": "vercel-python@4.3.1",
             "includeFiles": "templates/**"
         }
-    }],
+    },
     "routes": [{
             "src": "/static/(.*)",
             "dest": "/static/$1"
