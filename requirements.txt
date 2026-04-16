@@ -1,7 +1,5 @@
-cat > requirements.txt << 'EOF'
 Flask
 Flask-SQLAlchemy
 Flask-WTF
 python-dateutil
 psycopg2-binary
-EOF
