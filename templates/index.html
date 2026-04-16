@@ -1,271 +1,173 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html class="dark" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templo Fitness | Baradero</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TEMPLO FITNESS</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#131313",
+                        surface: "#131313",
+                        "surface-dim": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#20201f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353535",
+                        "on-surface": "#ffffff",
+                        "on-surface-variant": "#a0a0a0",
+                        "on-background": "#e5e2e1",
+                    },
+                    fontFamily: {
+                        headline: ["Lexend", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        label: ["Inter", "sans-serif"]
+                    }
+                }
+            }
         }
-        
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-        
-        h1,
-        h2,
-        h3 {
-            font-family: 'Anton', sans-serif;
-            text-transform: uppercase;
-            font-style: italic;
-            letter-spacing: 1px;
-        }
-        
-        .bg-industrial {
-            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
-        
-        .nav-templo {
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid #1a1a1a;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 20px 0;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 25px;
-        }
-        
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            height: 85vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-bottom: 1px solid #1a1a1a;
-        }
-        
-        .hero h1 {
-            font-size: clamp(3.5rem, 12vw, 8rem);
-            line-height: 0.85;
-            margin-bottom: 20px;
-        }
-        
-        .hero p {
-            letter-spacing: 8px;
-            color: #475569;
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-        
-        .btn-premium {
-            background-color: #ffffff;
-            color: #000000;
-            font-weight: 900;
-            padding: 15px 35px;
-            text-transform: uppercase;
-            text-decoration: none;
-            display: inline-block;
-            letter-spacing: 2px;
-            font-size: 13px;
-            transition: 0.3s;
-            margin-top: 40px;
-        }
-        
-        .btn-premium:hover {
-            background-color: #94a3b8;
-            transform: scale(1.05);
-        }
-        
-        .grid-aranceles {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 100px 0;
-        }
-        
-        .tarjeta {
-            background-color: #050505;
-            border: 1px solid #1a1a1a;
-            padding: 50px 30px;
-            text-align: center;
-            transition: all 0.4s ease;
-        }
-        
-        .tarjeta:hover {
-            border-color: #ffffff;
-            transform: translateY(-8px);
-            background-color: #0a0a0a;
-        }
-        
-        .tarjeta h3 {
-            font-size: 20px;
-            color: #94a3b8;
-            margin-bottom: 10px;
-        }
-        
-        .precio {
-            font-size: 45px;
-            font-weight: 900;
-            margin: 25px 0;
-            color: white;
-        }
-        
-        .tarjeta-anual {
-            border: 1px solid #ffffff;
-        }
-        
-        .label-ahorro {
-            font-size: 10px;
-            background: white;
-            color: black;
-            padding: 2px 10px;
-            font-weight: 900;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        
-        .horarios {
-            background-color: #050505;
-            padding: 100px 0;
-            text-align: center;
-            border-top: 1px solid #1a1a1a;
-        }
-        
-        .horario-fila {
-            max-width: 500px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #1a1a1a;
-            padding: 15px 0;
-            font-size: 16px;
-            letter-spacing: 1px;
-        }
-        
-        footer {
-            padding: 60px 0;
-            text-align: center;
-            font-size: 10px;
-            color: #262626;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-    </style>
+    </script>
 </head>
-
-<body class="bg-industrial">
-
-    <nav class="nav-templo">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-size: 24px; font-weight: 900; font-style: italic; letter-spacing: 2px;">
-                TEMPLO <span style="font-weight: 300; font-style: normal; color: #94a3b8;">FITNESS</span>
+<body class="bg-background text-on-background font-body antialiased overflow-x-hidden selection:bg-white selection:text-black">
+    <nav class="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl shadow-2xl shadow-black/50">
+        <div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+            <a class="text-2xl font-black tracking-tighter text-white italic font-headline" href="/">
+                TEMPLO FITNESS
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a class="font-headline tracking-tight text-sm uppercase text-neutral-400 hover:text-white transition-colors duration-300" href="#planes">Planes</a>
+                <a class="font-headline tracking-tight text-sm uppercase text-neutral-400 hover:text-white transition-colors duration-300" href="#horarios">Horarios</a>
+                <a class="font-headline tracking-tight text-sm uppercase text-neutral-400 hover:text-white transition-colors duration-300" href="#ubicacion">Ubicación</a>
             </div>
-            <a href="/login" class="btn-premium" style="padding: 10px 25px; font-size: 10px; margin: 0;">ZONA SOCIOS</a>
+            <a href="/login" class="bg-white text-black font-headline font-bold tracking-tight text-sm uppercase px-6 py-2 rounded-xl scale-95 active:scale-90 transition-transform hover:bg-neutral-200 transition-all duration-300">
+                UNIRSE
+            </a>
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="container">
-            <h1>FORJÁ TU<br><span style="color: #ffffff;">DESTINO</span></h1>
-            <p>Musculación • Fuerza • Resistencia</p>
-            <a href="#planes" class="btn-premium">Ver Membresías</a>
+    <header class="relative min-h-[100vh] flex items-center justify-center pt-24 overflow-hidden">
+        <div class="absolute inset-0 z-0 bg-surface-container-lowest">
+            <img alt="hero gym equipment" class="w-full h-full object-cover opacity-30 mix-blend-luminosity grayscale" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
+            <span class="font-label text-xs tracking-[0.2em] text-white uppercase mb-6 font-bold">
+                Musculación • Fuerza • Resistencia
+            </span>
+            <h1 class="font-headline text-5xl md:text-[5rem] font-black text-on-surface tracking-tighter leading-[0.9] mb-12 uppercase italic">
+                FORJÁ TU DESTINO
+            </h1>
+            <a class="inline-flex items-center justify-center bg-white text-black font-headline font-bold text-sm tracking-widest uppercase px-8 py-4 rounded-xl hover:scale-105 transition-transform duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)]" href="#planes">
+                Ver Membresías
+            </a>
         </div>
     </header>
 
-    <section id="planes" class="container">
-        <div class="grid-aranceles">
-
-            <div class="tarjeta">
-                <h3>Mensual</h3>
-                <div class="precio">$45.000</div>
-                <p style="color: #ffffff; font-size: 12px; font-weight: 700;">$43.000 EFECTIVO</p>
+    <section class="py-24 bg-surface relative z-20" id="planes">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2 italic">MEMBRESÍAS</h2>
+                    <p class="font-body text-on-surface-variant max-w-md">Elige el nivel de compromiso que mejor se adapte a tu objetivo.</p>
+                </div>
             </div>
-
-            <div class="tarjeta">
-                <h3>Trimestral</h3>
-                <div class="precio">$125.000</div>
-                <p style="color: #475569; font-size: 11px;">PASE 3 MESES</p>
-            </div>
-
-            <div class="tarjeta">
-                <h3>Semestral</h3>
-                <div class="precio">$242.000</div>
-                <p style="color: #475569; font-size: 11px;">PASE 6 MESES</p>
-            </div>
-
-            <div class="tarjeta tarjeta-anual">
-                <h3 style="color: white !important;">Anual</h3>
-                <div class="precio">$459.000</div>
-                <div class="label-ahorro">MÁXIMO AHORRO</div>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="horarios">
-        <div class="container">
-            <h2 style="margin-bottom: 50px; font-size: 35px; letter-spacing: 2px;">Horarios</h2>
-            <div class="horario-fila">
-                <span style="color: #94a3b8;">LUNES A VIERNES</span>
-                <span style="font-weight: 700;">07:00 - 22:30</span>
-            </div>
-            <div class="horario-fila">
-                <span style="color: #94a3b8;">SÁBADOS</span>
-                <span style="font-weight: 700;">09:00 - 21:00</span>
-            </div>
-            <div class="horario-fila" style="color: #525252; border: none;">
-                <span>DOMINGOS</span>
-                <span style="font-weight: 700;">CERRADO</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-surface-container-low p-8 rounded-xl flex flex-col hover:bg-surface-container transition-colors duration-300 group">
+                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Mensual</h3>
+                    <div class="mt-4 mb-8">
+                        <span class="font-headline text-3xl font-bold text-white">$45.000</span>
+                        <div class="font-body text-sm text-on-surface-variant mt-2">$43.000 efectivo</div>
+                    </div>
+                </div>
+                <div class="bg-surface-container-low p-8 rounded-xl flex flex-col hover:bg-surface-container transition-colors duration-300 group">
+                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Trimestral</h3>
+                    <div class="mt-4 mb-8">
+                        <span class="font-headline text-3xl font-bold text-on-surface">$125.000</span>
+                    </div>
+                </div>
+                <div class="bg-surface-container-low p-8 rounded-xl flex flex-col hover:bg-surface-container transition-colors duration-300 group">
+                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Semestral</h3>
+                    <div class="mt-4 mb-8">
+                        <span class="font-headline text-3xl font-bold text-on-surface">$242.000</span>
+                    </div>
+                </div>
+                <div class="bg-surface-container-high p-8 rounded-xl flex flex-col relative overflow-hidden group shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/10">
+                    <div class="absolute top-0 right-0 bg-neutral-800 text-white font-label text-[0.65rem] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
+                        MÁXIMO AHORRO
+                    </div>
+                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Anual</h3>
+                    <div class="mt-4 mb-8">
+                        <span class="font-headline text-4xl font-black text-white italic">$459.000</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section style="padding: 100px 0; background-color: #000; text-align: center; border-top: 1px solid #1a1a1a;">
-        <div class="container">
-            <h2 style="margin-bottom: 40px; font-size: 35px; letter-spacing: 2px;">Dónde Estamos</h2>
-
-            <div style="border: 1px solid #1a1a1a; max-width: 800px; margin: 0 auto 50px auto;">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3315.3022863618176!2d-59.50369692488548!3d-33.804511415730836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ba37b360e63281%3A0x832dbbb2e271818f!2sPasso%20419%2C%20B2942%20Baradero%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1776206681654!5m2!1ses!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <section class="py-24 bg-surface-dim relative z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1 bg-surface-container p-8 rounded-xl flex flex-col" id="horarios">
+                    <div class="flex items-center gap-3 mb-8">
+                        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">schedule</span>
+                        <h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface italic">HORARIOS</h2>
+                    </div>
+                    <ul class="space-y-6 font-body text-on-surface-variant flex-1">
+                        <li class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <span class="font-medium text-on-surface">Lunes a Viernes</span>
+                            <span class="font-label text-sm tracking-wider bg-surface-container-highest px-3 py-1 rounded text-white">07:00 - 22:30</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <span class="font-medium text-on-surface">Sábados</span>
+                            <span class="font-label text-sm tracking-wider bg-surface-container-highest px-3 py-1 rounded text-white">09:00 - 21:00</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span class="font-medium text-on-surface">Domingos</span>
+                            <span class="font-label text-sm tracking-wider text-neutral-400">Cerrado</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2 bg-surface-container rounded-xl overflow-hidden flex flex-col md:flex-row" id="ubicacion">
+                    <div class="p-8 flex flex-col justify-between w-full md:w-1/2">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                                <h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface italic">DÓNDE ESTAMOS</h2>
+                            </div>
+                            <p class="font-body text-on-surface-variant text-lg mb-8">Passo 419, Baradero</p>
+                        </div>
+                        <a class="inline-flex items-center gap-3 bg-surface-container-highest hover:bg-white hover:text-black transition-colors px-6 py-4 rounded-xl text-white font-label text-sm uppercase tracking-wider w-fit" href="https://instagram.com/templofitness.ba" target="_blank">
+                            <span class="material-symbols-outlined">photo_camera</span>
+                            @templofitness.ba
+                        </a>
+                    </div>
+                    <div class="w-full md:w-1/2 h-64 md:h-auto bg-surface-container-lowest relative p-2">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3315.3022863618176!2d-59.50369692488548!3d-33.804511415730836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ba37b360e63281%3A0x832dbbb2e271818f!2sPasso%20419%2C%20B2942%20Baradero%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1776206681654!5m2!1ses!2sar" class="w-full h-full rounded-lg opacity-80 mix-blend-luminosity grayscale" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
             </div>
-
-            <a href="https://www.instagram.com/templofitness.ba/" target="_blank" class="btn-premium" style="display: inline-flex; align-items: center; gap: 12px; background-color: #0a0a0a; border: 1px solid #333; color: white;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.036 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
-                </svg> SEGUINOS EN INSTAGRAM
-            </a>
         </div>
     </section>
 
-    <footer id="contacto">
-        <div class="container">
-            <p>Santino Brocato • Ingeniería en Sistemas UTN FRD</p>
-            <p>Contacto: santinobrocato15@gmail.com</p>
-            <p>Teléfono: +54 3329 304923</p>
+    <footer class="w-full py-12 border-t border-neutral-900 bg-neutral-950" id="contacto">
+        <div class="flex flex-col md:flex-row justify-between items-center px-8 space-y-4 md:space-y-0 max-w-7xl mx-auto">
+            <div class="text-lg font-black text-white font-headline tracking-tight italic">
+                TEMPLO FITNESS
+            </div>
+            <div class="flex flex-col items-center md:items-end">
+                <p class="font-headline text-xs tracking-widest uppercase text-neutral-500">© 2026 TEMPLO FITNESS. FORJÁ TU DESTINO.</p>
+                <p class="font-body text-[10px] text-neutral-600 mt-2">Desarrollado por Santino Brocato</p>
+            </div>
         </div>
     </footer>
-
 </body>
-
 </html>

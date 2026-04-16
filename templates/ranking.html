@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Ranking - Templo Fitness</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Lexend:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #131313; color: #e5e2e1; }
+        .font-headline { font-family: 'Lexend', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased pb-24 md:pb-0">
+
+    <header class="fixed top-0 w-full z-50 bg-[#131313]/90 backdrop-blur-xl border-b border-white/5 flex justify-between items-center px-6 h-16">
+        <a href="/dashboard/{{ socio_actual.dni }}" class="text-zinc-400 hover:text-white"><span class="material-symbols-outlined">arrow_back</span></a>
+        <span class="text-xl font-black italic tracking-tighter text-white font-headline uppercase">Ranking</span>
+        <div class="w-6"></div> </header>
+
+    <main class="pt-24 px-6 md:p-12 max-w-4xl mx-auto w-full">
+        <header class="mb-10 text-center">
+            <h1 class="text-5xl md:text-7xl font-headline font-black tracking-tighter uppercase italic text-white leading-none">TOP DE PESOS</h1>
+            <p class="text-zinc-500 mt-4 font-body text-xs leading-relaxed uppercase tracking-widest">El salón de la fama del Templo.</p>
+        </header>
+
+        <div class="flex justify-center gap-2 mb-8">
+            <button onclick="cambiarGenero('MASCULINO')" id="btn-MASCULINO" class="px-6 py-2 bg-white text-black font-headline font-bold text-[10px] uppercase tracking-widest rounded-full transition-all tab-genero">Hombres</button>
+            <button onclick="cambiarGenero('FEMENINO')" id="btn-FEMENINO" class="px-6 py-2 bg-[#20201f] text-zinc-500 font-headline font-bold text-[10px] uppercase tracking-widest rounded-full border border-white/5 transition-all tab-genero">Mujeres</button>
+        </div>
+
+        <div class="flex gap-2 mb-10 overflow-x-auto pb-2 no-scrollbar justify-start md:justify-center">
+            <button onclick="cambiarEjercicio('Sentadilla Libre')" id="btn-Sentadilla Libre" class="px-6 py-3 bg-white text-black font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio">Sentadilla</button>
+            <button onclick="cambiarEjercicio('Press de Banca Plano')" id="btn-Press de Banca Plano" class="px-6 py-3 bg-[#20201f] text-zinc-500 border border-white/10 transition-all font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio">Banca</button>
+            <button onclick="cambiarEjercicio('Peso Muerto')" id="btn-Peso Muerto" class="px-6 py-3 bg-[#20201f] text-zinc-500 border border-white/10 transition-all font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio">Muerto</button>
+        </div>
+
+        <div id="contenedor-rankings">
+            {% for genero, ejercicios in tops.items() %}
+                {% for ej_nombre, lista in ejercicios.items() %}
+                    <div id="rank-{{ genero }}-{{ ej_nombre }}" class="seccion-ranking hidden">
+                        
+                        {% if lista|length == 0 %}
+                            <div class="text-center py-20 border border-dashed border-white/10 rounded-xl">
+                                <p class="text-zinc-500 uppercase tracking-widest text-xs font-bold">Todavía no hay récords acá.</p>
+                            </div>
+                        {% else %}
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 items-end">
+                                {% if lista|length > 1 %}
+                                <div class="order-2 md:order-1 bg-[#20201f] border border-white/5 p-6 rounded-xl relative overflow-hidden group text-center">
+                                    <div class="absolute -right-2 -top-2 opacity-5 text-7xl font-black italic font-headline">2</div>
+                                    <div class="text-2xl mb-2">🥈</div>
+                                    <h3 class="font-headline font-bold text-lg text-white truncate">{{ lista[1].nombre }}</h3>
+                                    <div class="text-2xl font-headline font-black italic text-zinc-300 mt-2">{{ lista[1].peso }} KG</div>
+                                </div>
+                                {% endif %}
+
+                                <div class="order-1 md:order-2 bg-white p-8 rounded-xl relative overflow-hidden shadow-[0_20px_40px_rgba(255,255,255,0.15)] text-center md:-mt-6">
+                                    <div class="absolute -right-2 -top-2 opacity-10 text-black text-8xl font-black italic font-headline">1</div>
+                                    <div class="text-3xl mb-2">🥇</div>
+                                    <h3 class="font-headline font-black text-xl text-black uppercase tracking-tight truncate">{{ lista[0].nombre }}</h3>
+                                    <div class="text-4xl font-headline font-black italic text-black tracking-tighter mt-2">{{ lista[0].peso }} KG</div>
+                                </div>
+
+                                {% if lista|length > 2 %}
+                                <div class="order-3 bg-[#20201f] border border-white/5 p-6 rounded-xl relative overflow-hidden group text-center">
+                                    <div class="absolute -right-2 -top-2 opacity-5 text-7xl font-black italic font-headline">3</div>
+                                    <div class="text-2xl mb-2">🥉</div>
+                                    <h3 class="font-headline font-bold text-lg text-white truncate">{{ lista[2].nombre }}</h3>
+                                    <div class="text-2xl font-headline font-black italic text-zinc-300 mt-2">{{ lista[2].peso }} KG</div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="space-y-2">
+                                {% for item in lista[3:] %}
+                                <div class="grid grid-cols-[40px_1fr_80px] items-center px-4 py-4 bg-[#1c1b1b] rounded-xl border border-white/5 {% if item.dni == socio_actual.dni %} border-white/30 bg-white/5 {% endif %}">
+                                    <span class="font-headline font-black italic text-zinc-500 text-sm">0{{ loop.index + 3 }}</span>
+                                    <p class="font-headline font-bold text-xs text-white uppercase tracking-tight truncate">
+                                        {{ item.nombre }} {% if item.dni == socio_actual.dni %}<span class="text-green-500">(VOS)</span>{% endif %}
+                                    </p>
+                                    <span class="font-headline font-black italic text-white text-right text-sm">{{ item.peso }}KG</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </main>
+
+    <script>
+        let generoActual = 'MASCULINO';
+        let ejercicioActual = 'Sentadilla Libre';
+
+        function actualizarVista() {
+            // Ocultar todos
+            document.querySelectorAll('.seccion-ranking').forEach(el => el.classList.add('hidden'));
+            
+            // Mostrar el activo
+            let idMostrar = `rank-${generoActual}-${ejercicioActual}`;
+            let elem = document.getElementById(idMostrar);
+            if(elem) elem.classList.remove('hidden');
+
+            // Estilos de botones de Género
+            document.querySelectorAll('.tab-genero').forEach(btn => {
+                btn.className = "px-6 py-2 bg-[#20201f] text-zinc-500 font-headline font-bold text-[10px] uppercase tracking-widest rounded-full border border-white/5 transition-all tab-genero";
+            });
+            let btnGen = document.getElementById(`btn-${generoActual}`);
+            if(btnGen) btnGen.className = "px-6 py-2 bg-white text-black font-headline font-bold text-[10px] uppercase tracking-widest rounded-full transition-all tab-genero";
+
+            // Estilos de botones de Ejercicio
+            document.querySelectorAll('.tab-ejercicio').forEach(btn => {
+                btn.className = "px-6 py-3 bg-[#20201f] text-zinc-500 border border-white/10 transition-all font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio";
+            });
+            let btnEj = document.getElementById(`btn-${ejercicioActual}`);
+            if(btnEj) btnEj.className = "px-6 py-3 bg-white text-black font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio";
+        }
+
+        function cambiarGenero(gen) { generoActual = gen; actualizarVista(); }
+        function cambiarEjercicio(ej) { ejercicioActual = ej; actualizarVista(); }
+
+        // Inicializar
+        actualizarVista();
+    </script>
+</body>
+</html>

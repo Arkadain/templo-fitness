@@ -7,28 +7,23 @@ import os
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.exc import IntegrityError
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
-app = Flask(__name__, template_folder=os.path.join(base_dir, 'templates'), static_folder=os.path.join(base_dir, 'static'))
+app = Flask(__name__)
 
-# --- SECRET KEY (Fija para evitar errores CSRF en Vercel) ---
-app.secret_key = "TemploBaraderoSeguro2026!"
+# --- SECRET KEY ---
+app.secret_key = os.environ.get('SECRET_KEY', "TemploBaraderoSeguro2026!")
 
 # --- PROTECCIÓN CSRF ---
 csrf = CSRFProtect(app)
 
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
-_raw_db_url = os.environ.get(
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL',
     'postgresql://postgres.outmumjurvsesziislzu:312111Santi%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
 )
-if _raw_db_url.startswith('postgresql://') or _raw_db_url.startswith('postgres://'):
-    _raw_db_url = _raw_db_url.replace('postgresql://', 'postgresql+pg8000://', 1).replace('postgres://', 'postgresql+pg8000://', 1)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = _raw_db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "connect_args": {
-        "ssl_context": True
+        "sslmode": "require"
     }
 }
 db = SQLAlchemy(app)
@@ -46,7 +41,6 @@ def restan_dias(fecha_str):
         delta = vence_dt - hoy
         return delta.days
     except Exception as e:
-        print(f"Error en fecha: {e}")
         return 0
 
 @app.context_processor
@@ -61,6 +55,7 @@ class Socio(db.Model):
     password = db.Column(db.String(256), nullable=False)
     plan = db.Column(db.String(50))
     vence = db.Column(db.String(50))
+    genero = db.Column(db.String(20), default="MASCULINO") # NUEVO CAMPO
     rutina_lunes = db.Column(db.Text, default="")
     rutina_martes = db.Column(db.Text, default="")
     rutina_miercoles = db.Column(db.Text, default="")
@@ -130,7 +125,6 @@ def logout():
     return redirect(url_for('login'))
 
 # --- RUTAS DEL ALUMNO ---
-
 @app.route('/dashboard/<id_socio>')
 def dashboard(id_socio):
     if session.get('user_id') != id_socio and not session.get('admin'):
@@ -141,31 +135,37 @@ def dashboard(id_socio):
         return redirect(url_for('login'))
 
     hoy = fecha_hoy_argentina()
-    
     asistencias = Asistencia.query.filter_by(dni_socio=id_socio).all()
-    fechas_asistidas = [a.fecha for a in asistencias]
     
+    # --- NUEVA LÓGICA: RACHA SEMANAL ---
+    semanas_asistidas = set()
+    for a in asistencias:
+        año, semana, _ = a.fecha.isocalendar()
+        semanas_asistidas.add((año, semana))
+        
+    sorted_weeks = sorted(list(semanas_asistidas), reverse=True)
     racha = 0
-    fecha_check = hoy
-    if fecha_check not in fechas_asistidas:
-        fecha_check -= relativedelta(days=1)
-        
-    while fecha_check in fechas_asistidas:
-        racha += 1
-        fecha_check -= relativedelta(days=1)
-        
-    dias_semana_corto = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
-    ultimos_7_dias = [hoy - relativedelta(days=i) for i in range(6, -1, -1)]
     
-    historial_strava = []
-    for d in ultimos_7_dias:
-        historial_strava.append({
-            'nombre': dias_semana_corto[d.weekday()],
-            'asistio': d in fechas_asistidas,
-            'es_hoy': d == hoy
-        })
+    if sorted_weeks:
+        curr_year, curr_week, _ = hoy.isocalendar()
+        last_week_date = hoy - relativedelta(days=7)
+        last_year, last_week, _ = last_week_date.isocalendar()
+        
+        latest_year, latest_week = sorted_weeks[0]
+        
+        # Validamos si la racha sigue viva (vino esta semana o la pasada)
+        if (latest_year, latest_week) == (curr_year, curr_week) or (latest_year, latest_week) == (last_year, last_week):
+            expected_y, expected_w = latest_year, latest_week
+            for y, w in sorted_weeks:
+                if (y, w) == (expected_y, expected_w):
+                    racha += 1
+                    # Calcular matemáticamente la semana anterior
+                    prev_date = date.fromisocalendar(y, w, 1) - relativedelta(days=7)
+                    expected_y, expected_w, _ = prev_date.isocalendar()
+                else:
+                    break
 
-    return render_template('dashboard.html', socio=socio, racha=racha, historial_strava=historial_strava)
+    return render_template('dashboard.html', socio=socio, racha=racha, semanas_asistidas=semanas_asistidas)
 
 @app.route('/asistencia/presente', methods=['POST'])
 def dar_presente():
@@ -199,7 +199,6 @@ def rutina(id_socio):
         "Viernes": socio.rutina_viernes, "Sábado": socio.rutina_sabado
     }
     rutina_hoy = rutinas.get(dia_hoy_nombre, "")
-    
     return render_template('rutina.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_hoy_nombre)
 
 @app.route('/fuerza/<id_socio>', methods=['GET', 'POST'])
@@ -235,6 +234,31 @@ def perfil(id_socio):
     socio = Socio.query.get(id_socio)
     return render_template('perfil.html', socio=socio, restan=restan_dias(socio.vence))
 
+# --- NUEVA RUTA: SALÓN DE LA FAMA (RANKING) ---
+@app.route('/ranking')
+def ranking():
+    if not session.get('user_id') and not session.get('admin'):
+        return redirect(url_for('login'))
+        
+    ejercicios = ["Sentadilla Libre", "Press de Banca Plano", "Peso Muerto"]
+    tops = {'MASCULINO': {}, 'FEMENINO': {}}
+    
+    for genero in ['MASCULINO', 'FEMENINO']:
+        for ej in ejercicios:
+            registros = db.session.query(
+                Socio.dni,
+                Socio.nombre,
+                db.func.max(RegistroPesos.peso).label('max_peso')
+            ).join(RegistroPesos, Socio.dni == RegistroPesos.dni_socio)\
+             .filter(RegistroPesos.ejercicio == ej, Socio.genero == genero)\
+             .group_by(Socio.dni, Socio.nombre)\
+             .order_by(db.func.max(RegistroPesos.peso).desc())\
+             .limit(10).all()
+             
+            tops[genero][ej] = [{'nombre': r.nombre, 'peso': float(r.max_peso), 'dni': r.dni} for r in registros]
+
+    socio_actual = Socio.query.get(session.get('user_id'))
+    return render_template('ranking.html', tops=tops, socio_actual=socio_actual)
 
 # --- RUTAS DE ADMINISTRACIÓN ---
 @app.route('/admin')
@@ -265,6 +289,7 @@ def nuevo_socio():
         nombre = request.form.get('nombre', '').strip()
         password_raw = request.form.get('password', '')
         plan = request.form.get('plan', '')
+        genero = request.form.get('genero', 'MASCULINO') # NUEVO
 
         if not dni or not nombre or not password_raw or not plan:
             flash("Todos los campos son obligatorios.", "error")
@@ -279,7 +304,7 @@ def nuevo_socio():
 
         nuevo = Socio(
             dni=dni, nombre=nombre.upper(), password=generate_password_hash(password_raw),
-            plan=plan.upper(), vence=vencimiento.strftime('%d/%m/%Y')
+            plan=plan.upper(), genero=genero.upper(), vence=vencimiento.strftime('%d/%m/%Y')
         )
         db.session.add(nuevo)
         db.session.commit()
@@ -323,6 +348,7 @@ def editar_socio(id_socio):
     if request.method == 'POST':
         socio.nombre = request.form.get('nombre', '').upper()
         socio.plan = request.form.get('plan', '').upper()
+        socio.genero = request.form.get('genero', 'MASCULINO').upper() # NUEVO
 
         nueva_password = request.form.get('password', '').strip()
         if nueva_password:
