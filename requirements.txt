@@ -3,3 +3,4 @@ Flask-SQLAlchemy
 Flask-WTF
 python-dateutil
 pg8000
+python-dateutil
