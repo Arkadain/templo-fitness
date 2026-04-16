@@ -5,7 +5,7 @@ cat > vercel.json << 'EOF'
         "src": "app.py",
         "use": "@vercel/python",
         "config": {
-            "includeFiles": ["templates/**", "static/**"]
+            "includeFiles": "**"
         }
     }],
     "routes": [
