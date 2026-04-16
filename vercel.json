@@ -1,13 +1,15 @@
+cat > vercel.json << 'EOF'
 {
     "version": 2,
     "builds": [{
         "src": "app.py",
         "use": "@vercel/python",
         "config": {
-            "includeFiles": "templates/**"
+            "includeFiles": ["templates/**", "static/**"]
         }
     }],
-    "routes": [{
+    "routes": [
+        {
             "src": "/static/(.*)",
             "dest": "/static/$1"
         },
@@ -17,3 +19,4 @@
         }
     ]
 }
+EOF
