@@ -1,35 +1,95 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="dark" lang="es">
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TEMPLO - Acceso Socios</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#131313",
+                        "surface-container": "#1f1f1f",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353535",
+                        "surface-variant": "#353535",
+                        "on-surface": "#e2e2e2",
+                        "on-surface-variant": "#c6c6c6",
+                        "outline": "#919191",
+                        "outline-variant": "#474747",
+                        "primary": "#ffffff",
+                        "primary-container": "#d4d4d4",
+                        "on-primary": "#1a1c1c",
+                        "tertiary": "#e2e2e2",
+                        "error": "#ffb4ab",
+                    },
+                    borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "0px" },
+                    fontFamily: { headline: ["Lexend"], body: ["Lexend"], label: ["Lexend"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Lexend', sans-serif; }
+        .bg-industrial-pattern {
+            background-color: #131313;
+            background-image: linear-gradient(45deg, #1b1b1b 25%, transparent 25%, transparent 75%, #1b1b1b 75%, #1b1b1b),
+                              linear-gradient(45deg, #1b1b1b 25%, transparent 25%, transparent 75%, #1b1b1b 75%, #1b1b1b);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        .text-shadow-glow { text-shadow: 0 0 20px rgba(255,255,255,0.1); }
+    </style>
 </head>
-<body class="bg-black text-white h-screen flex items-center justify-center font-sans">
-    <div class="max-w-md w-full p-10 border border-zinc-900 bg-zinc-950">
-        <h1 style="font-family: 'Anton';" class="text-4xl italic text-center mb-8 uppercase text-white">Acceso <span class="text-zinc-600">Socios</span></h1>
-        
+<body class="bg-surface text-on-surface min-h-screen flex flex-col antialiased overflow-x-hidden">
+<main class="flex-grow flex items-center justify-center p-4 md:p-8 relative w-full h-screen">
+    <div class="absolute inset-0 bg-industrial-pattern opacity-40 z-0 mix-blend-overlay"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-surface-container-lowest z-0"></div>
+
+    <div class="relative z-10 w-full max-w-md bg-surface-container-low p-8 md:p-12 shadow-[0_20px_60px_rgba(226,226,226,0.04)]">
+        <div class="text-center mb-12">
+            <h1 class="font-headline font-black italic tracking-tighter uppercase text-4xl md:text-5xl text-primary text-shadow-glow">TEMPLO</h1>
+            <p class="font-label tracking-[0.05em] uppercase text-xs text-outline mt-2">Acceso Socios</p>
+        </div>
+
         <form action="/login" method="POST" class="space-y-6">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div>
-                <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Ingresá tu DNI</label>
-                <input type="text" name="dni" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">
+
+            <div class="space-y-2">
+                <label class="font-label tracking-[0.05em] uppercase text-[10px] text-tertiary block" for="dni">DNI</label>
+                <input class="w-full bg-surface-container-lowest text-primary placeholder-outline border-0 border-b border-surface-variant focus:border-primary focus:bg-surface-container-highest transition-all duration-300 py-4 px-4 font-body outline-none"
+                    id="dni" name="dni" placeholder="Ingresá tu DNI" required type="text"/>
             </div>
-            <div>
-                <label class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 block mb-2">Contraseña</label>
-                <input type="password" name="password" required class="w-full bg-black border border-zinc-800 p-4 outline-none focus:border-white text-white">
+
+            <div class="space-y-2">
+                <label class="font-label tracking-[0.05em] uppercase text-[10px] text-tertiary block" for="password">Contraseña</label>
+                <input class="w-full bg-surface-container-lowest text-primary placeholder-outline border-0 border-b border-surface-variant focus:border-primary focus:bg-surface-container-highest transition-all duration-300 py-4 px-4 font-body outline-none"
+                    id="password" name="password" placeholder="••••••••" required type="password"/>
             </div>
 
             {% if error %}
-                <p class="text-red-500 text-xs uppercase font-bold">{{ error }}</p>
+            <p class="font-label text-xs uppercase tracking-widest text-error font-bold">{{ error }}</p>
             {% endif %}
 
-            <button type="submit" class="w-full bg-white text-black font-black py-4 uppercase text-xs tracking-widest hover:bg-zinc-300 transition">
-                Entrar al Templo
-            </button>
+            <div class="pt-6">
+                <button class="w-full bg-primary text-on-primary font-headline font-bold italic uppercase tracking-wider py-5 px-8 hover:bg-primary-container transition-colors duration-300 flex justify-center items-center gap-2 group" type="submit">
+                    ENTRAR AL TEMPLO
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+            </div>
         </form>
-        <div class="mt-8 text-center">
-            <a href="/" class="text-[10px] uppercase text-zinc-600 hover:text-white transition">Volver al inicio</a>
+
+        <div class="mt-8 text-center border-t border-surface-variant/50 pt-8">
+            <a href="/" class="font-body text-xs text-outline hover:text-primary transition-colors tracking-widest uppercase">← Volver al inicio</a>
         </div>
     </div>
+</main>
 </body>
 </html>

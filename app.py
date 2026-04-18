@@ -125,19 +125,21 @@ def logout():
     return redirect(url_for('login'))
 
 # --- RUTAS DEL ALUMNO ---
-@app.route('/dashboard/<id_socio>')
-def dashboard(id_socio):
+@app.route('/perfil/<id_socio>')
+def perfil(id_socio):
     if session.get('user_id') != id_socio and not session.get('admin'):
         return redirect(url_for('login'))
-
+        
     socio = Socio.query.get(id_socio)
-    if not socio:
-        return redirect(url_for('login'))
-
+    
+    # --- CALCULAR RACHA Y TOTAL PARA EL PERFIL ---
     hoy = fecha_hoy_argentina()
     asistencias = Asistencia.query.filter_by(dni_socio=id_socio).all()
     
-    # --- NUEVA LÓGICA: RACHA SEMANAL ---
+    # Total de días que vino en su historia
+    total_entrenamientos = len(asistencias)
+    
+    # Calcular Racha Semanal
     semanas_asistidas = set()
     for a in asistencias:
         año, semana, _ = a.fecha.isocalendar()
@@ -153,19 +155,17 @@ def dashboard(id_socio):
         
         latest_year, latest_week = sorted_weeks[0]
         
-        # Validamos si la racha sigue viva (vino esta semana o la pasada)
         if (latest_year, latest_week) == (curr_year, curr_week) or (latest_year, latest_week) == (last_year, last_week):
             expected_y, expected_w = latest_year, latest_week
             for y, w in sorted_weeks:
                 if (y, w) == (expected_y, expected_w):
                     racha += 1
-                    # Calcular matemáticamente la semana anterior
                     prev_date = date.fromisocalendar(y, w, 1) - relativedelta(days=7)
                     expected_y, expected_w, _ = prev_date.isocalendar()
                 else:
                     break
 
-    return render_template('dashboard.html', socio=socio, racha=racha, semanas_asistidas=semanas_asistidas)
+    return render_template('perfil.html', socio=socio, restan=restan_dias(socio.vence), racha=racha, total_entrenamientos=total_entrenamientos)
 
 @app.route('/asistencia/presente', methods=['POST'])
 def dar_presente():
@@ -231,8 +231,43 @@ def fuerza(id_socio):
 def perfil(id_socio):
     if session.get('user_id') != id_socio and not session.get('admin'):
         return redirect(url_for('login'))
+        
     socio = Socio.query.get(id_socio)
-    return render_template('perfil.html', socio=socio, restan=restan_dias(socio.vence))
+    
+    # --- CALCULAR RACHA Y TOTAL PARA EL PERFIL ---
+    hoy = fecha_hoy_argentina()
+    asistencias = Asistencia.query.filter_by(dni_socio=id_socio).all()
+    
+    # Total de días que vino en su historia
+    total_entrenamientos = len(asistencias)
+    
+    # Calcular Racha Semanal
+    semanas_asistidas = set()
+    for a in asistencias:
+        año, semana, _ = a.fecha.isocalendar()
+        semanas_asistidas.add((año, semana))
+        
+    sorted_weeks = sorted(list(semanas_asistidas), reverse=True)
+    racha = 0
+    
+    if sorted_weeks:
+        curr_year, curr_week, _ = hoy.isocalendar()
+        last_week_date = hoy - relativedelta(days=7)
+        last_year, last_week, _ = last_week_date.isocalendar()
+        
+        latest_year, latest_week = sorted_weeks[0]
+        
+        if (latest_year, latest_week) == (curr_year, curr_week) or (latest_year, latest_week) == (last_year, last_week):
+            expected_y, expected_w = latest_year, latest_week
+            for y, w in sorted_weeks:
+                if (y, w) == (expected_y, expected_w):
+                    racha += 1
+                    prev_date = date.fromisocalendar(y, w, 1) - relativedelta(days=7)
+                    expected_y, expected_w, _ = prev_date.isocalendar()
+                else:
+                    break
+
+    return render_template('perfil.html', socio=socio, restan=restan_dias(socio.vence), racha=racha, total_entrenamientos=total_entrenamientos)
 
 # --- NUEVA RUTA: SALÓN DE LA FAMA (RANKING) ---
 @app.route('/ranking')

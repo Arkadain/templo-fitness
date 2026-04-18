@@ -1,174 +1,271 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="dark" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;900&display=swap" rel="stylesheet">
-    <style>body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }</style>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TEMPLO - Fuerza</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#131313", "background": "#131313",
+                        "surface-container": "#1f1f1f",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353535",
+                        "surface-variant": "#353535",
+                        "on-surface": "#e2e2e2",
+                        "on-surface-variant": "#c6c6c6",
+                        "outline": "#919191", "outline-variant": "#474747",
+                        "primary": "#ffffff", "primary-container": "#d4d4d4",
+                        "on-primary": "#1a1c1c", "secondary": "#c7c6c6",
+                        "error": "#ffb4ab",
+                    },
+                    borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "0px" },
+                    fontFamily: { headline: ["Lexend"], body: ["Lexend"], label: ["Lexend"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Lexend', sans-serif; background-color: #131313; color: #e2e2e2; }
+    </style>
 </head>
-<body class="p-6">
-    <div class="max-w-md mx-auto">
-        <header class="mb-8 flex items-center justify-between">
-            <a href="/dashboard/{{ socio.dni }}" class="text-[10px] uppercase tracking-widest text-zinc-500 hover:text-white">← Volver</a>
-            <h1 style="font-family: 'Anton';" class="text-4xl italic uppercase text-white">Fuerza</h1>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row pb-20 md:pb-0">
+
+    <!-- SideNavBar Desktop -->
+    <nav class="hidden md:flex flex-col h-screen fixed left-0 top-0 w-64 border-r border-white/5 bg-[#131313] z-40">
+        <div class="p-6">
+            <h1 class="text-xl font-black italic text-white tracking-tighter">TEMPLO</h1>
+            <div class="mt-8 mb-12">
+                <p class="text-xs text-outline font-bold tracking-widest uppercase mb-1">SOCIO</p>
+                <h2 class="text-white font-bold text-lg">{{ socio.nombre.split()[0] }}</h2>
+                <p class="text-xs text-outline font-medium tracking-widest uppercase mt-1">{{ socio.plan }}</p>
+            </div>
+            <ul class="space-y-6">
+                <li><a href="/dashboard/{{ socio.dni }}" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">grid_view</span>INICIO</a></li>
+                <li><a href="/rutina/{{ socio.dni }}" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">fitness_center</span>RUTINAS</a></li>
+                <li><a href="/fuerza/{{ socio.dni }}" class="flex items-center text-white border-l-4 border-white bg-surface-container-low pl-4 py-2 font-headline font-bold italic tracking-widest uppercase text-xs"><span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">monitoring</span>FUERZA</a></li>
+                <li><a href="/ranking" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">leaderboard</span>RANKING</a></li>
+                <li><a href="/perfil/{{ socio.dni }}" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">person</span>PERFIL</a></li>
+            </ul>
+        </div>
+        <div class="mt-auto p-6">
+            <a href="/logout" class="w-full block text-center bg-surface-container-low text-outline font-bold italic tracking-widest uppercase text-xs py-4 px-6 hover:bg-surface-container-high hover:text-white transition-colors border border-outline-variant">CERRAR SESIÓN</a>
+        </div>
+    </nav>
+
+    <!-- TopAppBar Mobile -->
+    <header class="md:hidden flex justify-between items-center w-full px-6 py-4 bg-[#131313] border-b border-white/5 sticky top-0 z-40">
+        <h1 class="text-2xl font-black italic tracking-tighter text-white uppercase">TEMPLO</h1>
+        <a href="/logout" class="text-outline hover:text-white transition-colors"><span class="material-symbols-outlined">logout</span></a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 md:ml-64 p-6 md:p-12 w-full max-w-5xl mx-auto">
+
+        <!-- Header -->
+        <header class="mb-12">
+            <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase leading-none">FUERZA</h2>
+            <p class="text-outline text-sm tracking-widest uppercase mt-4">REGISTRO DE MARCAS DE ALTO RENDIMIENTO</p>
         </header>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div class="mb-6 bg-zinc-900 border-l-4 border-green-500 p-4 text-[10px] uppercase font-bold tracking-widest text-white shadow-lg">
-                {{ message }}
-              </div>
+            <div class="mb-8 bg-surface-container-low border-l-4 border-primary p-4 text-xs uppercase font-bold tracking-widest text-white">{{ message }}</div>
             {% endfor %}
           {% endif %}
         {% endwith %}
 
-        <form method="POST" class="bg-zinc-950 border border-zinc-900 p-6 mb-6 shadow-xl">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="mb-5">
-                <label class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold block mb-2">Ejercicio de hoy</label>
-                <select name="ejercicio" required class="w-full bg-black border border-zinc-900 p-4 text-white outline-none focus:border-white">
-                    <option value="" disabled selected>Seleccioná de la lista...</option>
-                    <optgroup label="-- PECHO --" class="text-zinc-600 bg-zinc-950 font-black italic">
-                        <option value="Press de Banca Plano" class="text-white not-italic font-normal">Press de Banca Plano</option>
-                        <option value="Press Inclinado" class="text-white not-italic font-normal">Press Inclinado</option>
-                        <option value="Aperturas" class="text-white not-italic font-normal">Aperturas</option>
-                    </optgroup>
-                    <optgroup label="-- PIERNAS --" class="text-zinc-600 bg-zinc-950 font-black italic">
-                        <option value="Sentadilla Libre" class="text-white not-italic font-normal">Sentadilla Libre</option>
-                        <option value="Prensa 45°" class="text-white not-italic font-normal">Prensa 45°</option>
-                        <option value="Peso Muerto" class="text-white not-italic font-normal">Peso Muerto</option>
-                    </optgroup>
-                    <optgroup label="-- ESPALDA --" class="text-zinc-600 bg-zinc-950 font-black italic">
-                        <option value="Dominadas" class="text-white not-italic font-normal">Dominadas</option>
-                        <option value="Remo con Barra" class="text-white not-italic font-normal">Remo con Barra</option>
-                        <option value="Jalón al Pecho" class="text-white not-italic font-normal">Jalón al Pecho</option>
-                    </optgroup>
-                    <optgroup label="-- BRAZOS/HOMBROS --" class="text-zinc-600 bg-zinc-950 font-black italic">
-                        <option value="Press Militar" class="text-white not-italic font-normal">Press Militar</option>
-                        <option value="Curl de Bíceps" class="text-white not-italic font-normal">Curl de Bíceps</option>
-                        <option value="Tríceps en Polea" class="text-white not-italic font-normal">Tríceps en Polea</option>
-                    </optgroup>
-                </select>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold block mb-2">Peso (KG)</label>
-                    <input type="number" step="0.5" name="peso" placeholder="Ej: 60" required class="w-full bg-black border border-zinc-900 p-4 text-white outline-none focus:border-white">
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold block mb-2">Repeticiones</label>
-                    <input type="number" name="repeticiones" placeholder="Ej: 8" required class="w-full bg-black border border-zinc-900 p-4 text-white outline-none focus:border-white">
-                </div>
-            </div>
-            <button type="submit" class="w-full bg-white text-black font-black py-4 uppercase text-xs tracking-widest hover:bg-zinc-300 transition-all">Guardar Marca</button>
-        </form>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        <div class="bg-black border border-zinc-800 p-6 mb-10 shadow-lg">
-            <div class="flex justify-between items-center mb-4 border-b border-zinc-900 pb-2">
-                <h2 class="text-[10px] uppercase text-zinc-500 tracking-[0.2em] font-bold">Calculadora de Pesos (1RM)</h2>
-                <span class="text-xl">🧮</span>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                    <label class="text-[9px] uppercase tracking-widest text-zinc-500 block mb-1">KG Levantados</label>
-                    <input type="number" id="calcPeso" placeholder="Ej: 100" class="w-full bg-zinc-950 border border-zinc-900 p-3 text-white outline-none focus:border-zinc-700 text-sm">
+            <!-- Left: Formulario -->
+            <section class="lg:col-span-7 space-y-8">
+                <div class="bg-surface-container-low p-8 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-surface-container-high/20 to-transparent pointer-events-none"></div>
+                    <h3 class="text-2xl font-bold italic text-white mb-8 tracking-tighter">EJERCICIO DE HOY</h3>
+                    <form method="POST" class="space-y-6 relative z-10">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div>
+                            <label class="block text-xs font-bold tracking-widest text-outline mb-3 uppercase">SELECCIONA MOVIMIENTO</label>
+                            <div class="relative">
+                                <select name="ejercicio" required class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-4 font-bold appearance-none focus:ring-0 focus:outline-none focus:bg-surface-container-highest transition-colors">
+                                    <option value="" disabled selected>SELECCIONÁ...</option>
+                                    <optgroup label="— PECHO —">
+                                        <option value="Press de Banca Plano">PRESS DE BANCA PLANO</option>
+                                        <option value="Press Inclinado">PRESS INCLINADO</option>
+                                        <option value="Aperturas">APERTURAS</option>
+                                    </optgroup>
+                                    <optgroup label="— PIERNAS —">
+                                        <option value="Sentadilla Libre">SENTADILLA LIBRE</option>
+                                        <option value="Prensa 45°">PRENSA 45°</option>
+                                        <option value="Peso Muerto">PESO MUERTO</option>
+                                    </optgroup>
+                                    <optgroup label="— ESPALDA —">
+                                        <option value="Dominadas">DOMINADAS</option>
+                                        <option value="Remo con Barra">REMO CON BARRA</option>
+                                        <option value="Jalón al Pecho">JALÓN AL PECHO</option>
+                                    </optgroup>
+                                    <optgroup label="— BRAZOS / HOMBROS —">
+                                        <option value="Press Militar">PRESS MILITAR</option>
+                                        <option value="Curl de Bíceps">CURL DE BÍCEPS</option>
+                                        <option value="Tríceps en Polea">TRÍCEPS EN POLEA</option>
+                                    </optgroup>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 transform -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold tracking-widest text-outline mb-3 uppercase">PESO (KG)</label>
+                                <input type="number" step="0.5" name="peso" required placeholder="0.0"
+                                    class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-4 font-black text-2xl placeholder-surface-container text-center focus:ring-0 focus:outline-none focus:bg-surface-container-highest transition-colors"/>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold tracking-widest text-outline mb-3 uppercase">REPETICIONES</label>
+                                <input type="number" name="repeticiones" required placeholder="0"
+                                    class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-4 font-black text-2xl placeholder-surface-container text-center focus:ring-0 focus:outline-none focus:bg-surface-container-highest transition-colors"/>
+                            </div>
+                        </div>
+                        <div class="pt-6">
+                            <button type="submit" class="w-full bg-primary text-on-primary font-black italic tracking-widest uppercase py-5 px-8 text-lg hover:bg-primary-container transition-all flex items-center justify-center space-x-3 group relative overflow-hidden">
+                                <span class="relative z-10">REGISTRAR MARCA</span>
+                                <span class="material-symbols-outlined relative z-10 group-hover:translate-x-1 transition-transform" style="font-variation-settings: 'FILL' 1;">add_task</span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <label class="text-[9px] uppercase tracking-widest text-zinc-500 block mb-1">Repeticiones</label>
-                    <input type="number" id="calcReps" placeholder="Ej: 2" class="w-full bg-zinc-950 border border-zinc-900 p-3 text-white outline-none focus:border-zinc-700 text-sm">
-                </div>
-            </div>
-            <button type="button" onclick="calcularRM()" class="w-full bg-zinc-800 text-white font-black py-3 uppercase text-[10px] tracking-widest hover:bg-zinc-700 transition-all">Estimar Mis Pesos</button>
 
-            <div id="resultadoRM" class="mt-5 hidden">
-                <p class="text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Tu Máximo Teórico (1RM): <span id="rmMax" class="text-green-500 text-lg font-black italic block mt-1"></span></p>
-                <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
-                    <div class="bg-zinc-950 border border-zinc-900 p-2"><span class="text-zinc-600 block mb-1">3 REPS</span><span id="rm3" class="font-bold text-white"></span></div>
-                    <div class="bg-zinc-950 border border-zinc-900 p-2"><span class="text-zinc-600 block mb-1">5 REPS</span><span id="rm5" class="font-bold text-white"></span></div>
-                    <div class="bg-zinc-950 border border-zinc-900 p-2"><span class="text-zinc-600 block mb-1">8 REPS</span><span id="rm8" class="font-bold text-white"></span></div>
+                <!-- Calculadora 1RM -->
+                <div class="bg-surface-container p-6 relative">
+                    <h3 class="text-sm font-bold italic text-white mb-6 tracking-widest uppercase">CALCULADORA 1RM</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-bold tracking-widest text-outline mb-2 uppercase">KG Levantados</label>
+                            <input type="number" id="calcPeso" placeholder="Ej: 100"
+                                class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-3 font-bold focus:ring-0 focus:outline-none transition-colors text-sm"/>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold tracking-widest text-outline mb-2 uppercase">Repeticiones</label>
+                            <input type="number" id="calcReps" placeholder="Ej: 2"
+                                class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-3 font-bold focus:ring-0 focus:outline-none transition-colors text-sm"/>
+                        </div>
+                    </div>
+                    <button onclick="calcularRM()" class="w-full bg-surface-container-high text-white font-bold italic tracking-widest uppercase py-3 hover:bg-surface-container-highest transition-colors text-xs">ESTIMAR PESOS</button>
+                    <div id="resultadoRM" class="hidden mt-6">
+                        <p class="text-center text-xs font-bold text-outline uppercase tracking-widest mb-4">Tu Máximo Teórico (1RM): <span id="rmMax" class="text-white text-3xl font-black italic block mt-1"></span></p>
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                            <div class="bg-surface-container-lowest border border-outline-variant p-3"><span class="text-outline block mb-1">3 REPS</span><span id="rm3" class="font-bold text-white"></span></div>
+                            <div class="bg-surface-container-lowest border border-outline-variant p-3"><span class="text-outline block mb-1">5 REPS</span><span id="rm5" class="font-bold text-white"></span></div>
+                            <div class="bg-surface-container-lowest border border-outline-variant p-3"><span class="text-outline block mb-1">8 REPS</span><span id="rm8" class="font-bold text-white"></span></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <div class="mb-10">
-            <h2 class="text-[10px] uppercase text-zinc-500 tracking-[0.2em] mb-4 font-bold border-b border-zinc-900 pb-2">Récords Históricos (PRs)</h2>
-            <div class="grid grid-cols-2 gap-3">
+            <!-- Right: PRs + Historial -->
+            <section class="lg:col-span-5 space-y-6">
+                <div class="flex items-end justify-between pb-4 border-b border-surface-container-high">
+                    <h3 class="text-xl font-bold italic text-white tracking-tighter">RÉCORDS (PRs)</h3>
+                    <span class="text-xs font-bold text-outline tracking-widest uppercase">HISTÓRICO</span>
+                </div>
+
                 {% for pr in prs %}
-                <div class="bg-zinc-900/50 p-4 border border-zinc-800">
-                    <p class="text-[9px] uppercase tracking-widest text-zinc-400 mb-1 truncate">{{ pr.ejercicio }}</p>
-                    <p class="text-xl font-black text-white italic">{{ pr.max_peso }} kg</p>
+                <div class="bg-surface-container p-6 {% if loop.first %}border-l-4 border-primary{% endif %} hover:bg-surface-container-low transition-colors group cursor-pointer">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-xs font-bold text-outline tracking-widest uppercase mb-1">PR ACTUAL</p>
+                            <h4 class="text-lg font-bold italic text-white tracking-tighter uppercase">{{ pr.ejercicio }}</h4>
+                        </div>
+                        {% if loop.first %}<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">emoji_events</span>{% endif %}
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-4xl font-black text-white tracking-tighter">{{ pr.max_peso }}</span>
+                        <span class="text-sm font-bold text-outline uppercase tracking-widest">KG</span>
+                    </div>
                 </div>
                 {% endfor %}
+
                 {% if not prs %}
-                <p class="text-[10px] text-zinc-600 italic col-span-2">Todavía no rompiste ningún récord.</p>
+                <div class="bg-surface-container p-8 text-center">
+                    <span class="material-symbols-outlined text-4xl text-outline mb-4 block">monitoring</span>
+                    <p class="text-xs font-bold text-outline uppercase tracking-widest">Todavía no hay PRs registrados</p>
+                </div>
                 {% endif %}
-            </div>
-        </div>
 
-        <div>
-            <h2 class="text-[10px] uppercase text-zinc-500 tracking-[0.2em] mb-4 font-bold border-b border-zinc-900 pb-2">Tu Diario</h2>
-            
-            <input type="text" id="buscadorFuerza" placeholder="🔍 BUSCAR EJERCICIO..." class="w-full bg-zinc-950 border border-zinc-900 p-4 outline-none focus:border-white text-zinc-400 focus:text-white text-[10px] uppercase tracking-[0.2em] transition-all font-bold mb-4">
-
-            <div class="space-y-3" id="listaEntrenamientos">
-                {% for reg in registros %}
-                <div class="registro-item flex justify-between items-center bg-zinc-950 p-4 border border-zinc-900">
-                    <div>
-                        <p class="ejercicio-nombre text-sm font-bold text-white">{{ reg.ejercicio }}</p>
-                        <p class="text-[9px] text-zinc-600 uppercase tracking-widest mt-1">{{ reg.fecha.strftime('%d/%m/%Y') }}</p>
+                <!-- Buscador + Historial -->
+                <div class="pt-4 border-t border-surface-container-high">
+                    <div class="flex items-end justify-between mb-4">
+                        <h3 class="text-sm font-bold italic text-white tracking-widest uppercase">DIARIO</h3>
                     </div>
-                    <div class="text-right">
-                        <p class="text-lg font-black italic text-green-500">{{ reg.peso }} kg</p>
-                        <p class="text-[9px] text-zinc-500 uppercase tracking-widest">x{{ reg.repeticiones }} reps</p>
+                    <input type="text" id="buscadorFuerza" placeholder="BUSCAR EJERCICIO..."
+                        class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white p-3 font-bold text-xs uppercase tracking-widest focus:ring-0 focus:outline-none transition-colors mb-4"/>
+                    <div class="space-y-2 max-h-80 overflow-y-auto" id="listaEntrenamientos">
+                        {% for reg in registros %}
+                        <div class="registro-item flex justify-between items-center bg-surface-container p-4 hover:bg-surface-container-low transition-colors">
+                            <div>
+                                <p class="ejercicio-nombre text-sm font-bold text-white italic">{{ reg.ejercicio }}</p>
+                                <p class="text-[10px] text-outline uppercase tracking-widest mt-1">{{ reg.fecha.strftime('%d/%m/%Y') }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-black text-white">{{ reg.peso }} <span class="text-xs text-outline font-normal">kg</span></p>
+                                <p class="text-[10px] text-outline uppercase tracking-widest">×{{ reg.repeticiones }} reps</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if not registros %}
+                        <p class="text-xs text-outline italic p-4">Tu diario está vacío.</p>
+                        {% endif %}
                     </div>
                 </div>
-                {% endfor %}
-                {% if not registros %}
-                <p class="text-[10px] text-zinc-600 italic">Tu diario está vacío.</p>
-                {% endif %}
-            </div>
+            </section>
         </div>
-    </div>
+    </main>
+
+    <!-- BottomNavBar Mobile -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-[#131313]/90 backdrop-blur-xl border-t border-white/10">
+        <a href="/dashboard/{{ socio.dni }}" class="flex flex-col items-center justify-center text-outline w-16 group">
+            <span class="material-symbols-outlined mb-1 group-hover:text-white transition-colors">home</span>
+            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">INICIO</span>
+        </a>
+        <a href="/rutina/{{ socio.dni }}" class="flex flex-col items-center justify-center text-outline w-16 group">
+            <span class="material-symbols-outlined mb-1 group-hover:text-white transition-colors">fitness_center</span>
+            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">RUTINAS</span>
+        </a>
+        <a href="/fuerza/{{ socio.dni }}" class="flex flex-col items-center justify-center text-white scale-110 w-16">
+            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">legend_toggle</span>
+            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">RECORDS</span>
+        </a>
+        <a href="/perfil/{{ socio.dni }}" class="flex flex-col items-center justify-center text-outline w-16 group">
+            <span class="material-symbols-outlined mb-1 group-hover:text-white transition-colors">person</span>
+            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">PERFIL</span>
+        </a>
+    </nav>
 
     <script>
-        // 1. Buscador en Vivo
         document.getElementById('buscadorFuerza').addEventListener('keyup', function() {
             let filtro = this.value.toLowerCase();
-            let registros = document.querySelectorAll('.registro-item');
-            
-            registros.forEach(function(registro) {
-                let nombreEjercicio = registro.querySelector('.ejercicio-nombre').textContent.toLowerCase();
-                if(nombreEjercicio.includes(filtro)) {
-                    registro.style.display = 'flex';
-                } else {
-                    registro.style.display = 'none';
-                }
+            document.querySelectorAll('.registro-item').forEach(function(el) {
+                el.style.display = el.querySelector('.ejercicio-nombre').textContent.toLowerCase().includes(filtro) ? 'flex' : 'none';
             });
         });
-
-        // 2. Calculadora de 1RM (Fórmula de Epley)
         function calcularRM() {
             let peso = parseFloat(document.getElementById('calcPeso').value);
             let reps = parseInt(document.getElementById('calcReps').value);
-
-            if(!peso || !reps || reps < 1) {
-                alert("Por favor, ingresá un peso y repeticiones válidas.");
-                return;
-            }
-
-            // Cálculo base de 1RM
+            if (!peso || !reps || reps < 1) { alert("Ingresá peso y repeticiones válidas."); return; }
             let rm = peso * (1 + (reps / 30));
-
-            // Escribir los resultados en pantalla (calculando los porcentajes para distintas repeticiones)
-            // 3 reps ~ 93% | 5 reps ~ 87% | 8 reps ~ 80%
             document.getElementById('rmMax').innerText = rm.toFixed(1) + ' kg';
             document.getElementById('rm3').innerText = (rm * 0.93).toFixed(1) + ' kg';
             document.getElementById('rm5').innerText = (rm * 0.87).toFixed(1) + ' kg';
             document.getElementById('rm8').innerText = (rm * 0.80).toFixed(1) + ' kg';
-
-            // Mostrar la caja de resultados
             document.getElementById('resultadoRM').classList.remove('hidden');
         }
     </script>
