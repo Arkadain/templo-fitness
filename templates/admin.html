@@ -1,129 +1,194 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html class="dark" lang="es">
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>GESTIÓN DE TEMPLO | ADMIN</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#131313", "background": "#131313",
+                        "surface-container": "#1f1f1f",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353535",
+                        "surface-variant": "#353535",
+                        "on-surface": "#e2e2e2",
+                        "on-surface-variant": "#c6c6c6",
+                        "outline": "#919191", "outline-variant": "#474747",
+                        "primary": "#ffffff", "primary-container": "#d4d4d4",
+                        "on-primary": "#1a1c1c",
+                    },
+                    borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "0px" },
+                    fontFamily: { headline: ["Lexend"], body: ["Lexend"], label: ["Lexend"] }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        h1 {
-            font-family: 'Anton', sans-serif;
-            font-style: italic;
-        }
+        body { background-color: #131313; color: #e2e2e2; font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #131313; }
+        ::-webkit-scrollbar-thumb { background: #353535; }
     </style>
 </head>
+<body class="font-body">
 
-<body class="p-10">
-    <div class="max-w-5xl mx-auto">
-        <header class="flex justify-between items-center mb-12 border-b border-zinc-900 pb-6">
-            <h1 class="text-4xl tracking-tighter uppercase">GESTIÓN DE <span class="text-zinc-600">TEMPLO</span></h1>
+    <aside class="fixed left-0 top-0 h-full w-64 flex flex-col py-10 z-50 border-r border-white/5" style="background-color: #18181b;">
+        <div class="px-8 mb-10">
+            <h1 class="text-xl font-black italic text-white tracking-tighter">TEMPLO</h1>
+            <p class="text-[10px] font-medium tracking-[0.2em] text-zinc-500 uppercase mt-1">ADMIN_PORTAL</p>
+        </div>
+        <nav class="flex-1 space-y-1 px-4">
+            <a class="flex items-center gap-4 px-4 py-3 bg-white text-black font-bold italic font-headline text-xs tracking-widest uppercase" href="/admin">
+                <span class="material-symbols-outlined">group</span><span>Socios</span>
+            </a>
+            <a href="/nuevo_socio" class="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-headline text-xs font-medium tracking-widest uppercase">
+                <span class="material-symbols-outlined">person_add</span><span>Nuevo Socio</span>
+            </a>
+        </nav>
+        <div class="px-4 mt-auto">
+            <a href="/nuevo_socio" class="w-full bg-primary text-on-primary font-bold italic py-4 flex items-center justify-center gap-2 hover:bg-primary-container transition-all uppercase text-xs tracking-widest mb-4">
+                <span class="material-symbols-outlined">add</span> NUEVO SOCIO
+            </a>
+            <a href="/logout" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white transition-all font-headline text-xs font-medium tracking-widest uppercase">
+                <span class="material-symbols-outlined">logout</span><span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
 
-            <div class="flex items-center gap-6">
-                <a href="/admin/nuevo" class="bg-white text-black px-6 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-300 transition-all">
-                    + Agregar Socio
+    <main class="ml-64 min-h-screen flex flex-col bg-surface">
+
+        <header class="flex justify-between items-center w-full px-8 py-4 bg-zinc-950 sticky top-0 z-40">
+            <span class="text-2xl font-black italic text-white tracking-tighter uppercase">KINETIC_ADMIN</span>
+            <div class="flex items-center gap-4">
+                <div class="relative flex items-center bg-zinc-900 px-4 py-2">
+                    <span class="material-symbols-outlined text-zinc-500 text-sm">search</span>
+                    <input id="buscador" class="bg-transparent border-none text-xs font-bold italic text-white focus:ring-0 focus:outline-none placeholder:text-zinc-700 w-48 uppercase tracking-widest ml-2" placeholder="BUSCAR SOCIO..."/>
+                </div>
+                <a href="/logout" class="text-zinc-500 hover:text-white transition-colors p-2">
+                    <span class="material-symbols-outlined">logout</span>
                 </a>
-                <a href="/logout" class="text-xs font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Salir</a>
             </div>
         </header>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="mb-6 bg-zinc-800 border-l-4 border-white text-white px-4 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
-                {{ message }}
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+        <div class="p-12 space-y-10 max-w-[1400px]">
 
-        <div class="mb-6">
-            <input type="text" id="buscador" placeholder="🔍 BUSCAR SOCIO POR NOMBRE O DNI..." class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-zinc-400 focus:text-white text-[10px] uppercase tracking-[0.2em] transition-all font-bold">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                <div class="bg-surface-container-low border-l-4 border-primary px-6 py-4 text-xs uppercase font-bold tracking-widest text-white">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <section class="relative h-48 w-full bg-surface-container-lowest overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-zinc-950/60 flex flex-col justify-end p-10">
+                    <span class="text-primary text-[10px] font-black tracking-[0.5em] uppercase mb-2">SISTEMA DE CONTROL</span>
+                    <h2 class="text-5xl font-black italic text-white tracking-tighter leading-none uppercase">GESTIÓN DE TEMPLO</h2>
+                </div>
+            </section>
+
+            <section class="flex justify-between items-end">
+                <div class="flex gap-2">
+                    <button class="px-6 py-2 bg-white text-black font-bold italic text-[10px] tracking-widest uppercase">TODOS</button>
+                    <button onclick="filtrarVencidos()" class="px-6 py-2 bg-zinc-900 text-zinc-500 hover:text-white transition-all font-bold italic text-[10px] tracking-widest uppercase">VENCIDOS</button>
+                </div>
+                <a href="/nuevo_socio" class="bg-primary text-on-primary px-8 py-3 font-black italic text-xs tracking-[0.1em] hover:bg-primary-container transition-all uppercase">AGREGAR SOCIO</a>
+            </section>
+
+            <section class="bg-surface-container-low ring-1 ring-white/5">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-lowest">
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">SOCIO (DNI)</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">PLAN</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">VENCIMIENTO</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 text-right">ACCIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5" id="tablaBody">
+                            {% for socio in socios %}
+                            <tr class="hover:bg-zinc-800/50 transition-colors socio-row">
+                                <td class="p-6">
+                                    <p class="font-bold italic text-white text-sm uppercase">{{ socio.nombre }}</p>
+                                    <p class="text-[10px] text-zinc-500 font-medium mt-1">DNI: {{ socio.dni }}</p>
+                                </td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 bg-zinc-800 text-zinc-300 text-[10px] font-black italic uppercase tracking-tighter">{{ socio.plan }}</span>
+                                </td>
+                                <td class="p-6">
+                                    <p class="{% if restan_dias(socio.vence) <= 0 %}text-red-400{% else %}text-white{% endif %} font-bold italic text-sm">{{ socio.vence }}</p>
+                                    {% if restan_dias(socio.vence) <= 0 %}
+                                        <p class="text-[9px] text-red-600 font-black uppercase italic tracking-tighter mt-1">CUOTA VENCIDA</p>
+                                    {% else %}
+                                        <p class="text-[9px] text-zinc-600 uppercase font-bold mt-1">Quedan {{ restan_dias(socio.vence) }} días</p>
+                                    {% endif %}
+                                </td>
+                                <td class="p-6 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <button onclick="abrirModalRenovar('{{ socio.dni }}', '{{ socio.nombre }}')" class="bg-white text-black p-2 hover:bg-zinc-300 transition-all" title="Renovar">
+                                            <span class="material-symbols-outlined text-sm">refresh</span>
+                                        </button>
+                                        <a href="/editar_socio/{{ socio.dni }}" class="bg-zinc-800 text-white p-2 hover:bg-zinc-700 transition-all inline-flex items-center" title="Editar">
+                                            <span class="material-symbols-outlined text-sm">edit</span>
+                                        </a>
+                                        <form method="POST" action="/eliminar/{{ socio.dni }}" onsubmit="return confirm('¿Seguro que querés eliminar a {{ socio.nombre }} del Templo?');" style="display:inline;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="bg-zinc-900 text-zinc-500 hover:text-red-500 p-2 hover:bg-red-950/50 transition-all" title="Eliminar">
+                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
         </div>
-
-        <div class="bg-zinc-950 border border-zinc-900 rounded-sm overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-zinc-900/50 text-zinc-500 text-[10px] uppercase tracking-widest">
-                    <tr>
-                        <th class="p-6">Socio (DNI)</th>
-                        <th class="p-6">Plan</th>
-                        <th class="p-6">Vencimiento</th>
-                        <th class="p-6 text-right">Acción</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-900">
-                    {% for socio in socios %}
-                    <tr class="hover:bg-zinc-900/30 transition-colors">
-                        <td class="p-6">
-                            <span class="block font-black italic uppercase text-lg">{{ socio.nombre }}</span>
-                            <span class="text-xs text-zinc-600 font-mono tracking-tighter">ID: {{ socio.dni }}</span>
-                        </td>
-                        <td class="p-6 text-sm text-zinc-400 font-bold uppercase tracking-widest">{{ socio.plan }}</td>
-
-                        <td class="p-6 text-sm">
-                            <div class="flex flex-col">
-                                <span class="{% if restan_dias(socio.vence) <= 0 %} text-red-500 font-black {% else %} text-zinc-300 {% endif %}">
-                                    {{ socio.vence }}
-                                </span> 
-                                {% if restan_dias(socio.vence) <= 0 %} 
-                                    <span class="text-[9px] text-red-600 font-black uppercase italic tracking-tighter">Cuota Vencida</span>
-                                {% else %}
-                                    <span class="text-[9px] text-zinc-600 uppercase italic tracking-tighter">Quedan {{ restan_dias(socio.vence) }} días</span> 
-                                {% endif %}
-                            </div>
-                        </td>
-
-                        <td class="p-6 text-right">
-                            <div class="flex justify-end gap-2">
-                                <button onclick="abrirModalRenovar('{{ socio.dni }}', '{{ socio.nombre }}')" class="bg-green-900/20 text-green-500 border border-green-900/50 px-4 py-2 text-[10px] font-black uppercase hover:bg-green-600 hover:text-white transition-all">Renovar</button>
-                                
-                                <a href="/admin/editar/{{ socio.dni }}" class="bg-zinc-800 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-white hover:text-black transition-all">Editar</a>
-
-                                <!-- CORREGIDO: form POST en lugar de link GET para eliminar -->
-                                <form method="POST" action="/eliminar/{{ socio.dni }}" onsubmit="return confirm('¿Estás seguro de que querés eliminar a {{ socio.nombre }}?');" style="display:inline;">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="bg-red-900/20 text-red-500 border border-red-900/50 px-4 py-2 text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition-all">Eliminar</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    </main>
 
     <div id="modalRenovar" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-zinc-950 border border-zinc-900 p-8 w-full max-w-md shadow-2xl relative">
-            <button onclick="cerrarModalRenovar()" class="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl">✕</button>
-            <h2 class="text-2xl font-black italic uppercase mb-1">Registrar <span class="text-green-500">Pago</span></h2>
+        <div class="bg-zinc-950 border border-zinc-800 p-8 w-full max-w-md shadow-2xl relative">
+            <button onclick="cerrarModalRenovar()" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="text-2xl font-black italic uppercase mb-1">Registrar Pago</h2>
             <p class="text-[10px] uppercase text-zinc-500 tracking-widest mb-6">Socio: <span id="nombreRenovarTexto" class="text-white font-bold"></span></p>
-            
             <form id="formRenovar" method="POST" action="" class="space-y-6">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
                 <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Fecha del Pago</label>
-                    <input type="date" name="fecha_pago" id="fechaPagoInput" required style="color-scheme: dark;" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white cursor-pointer">
+                    <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">Fecha de inicio del pago</label>
+                    <input type="date" name="fecha_pago" id="fechaPagoInput" required style="color-scheme: dark;" class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white p-4 font-bold focus:ring-0 focus:outline-none transition-colors"/>
                 </div>
+                
                 <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Plan Abonado</label>
+                    <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">Meses a Renovar</label>
                     <div class="relative">
-                        <select name="plan" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white appearance-none cursor-pointer">
-                            <option value="MENSUAL">Plan Mensual</option>
-                            <option value="TRIMESTRAL">Plan Trimestral</option>
-                            <option value="SEMESTRAL">Plan Semestral</option>
-                            <option value="ANUAL">Plan Anual</option>
+                        <select name="meses" required class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white p-4 font-bold appearance-none focus:ring-0 focus:outline-none transition-colors">
+                            <option value="1">1 Mes (Mensual)</option>
+                            <option value="3">3 Meses (Trimestral)</option>
+                            <option value="6">6 Meses (Semestral)</option>
+                            <option value="12">12 Meses (Anual)</option>
                         </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
+                        <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">expand_more</span>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-green-600 text-white font-black py-4 uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                
+                <button type="submit" class="w-full bg-primary text-on-primary font-black italic py-5 uppercase text-xs tracking-widest hover:bg-primary-container transition-all">
                     Confirmar Renovación
                 </button>
             </form>
@@ -131,33 +196,32 @@
     </div>
 
     <script>
-        // Funcionalidad del Buscador
         document.getElementById('buscador').addEventListener('keyup', function() {
             let filtro = this.value.toLowerCase();
-            let filas = document.querySelectorAll('tbody tr'); 
-            
-            filas.forEach(function(fila) {
-                let textoFila = fila.textContent.toLowerCase();
-                if(textoFila.includes(filtro)) {
-                    fila.style.display = '';
-                } else {
-                    fila.style.display = 'none';
-                }
+            document.querySelectorAll('.socio-row').forEach(function(fila) {
+                fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
             });
         });
 
-        // Funcionalidad del Modal de Renovación
+        function filtrarVencidos() {
+            document.querySelectorAll('.socio-row').forEach(function(fila) {
+                fila.style.display = fila.textContent.includes('CUOTA VENCIDA') ? '' : 'none';
+            });
+        }
+
         function abrirModalRenovar(dni, nombre) {
             document.getElementById('modalRenovar').style.display = 'flex';
             document.getElementById('nombreRenovarTexto').innerText = nombre;
             
+            // Setear la fecha de hoy por defecto
             let hoy = new Date();
             let dd = String(hoy.getDate()).padStart(2, '0');
             let mm = String(hoy.getMonth() + 1).padStart(2, '0');
             let yyyy = hoy.getFullYear();
             document.getElementById('fechaPagoInput').value = yyyy + '-' + mm + '-' + dd;
             
-            document.getElementById('formRenovar').action = '/admin/renovar/' + dni;
+            // Apuntar el formulario a la ruta correcta de tu app.py
+            document.getElementById('formRenovar').action = '/renovar/' + dni;
         }
 
         function cerrarModalRenovar() {
@@ -165,5 +229,4 @@
         }
     </script>
 </body>
-
 </html>

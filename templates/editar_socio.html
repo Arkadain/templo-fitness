@@ -1,129 +1,215 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html class="dark" lang="es">
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>EDITAR SOCIO | ADMIN</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;500;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#131313", "background": "#131313",
+                        "surface-container": "#1f1f1f",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353535",
+                        "surface-variant": "#353535",
+                        "on-surface": "#e2e2e2",
+                        "on-surface-variant": "#c6c6c6",
+                        "outline": "#919191", "outline-variant": "#474747",
+                        "primary": "#ffffff", "primary-container": "#d4d4d4",
+                        "on-primary": "#1a1c1c",
+                    },
+                    borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "9999px" },
+                    fontFamily: { headline: ["Lexend"], body: ["Lexend"], label: ["Lexend"] }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        h1 {
-            font-family: 'Anton', sans-serif;
-        }
-        
-        textarea::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        textarea::-webkit-scrollbar-thumb {
-            background: #27272a;
-        }
+        body { background-color: #131313; color: #e2e2e2; font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #131313; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; }
+        textarea { resize: none; }
     </style>
 </head>
+<body class="bg-surface text-on-surface font-body">
 
-<body class="p-6 md:p-12">
-    <div class="max-w-2xl mx-auto">
-        <header class="mb-10 flex justify-between items-end">
-            <div>
-                <h1 class="text-5xl italic font-black uppercase tracking-tighter text-white">Editar <span class="text-zinc-700">Socio</span></h1>
-                <p class="text-[10px] text-zinc-500 uppercase tracking-[0.4em] mt-2">ID: {{ socio.dni }}</p>
+    <aside class="fixed left-0 top-0 h-full w-64 flex flex-col py-10 z-50 overflow-hidden border-r border-white/5" style="background-color: #18181b;">
+        <div class="px-8 mb-12">
+            <h1 class="text-xl font-black italic text-white leading-none tracking-tighter">TEMPLO</h1>
+            <p class="font-headline text-[10px] font-medium tracking-[0.2em] text-zinc-500 mt-1 uppercase">ADMIN_PORTAL</p>
+        </div>
+        <nav class="flex-1 flex flex-col gap-1 px-4">
+            <a href="/admin" class="flex items-center gap-4 px-4 py-3 bg-white text-black font-bold italic font-headline text-xs tracking-widest uppercase">
+                <span class="material-symbols-outlined">group</span><span>Socios</span>
+            </a>
+            <a href="/nuevo_socio" class="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-headline text-xs font-medium tracking-widest uppercase">
+                <span class="material-symbols-outlined">person_add</span><span>Nuevo Socio</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-4 py-6 border-t border-zinc-800/30">
+            <a href="/logout" class="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-headline text-xs font-medium tracking-widest uppercase">
+                <span class="material-symbols-outlined">logout</span><span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="ml-64 min-h-screen flex flex-col bg-surface">
+
+        <header class="bg-zinc-950 text-white flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40">
+            <div class="flex items-center gap-6">
+                <span class="text-2xl font-black italic text-white tracking-tighter uppercase">KINETIC_ADMIN</span>
+                <span class="h-6 w-px bg-zinc-800"></span>
+                <a href="/admin" class="text-zinc-500 hover:text-white font-headline uppercase tracking-[0.05em] font-bold italic text-xs transition-colors">← VOLVER</a>
             </div>
-            <a href="/admin" class="text-[10px] uppercase text-zinc-600 hover:text-white tracking-widest transition-all">Volver al Panel</a>
         </header>
 
-        <form method="POST" class="space-y-8 bg-zinc-950 p-8 border border-zinc-900 shadow-2xl">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="p-12 max-w-6xl w-full mx-auto">
+
+            <div class="mb-12 flex items-end justify-between">
                 <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Nombre Completo</label>
-                    <input type="text" name="nombre" value="{{ socio.nombre }}" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white italic font-bold transition-all">
+                    <h2 class="text-6xl font-black italic tracking-tighter uppercase leading-none">EDITAR SOCIO</h2>
+                    <p class="text-zinc-500 font-medium tracking-[0.3em] uppercase text-xs mt-4">DNI: {{ socio.dni }}</p>
                 </div>
-                
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Plan</label>
-                    <div class="relative">
-                        <select name="plan" id="planSelect" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all appearance-none cursor-pointer">
-                            <option value="MENSUAL" {% if socio.plan == 'MENSUAL' %}selected{% endif %}>Plan Mensual</option>
-                            <option value="TRIMESTRAL" {% if socio.plan == 'TRIMESTRAL' %}selected{% endif %}>Plan Trimestral</option>
-                            <option value="SEMESTRAL" {% if socio.plan == 'SEMESTRAL' %}selected{% endif %}>Plan Semestral</option>
-                            <option value="ANUAL" {% if socio.plan == 'ANUAL' %}selected{% endif %}>Plan Anual</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="bg-surface-container-low px-6 py-4 flex flex-col items-end">
+                    <span class="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">SOCIO</span>
+                    <span class="text-xl font-black italic tracking-tight">{{ socio.nombre.split()[0] }}</span>
+                </div>
+            </div>
+
+            <form method="POST" action="/editar_socio/{{ socio.dni }}" class="grid grid-cols-12 gap-8">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="col-span-12 lg:col-span-4 space-y-8">
+                    <div class="bg-surface-container-low p-8 space-y-6">
+                        <div>
+                            <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">PLAN DE AFILIACIÓN</label>
+                            <div class="relative">
+                                <select name="plan" id="planSelect" required class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white font-bold py-4 px-4 focus:ring-0 focus:outline-none transition-colors appearance-none">
+                                    <option value="MENSUAL" {% if socio.plan == 'MENSUAL' %}selected{% endif %}>Plan Mensual</option>
+                                    <option value="TRIMESTRAL" {% if socio.plan == 'TRIMESTRAL' %}selected{% endif %}>Plan Trimestral</option>
+                                    <option value="SEMESTRAL" {% if socio.plan == 'SEMESTRAL' %}selected{% endif %}>Plan Semestral</option>
+                                    <option value="ANUAL" {% if socio.plan == 'ANUAL' %}selected{% endif %}>Plan Anual</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">GÉNERO</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="setGenero('MASCULINO')" id="btnMasculino"
+                                    class="{% if socio.genero == 'MASCULINO' %}bg-white text-black{% else %}bg-surface-container-lowest text-zinc-500 hover:text-white{% endif %} font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors">
+                                    MASCULINO
+                                </button>
+                                <button type="button" onclick="setGenero('FEMENINO')" id="btnFemenino"
+                                    class="{% if socio.genero == 'FEMENINO' %}bg-white text-black{% else %}bg-surface-container-lowest text-zinc-500 hover:text-white{% endif %} font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors">
+                                    FEMENINO
+                                </button>
+                            </div>
+                            <input type="hidden" name="genero" id="generoInput" value="{{ socio.genero }}">
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Género</label>
-                    <div class="relative">
-                        <select name="genero" required class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all appearance-none cursor-pointer">
-                            <option value="MASCULINO" {% if socio.genero == 'MASCULINO' %}selected{% endif %}>Masculino</option>
-                            <option value="FEMENINO" {% if socio.genero == 'FEMENINO' %}selected{% endif %}>Femenino</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="col-span-12 lg:col-span-8 space-y-12">
+
+                    <div class="space-y-8">
+                        <div class="flex items-center gap-4">
+                            <span class="h-px flex-1 bg-zinc-800"></span>
+                            <h3 class="text-xs font-black italic tracking-[0.3em] text-zinc-400 uppercase">DATOS GENERALES</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="col-span-2">
+                                <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">NOMBRE COMPLETO</label>
+                                <input type="text" name="nombre" value="{{ socio.nombre }}" required
+                                    class="w-full bg-transparent border-0 border-b-2 border-zinc-800 focus:border-white text-2xl font-black italic tracking-tight py-4 px-0 focus:ring-0 focus:outline-none transition-colors text-white"/>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">FECHA DE VENCIMIENTO</label>
+                                <input type="date" name="vence" id="venceInput" value="{{ vence_html }}" required style="color-scheme: dark;"
+                                    class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white font-bold py-4 px-4 focus:ring-0 focus:outline-none transition-colors"/>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">NUEVA CONTRASEÑA <span class="text-zinc-700 normal-case">(vacío = sin cambios)</span></label>
+                                <input type="password" name="password" placeholder="••••••••"
+                                    class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white font-bold py-4 px-4 focus:ring-0 focus:outline-none transition-colors"/>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="md:col-span-2">
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Fecha de Vencimiento</label>
-                    <input type="date" name="vence" id="venceInput" value="{{ vence_html }}" required style="color-scheme: dark;" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all cursor-pointer">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="text-[10px] uppercase tracking-widest text-zinc-500 block mb-2 font-bold">Nueva Contraseña <span class="text-zinc-700">(dejar vacío para no cambiar)</span></label>
-                    <input type="password" name="password" placeholder="••••••••" class="w-full bg-black border border-zinc-900 p-4 outline-none focus:border-white text-white transition-all">
-                </div>
-            </div>
-
-            <div class="border-t border-zinc-900 pt-8">
-                <h3 class="text-zinc-400 text-xs font-black uppercase italic tracking-[0.3em] mb-6 underline decoration-zinc-800 underline-offset-8">Planificación de Rutinas</h3>
-
-                <div class="space-y-6">
-                    {% set dias = [ ('lunes', socio.rutina_lunes), ('martes', socio.rutina_martes), ('miercoles', socio.rutina_miercoles), ('jueves', socio.rutina_jueves), ('viernes', socio.rutina_viernes), ('sabado', socio.rutina_sabado) ] %}
-                    {% for nombre, valor in dias %}
-                    <div class="group">
-                        <label class="text-[10px] text-zinc-600 uppercase tracking-[0.2em] block mb-2 group-focus-within:text-white transition-all">{{ nombre }}</label>
-                        <textarea name="rutina_{{ nombre }}" placeholder="Escribí los ejercicios aquí..." class="w-full bg-black border border-zinc-900 p-4 text-sm text-zinc-400 outline-none focus:border-zinc-500 transition-all h-32 font-mono leading-relaxed resize-none">{{ valor if valor else '' }}</textarea>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <span class="h-px flex-1 bg-zinc-800"></span>
+                            <h3 class="text-xs font-black italic tracking-[0.3em] text-zinc-400 uppercase">PLANIFICACIÓN DE RUTINAS</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% set dias = [ 
+                                ('lunes', socio.rutina_lunes), 
+                                ('martes', socio.rutina_martes), 
+                                ('miercoles', socio.rutina_miercoles), 
+                                ('jueves', socio.rutina_jueves), 
+                                ('viernes', socio.rutina_viernes), 
+                                ('sabado', socio.rutina_sabado) 
+                            ] %}
+                            
+                            {% for nombre_dia, valor in dias %}
+                            <div class="bg-surface-container-low p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-[10px] font-black italic tracking-[0.2em] text-white uppercase">{{ nombre_dia | upper }}</span>
+                                    <span class="material-symbols-outlined text-zinc-600 text-sm">fitness_center</span>
+                                </div>
+                                <textarea name="rutina_{{ nombre_dia }}" placeholder="Definir ejercicios..." rows="3"
+                                    class="w-full bg-transparent border-none p-0 focus:ring-0 text-sm text-zinc-400 font-medium placeholder:text-zinc-700">{{ valor if valor else '' }}</textarea>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    {% endfor %}
-                </div>
-            </div>
 
-            <div class="pt-6">
-                <button type="submit" class="w-full bg-white text-black font-black py-5 uppercase text-xs tracking-[0.3em] hover:bg-zinc-300 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                    Guardar Cambios del Socio
-                </button>
-            </div>
-        </form>
-    </div>
+                    <div class="pt-8 flex flex-col gap-4">
+                        <button type="submit" class="w-full bg-white text-black font-black italic text-sm tracking-[0.4em] py-6 hover:bg-zinc-200 active:scale-[0.98] transition-all uppercase">
+                            GUARDAR CAMBIOS DEL SOCIO
+                        </button>
+                        <a href="/admin" class="w-full text-center text-zinc-600 font-bold italic text-[10px] tracking-[0.2em] py-4 hover:text-white transition-colors uppercase">
+                            DESCARTAR Y VOLVER
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
 
     <script>
+        function setGenero(valor) {
+            document.getElementById('generoInput').value = valor;
+            document.getElementById('btnMasculino').className = (valor === 'MASCULINO')
+                ? 'bg-white text-black font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors'
+                : 'bg-surface-container-lowest text-zinc-500 hover:text-white font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors';
+            document.getElementById('btnFemenino').className = (valor === 'FEMENINO')
+                ? 'bg-white text-black font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors'
+                : 'bg-surface-container-lowest text-zinc-500 hover:text-white font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors';
+        }
+        
+        // Esta función está comentada para evitar que sobreescriba la fecha original sin querer al cargar la página
+        /*
         document.getElementById('planSelect').addEventListener('change', function() {
-            let planElegido = this.value;
+            let meses = { 'MENSUAL': 1, 'TRIMESTRAL': 3, 'SEMESTRAL': 6, 'ANUAL': 12 };
             let hoy = new Date();
-            let mesesAAgregar = {
-                'MENSUAL': 1,
-                'TRIMESTRAL': 3,
-                'SEMESTRAL': 6,
-                'ANUAL': 12
-            };
-            
-            if(mesesAAgregar[planElegido]) {
-                hoy.setMonth(hoy.getMonth() + mesesAAgregar[planElegido]);
-                let dd = String(hoy.getDate()).padStart(2, '0');
-                let mm = String(hoy.getMonth() + 1).padStart(2, '0'); 
-                let yyyy = hoy.getFullYear();
-                document.getElementById('venceInput').value = yyyy + '-' + mm + '-' + dd;
-            }
+            hoy.setMonth(hoy.getMonth() + (meses[this.value] || 1));
+            let dd = String(hoy.getDate()).padStart(2, '0');
+            let mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            document.getElementById('venceInput').value = hoy.getFullYear() + '-' + mm + '-' + dd;
         });
+        */
     </script>
 </body>
-
 </html>
