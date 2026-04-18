@@ -295,8 +295,24 @@ def ranking():
 def admin_panel():
     if not session.get('admin'):
         return redirect(url_for('login'))
+        
     socios = Socio.query.all()
-    return render_template('admin.html', socios=socios)
+    
+    # Calcular cuántos socios dieron el presente hoy (A PRUEBA DE BALAS)
+    hoy_dt = fecha_hoy_argentina()
+    # Verificamos si tiene el atributo 'date' antes de usarlo
+    hoy = hoy_dt.date() if hasattr(hoy_dt, 'date') else hoy_dt
+    
+    asistencias_todas = Asistencia.query.all()
+    
+    ingresos_hoy = 0
+    for a in asistencias_todas:
+        # Hacemos lo mismo con la fecha de asistencia
+        a_fecha = a.fecha.date() if hasattr(a.fecha, 'date') else a.fecha
+        if a_fecha == hoy:
+            ingresos_hoy += 1
+            
+    return render_template('admin.html', socios=socios, ingresos_hoy=ingresos_hoy)
 
 @app.route('/eliminar/<dni>', methods=['POST'])
 def eliminar_socio(dni):

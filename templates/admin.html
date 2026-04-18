@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>GESTIÓN DE TEMPLO | ADMIN</title>
+    <title>GESTIÓN DE TEMPLO | ADMIN PANEL</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -33,54 +33,71 @@
         }
     </script>
     <style>
-        body { background-color: #131313; color: #e2e2e2; font-family: 'Lexend', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #131313; }
         ::-webkit-scrollbar-thumb { background: #353535; }
+        body { background-color: #131313; color: #e2e2e2; font-family: 'Lexend', sans-serif;}
     </style>
 </head>
-<body class="font-body">
+<body class="font-body selection:bg-primary selection:text-on-primary">
 
-    <aside class="fixed left-0 top-0 h-full w-64 flex flex-col py-10 z-50 border-r border-white/5" style="background-color: #18181b;">
+    {% set contadores = namespace(activos=0, vencidos=0) %}
+    {% for s in socios %}
+        {% if restan_dias(s.vence) > 0 %}
+            {% set contadores.activos = contadores.activos + 1 %}
+        {% else %}
+            {% set contadores.vencidos = contadores.vencidos + 1 %}
+        {% endif %}
+    {% endfor %}
+
+    <aside class="fixed left-0 top-0 h-full w-64 bg-zinc-900 flex flex-col py-10 z-50 transition-transform duration-200 ease-in-out border-r border-white/5" style="background-color: #18181b;">
         <div class="px-8 mb-10">
-            <h1 class="text-xl font-black italic text-white tracking-tighter">TEMPLO</h1>
-            <p class="text-[10px] font-medium tracking-[0.2em] text-zinc-500 uppercase mt-1">ADMIN_PORTAL</p>
+            <h1 class="text-xl font-black italic text-white tracking-tighter uppercase">TEMPLO</h1>
+            <p class="text-[10px] font-medium tracking-[0.2em] text-zinc-500 uppercase">ADMIN_PORTAL</p>
         </div>
         <nav class="flex-1 space-y-1 px-4">
-            <a class="flex items-center gap-4 px-4 py-3 bg-white text-black font-bold italic font-headline text-xs tracking-widest uppercase" href="/admin">
-                <span class="material-symbols-outlined">group</span><span>Socios</span>
-            </a>
-            <a href="/admin/nuevo" class="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-headline text-xs font-medium tracking-widest uppercase">
-                <span class="material-symbols-outlined">person_add</span><span>Nuevo Socio</span>
+            <a class="flex items-center gap-4 px-4 py-3 bg-white text-black font-bold italic transition-all font-['Lexend'] text-xs tracking-widest" href="/admin">
+                <span class="material-symbols-outlined" data-icon="group">group</span>
+                <span class="uppercase">Socios</span>
             </a>
         </nav>
         <div class="px-4 mt-auto">
-            <a href="/admin/nuevo" class="w-full bg-primary text-on-primary font-bold italic py-4 flex items-center justify-center gap-2 hover:bg-primary-container transition-all uppercase text-xs tracking-widest mb-4">
-                <span class="material-symbols-outlined">add</span> NUEVO SOCIO
+            <a href="/admin/nuevo" class="w-full bg-primary text-on-primary font-bold italic py-4 flex items-center justify-center gap-2 transition-all hover:scale-95 active:scale-90 uppercase text-xs tracking-tighter">
+                <span class="material-symbols-outlined" data-icon="add">add</span> NUEVO SOCIO
             </a>
-            <a href="/logout" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white transition-all font-headline text-xs font-medium tracking-widest uppercase">
-                <span class="material-symbols-outlined">logout</span><span>Cerrar Sesión</span>
+            <a class="flex items-center gap-4 px-4 py-6 mt-4 text-zinc-500 hover:text-white transition-all font-['Lexend'] text-xs font-medium tracking-widest uppercase" href="/logout">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span> Cerrar Sesión
             </a>
         </div>
     </aside>
 
     <main class="ml-64 min-h-screen flex flex-col bg-surface">
-
-        <header class="flex justify-between items-center w-full px-8 py-4 bg-zinc-950 sticky top-0 z-40">
-            <span class="text-2xl font-black italic text-white tracking-tighter uppercase">KINETIC_ADMIN</span>
-            <div class="flex items-center gap-4">
-                <div class="relative flex items-center bg-zinc-900 px-4 py-2">
-                    <span class="material-symbols-outlined text-zinc-500 text-sm">search</span>
-                    <input id="buscador" class="bg-transparent border-none text-xs font-bold italic text-white focus:ring-0 focus:outline-none placeholder:text-zinc-700 w-48 uppercase tracking-widest ml-2" placeholder="BUSCAR SOCIO..."/>
+        
+        <header class="flex justify-between items-center w-full px-8 py-4 bg-zinc-950 sticky top-0 z-40 border-b border-white/5">
+            <div class="flex items-center gap-8">
+                <span class="text-2xl font-black italic text-white tracking-tighter uppercase">GESTIÓN</span>
+                <nav class="hidden lg:flex gap-6">
+                    <a class="text-white border-b-2 border-white font-['Lexend'] uppercase tracking-[0.05em] font-bold italic text-xs py-1" href="#">GESTIÓN</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="relative flex items-center bg-zinc-900 px-4 py-2 ring-1 ring-white/5">
+                    <span class="material-symbols-outlined text-zinc-500 text-sm" data-icon="search">search</span>
+                    <input id="buscador" class="bg-transparent border-none text-xs font-bold italic text-white focus:ring-0 placeholder:text-zinc-700 w-48 uppercase tracking-widest ml-2" placeholder="BUSCAR SOCIO..." type="text"/>
                 </div>
-                <a href="/logout" class="text-zinc-500 hover:text-white transition-colors p-2">
-                    <span class="material-symbols-outlined">logout</span>
-                </a>
+                <div class="flex gap-4">
+                    <a href="/logout" class="text-white hover:bg-zinc-800 p-2 transition-all scale-95 duration-150 rounded-full">
+                        <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+                    </a>
+                </div>
             </div>
         </header>
 
-        <div class="p-12 space-y-10 max-w-[1400px]">
+        <div class="p-12 space-y-12 max-w-[1400px]">
 
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
@@ -90,62 +107,87 @@
               {% endif %}
             {% endwith %}
 
-            <section class="relative h-48 w-full bg-surface-container-lowest overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-zinc-950/60 flex flex-col justify-end p-10">
-                    <span class="text-primary text-[10px] font-black tracking-[0.5em] uppercase mb-2">SISTEMA DE CONTROL</span>
-                    <h2 class="text-5xl font-black italic text-white tracking-tighter leading-none uppercase">GESTIÓN DE TEMPLO</h2>
+            <section class="relative h-64 w-full bg-surface-container-lowest overflow-hidden border border-white/5">
+                <div class="absolute inset-0 opacity-20 mix-blend-luminosity bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')] bg-cover bg-center"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-transparent flex flex-col justify-end p-10">
+                    <span class="text-primary text-[10px] font-black tracking-[0.5em] uppercase mb-2">SISTEMA DE CONTROL DE ACCESO</span>
+                    <h2 class="text-6xl font-black italic text-white tracking-tighter leading-none mb-6 uppercase">GESTIÓN DE TEMPLO</h2>
+                    
+                    <div class="flex gap-12">
+                        <div>
+                            <p class="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">SOCIOS ACTIVOS</p>
+                            <p class="text-3xl font-black italic text-white tracking-tighter">{{ contadores.activos }}</p>
+                        </div>
+                        <div>
+                            <p class="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">INGRESOS HOY</p>
+                            <p class="text-3xl font-black italic text-emerald-400 tracking-tighter">{{ ingresos_hoy | default('0') }}</p>
+                        </div>
+                        <div class="border-l border-white/10 pl-12">
+                            <p class="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">CUOTAS VENCIDAS</p>
+                            <p class="text-3xl font-black italic text-red-500 tracking-tighter">{{ contadores.vencidos }}</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section class="flex justify-between items-end">
+            <section class="flex justify-between items-end border-b border-white/5 pb-4">
                 <div class="flex gap-2">
-                    <button onclick="mostrarTodos()" class="px-6 py-2 bg-white text-black hover:bg-zinc-200 transition-all font-bold italic text-[10px] tracking-widest uppercase">TODOS</button>
-                    <button onclick="filtrarVencidos()" class="px-6 py-2 bg-zinc-900 text-zinc-500 hover:text-white hover:bg-zinc-800 transition-all font-bold italic text-[10px] tracking-widest uppercase">VENCIDOS</button>
+                    <button onclick="mostrarTodos()" class="px-6 py-2 bg-white text-black font-bold italic text-[10px] tracking-widest uppercase hover:bg-zinc-200 transition-colors">TODOS</button>
+                    <button onclick="filtrarVencidos()" class="px-6 py-2 bg-zinc-900 text-zinc-500 hover:text-red-400 hover:bg-red-950/30 transition-all font-bold italic text-[10px] tracking-widest uppercase">VENCIDOS</button>
                 </div>
-                <a href="/admin/nuevo" class="bg-primary text-on-primary px-8 py-3 font-black italic text-xs tracking-[0.1em] hover:bg-primary-container transition-all uppercase">AGREGAR SOCIO</a>
+                <a href="/admin/nuevo" class="bg-primary text-on-primary px-8 py-3 font-black italic text-xs tracking-[0.1em] hover:bg-primary-container transition-all uppercase">
+                    AGREGAR SOCIO
+                </a>
             </section>
 
-            <section class="bg-surface-container-low ring-1 ring-white/5">
+            <section class="bg-surface-container-low p-1 ring-1 ring-white/5">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-surface-container-lowest">
-                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">SOCIO (DNI)</th>
-                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">PLAN</th>
-                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">VENCIMIENTO</th>
-                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 text-right">ACCIÓN</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 border-b border-white/5">SOCIO (DNI)</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 border-b border-white/5">PLAN</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 border-b border-white/5">VENCIMIENTO</th>
+                                <th class="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 text-right border-b border-white/5">ACCIÓN</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5" id="tablaBody">
                             {% for socio in socios %}
-                            <tr class="hover:bg-zinc-800/50 transition-colors socio-row">
+                            <tr class="hover:bg-zinc-800/50 transition-colors group socio-row">
                                 <td class="p-6">
-                                    <p class="font-bold italic text-white text-sm uppercase">{{ socio.nombre }}</p>
-                                    <p class="text-[10px] text-zinc-500 font-medium mt-1">DNI: {{ socio.dni }}</p>
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 bg-zinc-900 overflow-hidden flex items-center justify-center border border-white/5">
+                                            <span class="material-symbols-outlined text-zinc-600">person</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold italic text-white text-sm uppercase">{{ socio.nombre }}</p>
+                                            <p class="text-[10px] text-zinc-500 font-medium tracking-widest mt-1">DNI: {{ socio.dni }}</p>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="p-6">
-                                    <span class="px-3 py-1 bg-zinc-800 text-zinc-300 text-[10px] font-black italic uppercase tracking-tighter">{{ socio.plan }}</span>
+                                    <span class="px-3 py-1 bg-zinc-900 border border-white/5 text-zinc-300 text-[10px] font-black italic uppercase tracking-widest">{{ socio.plan }}</span>
                                 </td>
                                 <td class="p-6">
                                     <p class="{% if restan_dias(socio.vence) <= 0 %}text-red-400{% else %}text-white{% endif %} font-bold italic text-sm">{{ socio.vence }}</p>
                                     {% if restan_dias(socio.vence) <= 0 %}
-                                        <p class="text-[9px] text-red-600 font-black uppercase italic tracking-tighter mt-1">CUOTA VENCIDA</p>
+                                        <p class="text-[9px] text-red-600 font-black uppercase italic tracking-widest mt-1">CUOTA VENCIDA</p>
                                     {% else %}
-                                        <p class="text-[9px] text-zinc-600 uppercase font-bold mt-1">Quedan {{ restan_dias(socio.vence) }} días</p>
+                                        <p class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Quedan {{ restan_dias(socio.vence) }} días</p>
                                     {% endif %}
                                 </td>
                                 <td class="p-6 text-right">
-                                    <div class="flex justify-end gap-2">
+                                    <div class="flex justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                         <button onclick="abrirModalRenovar('{{ socio.dni }}', '{{ socio.nombre }}')" class="bg-white text-black p-2 hover:bg-zinc-300 transition-all" title="Renovar">
-                                            <span class="material-symbols-outlined text-sm">refresh</span>
+                                            <span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span>
                                         </button>
                                         <a href="/admin/editar/{{ socio.dni }}" class="bg-zinc-800 text-white p-2 hover:bg-zinc-700 transition-all inline-flex items-center" title="Editar">
-                                            <span class="material-symbols-outlined text-sm">edit</span>
+                                            <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
                                         </a>
                                         <form method="POST" action="/eliminar/{{ socio.dni }}" onsubmit="return confirm('¿Seguro que querés eliminar a {{ socio.nombre }} del Templo?');" style="display:inline;">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button type="submit" class="bg-zinc-900 text-zinc-500 hover:text-red-500 p-2 hover:bg-red-950/50 transition-all" title="Eliminar">
-                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                                <span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
                                             </button>
                                         </form>
                                     </div>
@@ -156,7 +198,6 @@
                     </table>
                 </div>
             </section>
-
         </div>
     </main>
 
@@ -216,7 +257,7 @@
             document.querySelectorAll('.socio-row').forEach(function(fila) {
                 fila.style.display = '';
             });
-            document.getElementById('buscador').value = ''; // Limpia la barra de búsqueda si había algo escrito
+            document.getElementById('buscador').value = ''; // Limpia la barra
         }
 
         // Modal de Renovación
