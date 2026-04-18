@@ -6,6 +6,12 @@ from datetime import datetime, date
 import os
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.exc import IntegrityError
+from supabase import create_client, Client
+
+SUPABASE_URL = "https://outmumjurvsesziislzu.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dG11bWp1cnZzZXN6aWlzbHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4MzA0OTMsImV4cCI6MjA5MTQwNjQ5M30.fK3lLTSINKR4zBJQOotM0N2zUL-MJtny169wI-vLO24"
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
 
@@ -62,6 +68,7 @@ class Socio(db.Model):
     rutina_jueves = db.Column(db.Text, default="")
     rutina_viernes = db.Column(db.Text, default="")
     rutina_sabado = db.Column(db.Text, default="")
+    foto = db.Column(db.String(500), default='')
 
 class Asistencia(db.Model):
     __tablename__ = 'asistencia'
@@ -78,6 +85,49 @@ class RegistroPesos(db.Model):
     peso = db.Column(db.Numeric(5, 2), nullable=False)
     repeticiones = db.Column(db.Integer, nullable=False)
     fecha = db.Column(db.Date, nullable=False)
+
+# --- SUBIR FOTO DE PERFIL ---
+@app.route('/subir_foto/<id_socio>', methods=['POST'])
+def subir_foto(id_socio):
+    # Chequeo de seguridad
+    if session.get('user_id') != id_socio and not session.get('admin'):
+        return redirect(url_for('login'))
+
+    if 'foto' not in request.files:
+        return redirect(url_for('perfil', id_socio=id_socio))
+
+    file = request.files['foto']
+    if file.filename == '':
+        return redirect(url_for('perfil', id_socio=id_socio))
+
+    if file:
+        try:
+            # Leemos la foto
+            file_bytes = file.read()
+            # Sacamos la extensión (ej: jpg, png)
+            file_ext = file.filename.rsplit('.', 1)[1].lower()
+            # Bautizamos la foto (ej: avatar_34556122.jpg)
+            filename = f"avatar_{id_socio}.{file_ext}"
+
+            # Subimos a Supabase (upsert=True hace que sobreescriba la vieja si cambia la foto)
+            supabase.storage.from_('avatars').upload(
+                path=filename,
+                file=file_bytes,
+                file_options={"content-type": file.content_type, "upsert": "true"}
+            )
+
+            # Pedimos el link público
+            public_url = supabase.storage.from_('avatars').get_public_url(filename)
+
+            # Guardamos el link en la base de datos
+            socio = Socio.query.get(id_socio)
+            socio.foto = public_url
+            db.session.commit()
+
+        except Exception as e:
+            print("Error al subir foto:", e)
+
+    return redirect(url_for('perfil', id_socio=id_socio))
 
 # --- RUTAS PÚBLICAS ---
 @app.route('/')
