@@ -1,173 +1,239 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es" class="dark scroll-smooth">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>TEMPLO FITNESS</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:wght@400;700;900&display=swap" rel="stylesheet"/>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        background: "#131313",
-                        surface: "#131313",
-                        "surface-dim": "#131313",
-                        "surface-container-lowest": "#0e0e0e",
-                        "surface-container-low": "#1c1b1b",
-                        "surface-container": "#20201f",
-                        "surface-container-high": "#2a2a2a",
-                        "surface-container-highest": "#353535",
-                        "on-surface": "#ffffff",
-                        "on-surface-variant": "#a0a0a0",
-                        "on-background": "#e5e2e1",
+                        "templo-black": "#050505",
+                        "templo-dark": "#0a0a0a",
+                        "templo-gray": "#1a1a1a",
+                        "templo-border": "#262626",
                     },
                     fontFamily: {
                         headline: ["Lexend", "sans-serif"],
-                        body: ["Inter", "sans-serif"],
-                        label: ["Inter", "sans-serif"]
+                        body: ["Inter", "sans-serif"]
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-background text-on-background font-body antialiased overflow-x-hidden selection:bg-white selection:text-black">
-    <nav class="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl shadow-2xl shadow-black/50">
-        <div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-            <a class="text-2xl font-black tracking-tighter text-white italic font-headline" href="/">
-                TEMPLO FITNESS
+<body class="bg-templo-black text-white font-body antialiased overflow-x-hidden selection:bg-white selection:text-black">
+
+    <!-- Navegación -->
+    <nav class="fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border transition-all duration-300">
+        <div class="flex justify-between items-center px-6 lg:px-12 h-20 max-w-[1600px] mx-auto">
+            <!-- Logo -->
+            <a href="/" class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white hover:opacity-80 transition-opacity">
+                Templo Fitness
             </a>
-            <div class="hidden md:flex items-center space-x-8">
-                <a class="font-headline tracking-tight text-sm uppercase text-neutral-400 hover:text-white transition-colors duration-300" href="#planes">Planes</a>
-                <a class="font-headline tracking-tight text-sm uppercase text-neutral-400 hover:text-white transition-colors duration-300" href="#horarios">Horarios</a>
-                <a class="font-headline tracking-tight text-sm uppercase text-neutral-400 hover:text-white transition-colors duration-300" href="#ubicacion">Ubicación</a>
+            
+            <!-- Links Desktop -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#planes" class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors duration-300">Planes</a>
+                <a href="#horarios" class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors duration-300">Horarios</a>
+                <a href="#ubicacion" class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-white transition-colors duration-300">Ubicación</a>
             </div>
-            <a href="/login" class="bg-white text-black font-headline font-bold tracking-tight text-sm uppercase px-6 py-2 rounded-xl scale-95 active:scale-90 transition-transform hover:bg-neutral-200 transition-all duration-300">
-                UNIRSE
+            
+            <!-- CTA -->
+            <a href="/login" class="bg-white text-black font-headline font-black italic text-xs uppercase tracking-[0.1em] px-8 py-3 hover:bg-zinc-200 active:scale-95 transition-all duration-300">
+                Unirse
             </a>
         </div>
     </nav>
 
-    <header class="relative min-h-[100vh] flex items-center justify-center pt-24 overflow-hidden">
-        <div class="absolute inset-0 z-0 bg-surface-container-lowest">
-            <img alt="hero gym equipment" class="w-full h-full object-cover opacity-30 mix-blend-luminosity grayscale" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0 bg-templo-black">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop" 
+                 alt="Hero gym equipment" 
+                 class="w-full h-full object-cover opacity-40 grayscale mix-blend-luminosity scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-templo-black via-templo-black/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-templo-black via-transparent to-templo-black"></div>
         </div>
-        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
-            <span class="font-label text-xs tracking-[0.2em] text-white uppercase mb-6 font-bold">
+        
+        <!-- Content -->
+        <div class="relative z-10 text-center px-6 max-w-5xl mx-auto flex flex-col items-center mt-12">
+            <span class="font-headline font-bold text-[10px] sm:text-xs tracking-[0.3em] text-zinc-400 uppercase mb-6 flex items-center gap-4">
+                <span class="w-8 h-[1px] bg-zinc-600"></span>
                 Musculación • Fuerza • Resistencia
+                <span class="w-8 h-[1px] bg-zinc-600"></span>
             </span>
-            <h1 class="font-headline text-5xl md:text-[5rem] font-black text-on-surface tracking-tighter leading-[0.9] mb-12 uppercase italic">
-                FORJÁ TU DESTINO
+            
+            <h1 class="font-headline text-6xl sm:text-[6rem] lg:text-[8rem] font-black text-white tracking-tighter leading-[0.85] mb-12 uppercase italic text-shadow-xl">
+                Forjá Tu<br>Destino
             </h1>
-            <a class="inline-flex items-center justify-center bg-white text-black font-headline font-bold text-sm tracking-widest uppercase px-8 py-4 rounded-xl hover:scale-105 transition-transform duration-300 shadow-[0_20px_40px_rgba(255,255,255,0.1)]" href="#planes">
+            
+            <a href="#planes" class="inline-flex items-center justify-center bg-white text-black font-headline font-black italic text-sm tracking-[0.2em] uppercase px-10 py-5 hover:bg-zinc-200 active:scale-95 transition-all duration-300 group">
                 Ver Membresías
+                <span class="material-symbols-outlined ml-3 group-hover:translate-y-1 transition-transform duration-300">arrow_downward</span>
             </a>
         </div>
     </header>
 
-    <section class="py-24 bg-surface relative z-20" id="planes">
-        <div class="max-w-7xl mx-auto px-6">
+    <!-- Sección Planes -->
+    <section id="planes" class="py-24 lg:py-32 bg-templo-black relative z-20 border-t border-templo-border">
+        <div class="max-w-[1600px] mx-auto px-6 lg:px-12">
+            
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                 <div>
-                    <h2 class="font-headline text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-2 italic">MEMBRESÍAS</h2>
-                    <p class="font-body text-on-surface-variant max-w-md">Elige el nivel de compromiso que mejor se adapte a tu objetivo.</p>
+                    <h2 class="font-headline text-4xl lg:text-6xl font-black tracking-tighter text-white uppercase italic leading-none mb-4">
+                        Membresías
+                    </h2>
+                    <p class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 max-w-md">
+                        Elige el nivel de compromiso que mejor se adapte a tu objetivo.
+                    </p>
                 </div>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-surface-container-low p-8 rounded-xl flex flex-col hover:bg-surface-container transition-colors duration-300 group">
-                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Mensual</h3>
-                    <div class="mt-4 mb-8">
-                        <span class="font-headline text-3xl font-bold text-white">$45.000</span>
-                        <div class="font-body text-sm text-on-surface-variant mt-2">$43.000 efectivo</div>
+                
+                <!-- Plan Mensual -->
+                <div class="bg-templo-dark border border-templo-border p-8 lg:p-10 flex flex-col hover:border-white transition-colors duration-300 group relative">
+                    <h3 class="font-headline text-2xl font-black italic text-white uppercase tracking-tighter mb-2">Mensual</h3>
+                    <div class="w-12 h-1 bg-templo-border group-hover:bg-white transition-colors duration-300 mb-8"></div>
+                    <div class="mt-auto mb-8">
+                        <span class="font-headline text-4xl font-black italic text-white tracking-tighter">$45.000</span>
+                        <div class="font-headline text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[14px]">payments</span>
+                            $43.000 efectivo
+                        </div>
                     </div>
                 </div>
-                <div class="bg-surface-container-low p-8 rounded-xl flex flex-col hover:bg-surface-container transition-colors duration-300 group">
-                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Trimestral</h3>
-                    <div class="mt-4 mb-8">
-                        <span class="font-headline text-3xl font-bold text-on-surface">$125.000</span>
+
+                <!-- Plan Trimestral -->
+                <div class="bg-templo-dark border border-templo-border p-8 lg:p-10 flex flex-col hover:border-white transition-colors duration-300 group relative">
+                    <h3 class="font-headline text-2xl font-black italic text-white uppercase tracking-tighter mb-2">Trimestral</h3>
+                    <div class="w-12 h-1 bg-templo-border group-hover:bg-white transition-colors duration-300 mb-8"></div>
+                    <div class="mt-auto mb-8">
+                        <span class="font-headline text-4xl font-black italic text-white tracking-tighter">$125.000</span>
                     </div>
                 </div>
-                <div class="bg-surface-container-low p-8 rounded-xl flex flex-col hover:bg-surface-container transition-colors duration-300 group">
-                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Semestral</h3>
-                    <div class="mt-4 mb-8">
-                        <span class="font-headline text-3xl font-bold text-on-surface">$242.000</span>
+
+                <!-- Plan Semestral -->
+                <div class="bg-templo-dark border border-templo-border p-8 lg:p-10 flex flex-col hover:border-white transition-colors duration-300 group relative">
+                    <h3 class="font-headline text-2xl font-black italic text-white uppercase tracking-tighter mb-2">Semestral</h3>
+                    <div class="w-12 h-1 bg-templo-border group-hover:bg-white transition-colors duration-300 mb-8"></div>
+                    <div class="mt-auto mb-8">
+                        <span class="font-headline text-4xl font-black italic text-white tracking-tighter">$242.000</span>
                     </div>
                 </div>
-                <div class="bg-surface-container-high p-8 rounded-xl flex flex-col relative overflow-hidden group shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/10">
-                    <div class="absolute top-0 right-0 bg-neutral-800 text-white font-label text-[0.65rem] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-                        MÁXIMO AHORRO
+
+                <!-- Plan Anual (Destacado) -->
+                <div class="bg-white p-8 lg:p-10 flex flex-col relative group transform md:-translate-y-4 shadow-2xl">
+                    <div class="absolute top-0 right-0 bg-templo-black text-white font-headline text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2">
+                        Máximo Ahorro
                     </div>
-                    <h3 class="font-headline text-xl font-bold text-on-surface mb-1 uppercase tracking-tight">Anual</h3>
-                    <div class="mt-4 mb-8">
-                        <span class="font-headline text-4xl font-black text-white italic">$459.000</span>
+                    <h3 class="font-headline text-2xl font-black italic text-black uppercase tracking-tighter mb-2">Anual</h3>
+                    <div class="w-12 h-1 bg-black mb-8"></div>
+                    <div class="mt-auto mb-8">
+                        <span class="font-headline text-5xl font-black italic text-black tracking-tighter">$459.000</span>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <section class="py-24 bg-surface-dim relative z-10">
-        <div class="max-w-7xl mx-auto px-6">
+    <!-- Sección Horarios y Ubicación -->
+    <section class="py-24 lg:py-32 bg-templo-dark relative z-10 border-t border-templo-border">
+        <div class="max-w-[1600px] mx-auto px-6 lg:px-12">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-1 bg-surface-container p-8 rounded-xl flex flex-col" id="horarios">
-                    <div class="flex items-center gap-3 mb-8">
-                        <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">schedule</span>
-                        <h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface italic">HORARIOS</h2>
+                
+                <!-- Horarios -->
+                <div id="horarios" class="lg:col-span-1 bg-templo-black border border-templo-border p-8 lg:p-12 flex flex-col">
+                    <div class="flex items-center gap-4 mb-12">
+                        <span class="material-symbols-outlined text-white text-4xl">schedule</span>
+                        <h2 class="font-headline text-3xl font-black tracking-tighter text-white uppercase italic leading-none">Horarios</h2>
                     </div>
-                    <ul class="space-y-6 font-body text-on-surface-variant flex-1">
-                        <li class="flex justify-between items-center border-b border-white/5 pb-4">
-                            <span class="font-medium text-on-surface">Lunes a Viernes</span>
-                            <span class="font-label text-sm tracking-wider bg-surface-container-highest px-3 py-1 rounded text-white">07:00 - 22:30</span>
+                    
+                    <ul class="space-y-6 font-headline text-xs font-bold uppercase tracking-widest text-zinc-400 flex-1">
+                        <li class="flex flex-col gap-2 pb-6 border-b border-templo-border">
+                            <span class="text-white">Lunes a Viernes</span>
+                            <span class="text-zinc-500 font-body text-sm font-normal tracking-normal">07:00 - 22:30</span>
                         </li>
-                        <li class="flex justify-between items-center border-b border-white/5 pb-4">
-                            <span class="font-medium text-on-surface">Sábados</span>
-                            <span class="font-label text-sm tracking-wider bg-surface-container-highest px-3 py-1 rounded text-white">09:00 - 21:00</span>
+                        <li class="flex flex-col gap-2 pb-6 border-b border-templo-border">
+                            <span class="text-white">Sábados</span>
+                            <span class="text-zinc-500 font-body text-sm font-normal tracking-normal">09:00 - 21:00</span>
                         </li>
-                        <li class="flex justify-between items-center">
-                            <span class="font-medium text-on-surface">Domingos</span>
-                            <span class="font-label text-sm tracking-wider text-neutral-400">Cerrado</span>
+                        <li class="flex flex-col gap-2">
+                            <span class="text-white">Domingos</span>
+                            <span class="text-red-500 font-body text-sm font-normal tracking-normal italic">Cerrado</span>
                         </li>
                     </ul>
                 </div>
-                <div class="lg:col-span-2 bg-surface-container rounded-xl overflow-hidden flex flex-col md:flex-row" id="ubicacion">
-                    <div class="p-8 flex flex-col justify-between w-full md:w-1/2">
+
+                <!-- Ubicación -->
+                <div id="ubicacion" class="lg:col-span-2 bg-templo-black border border-templo-border flex flex-col md:flex-row overflow-hidden">
+                    
+                    <div class="p-8 lg:p-12 flex flex-col justify-between w-full md:w-1/2 border-b md:border-b-0 md:border-r border-templo-border">
                         <div>
-                            <div class="flex items-center gap-3 mb-4">
-                                <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
-                                <h2 class="font-headline text-2xl font-bold tracking-tight text-on-surface italic">DÓNDE ESTAMOS</h2>
+                            <div class="flex items-center gap-4 mb-6">
+                                <span class="material-symbols-outlined text-white text-4xl">location_on</span>
+                                <h2 class="font-headline text-3xl font-black tracking-tighter text-white uppercase italic leading-none">El Templo</h2>
                             </div>
-                            <p class="font-body text-on-surface-variant text-lg mb-8">Passo 419, Baradero</p>
+                            <p class="font-body text-zinc-400 text-lg mb-12">
+                                Passo 419, Baradero<br>
+                                Buenos Aires, Argentina
+                            </p>
                         </div>
-                        <a class="inline-flex items-center gap-3 bg-surface-container-highest hover:bg-white hover:text-black transition-colors px-6 py-4 rounded-xl text-white font-label text-sm uppercase tracking-wider w-fit" href="https://instagram.com/templofitness.ba" target="_blank">
-                            <span class="material-symbols-outlined">photo_camera</span>
+                        
+                        <a href="https://instagram.com/templofitness.ba" target="_blank" class="inline-flex items-center gap-4 bg-transparent border border-templo-border hover:border-white hover:bg-white hover:text-black transition-all duration-300 px-6 py-4 text-white font-headline font-bold text-[10px] uppercase tracking-[0.2em] w-fit group">
+                            <span class="material-symbols-outlined text-lg">photo_camera</span>
                             @templofitness.ba
                         </a>
                     </div>
-                    <div class="w-full md:w-1/2 h-64 md:h-auto bg-surface-container-lowest relative p-2">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3315.3022863618176!2d-59.50369692488548!3d-33.804511415730836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ba37b360e63281%3A0x832dbbb2e271818f!2sPasso%20419%2C%20B2942%20Baradero%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1776206681654!5m2!1ses!2sar" class="w-full h-full rounded-lg opacity-80 mix-blend-luminosity grayscale" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                    <!-- Mapa Google Maps -->
+                    <div class="w-full md:w-1/2 min-h-[300px] md:h-auto bg-templo-gray relative group">
+                        <!-- Pseudo-filtro para unificar colores -->
+                        <div class="absolute inset-0 bg-templo-black/20 pointer-events-none z-10 group-hover:bg-transparent transition-colors duration-500"></div>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3315.3022863618176!2d-59.50369692488548!3d-33.804511415730836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ba37b360e63281%3A0x832dbbb2e271818f!2sPasso%20419%2C%20B2942%20Baradero%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses!2sar!4v1776206681654!5m2!1ses!2sar" 
+                                class="absolute inset-0 w-full h-full grayscale opacity-80 mix-blend-luminosity group-hover:grayscale-0 group-hover:opacity-100 group-hover:mix-blend-normal transition-all duration-500" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
+
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="w-full py-12 border-t border-neutral-900 bg-neutral-950" id="contacto">
-        <div class="flex flex-col md:flex-row justify-between items-center px-8 space-y-4 md:space-y-0 max-w-7xl mx-auto">
-            <div class="text-lg font-black text-white font-headline tracking-tight italic">
-                TEMPLO FITNESS
+    <!-- Footer -->
+    <footer id="contacto" class="w-full py-12 border-t border-templo-border bg-templo-black">
+        <div class="max-w-[1600px] mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-2xl font-black text-white font-headline tracking-tighter uppercase italic">
+                Templo Fitness
             </div>
-            <div class="flex flex-col items-center md:items-end">
-                <p class="font-headline text-xs tracking-widest uppercase text-neutral-500">© 2026 TEMPLO FITNESS. FORJÁ TU DESTINO.</p>
-                <p class="font-body text-[10px] text-neutral-600 mt-2">Desarrollado por Santino Brocato</p>
+            <div class="flex flex-col items-center md:items-end text-center md:text-right">
+                <p class="font-headline text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-500">
+                    © 2026 Templo Fitness. Forjá Tu Destino.
+                </p>
+                <p class="font-body text-xs text-zinc-600 mt-2">
+                    Desarrollado por Santino Brocato
+                </p>
             </div>
         </div>
     </footer>
+
 </body>
 </html>

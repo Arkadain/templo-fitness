@@ -184,7 +184,12 @@ def dashboard(id_socio):
         return redirect(url_for('login'))
 
     hoy = fecha_hoy_argentina()
+    
+    # Acá ya traés todas las asistencias del socio
     asistencias = Asistencia.query.filter_by(dni_socio=id_socio).all()
+    
+    # MAGIA: Contamos cuántas hay en esa lista para las sesiones totales
+    total_entrenamientos = len(asistencias)
     
     semanas_asistidas = set()
     for a in asistencias:
@@ -210,7 +215,8 @@ def dashboard(id_socio):
                 else:
                     break
 
-    return render_template('dashboard.html', socio=socio, racha=racha, semanas_asistidas=semanas_asistidas)
+    # Le pasamos la nueva variable total_entrenamientos al final del render_template
+    return render_template('dashboard.html', socio=socio, racha=racha, semanas_asistidas=semanas_asistidas, total_entrenamientos=total_entrenamientos)
 
 @app.route('/asistencia/presente', methods=['POST'])
 def dar_presente():

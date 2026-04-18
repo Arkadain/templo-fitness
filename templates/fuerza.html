@@ -3,100 +3,178 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>TEMPLO - Fuerza</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+    <title>Fuerza | {{ socio.nombre.split()[0] }}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "surface": "#131313", "background": "#131313",
-                        "surface-container": "#1f1f1f",
-                        "surface-container-low": "#1b1b1b",
-                        "surface-container-lowest": "#0e0e0e",
-                        "surface-container-high": "#2a2a2a",
-                        "surface-container-highest": "#353535",
-                        "surface-variant": "#353535",
-                        "on-surface": "#e2e2e2",
-                        "on-surface-variant": "#c6c6c6",
-                        "outline": "#919191", "outline-variant": "#474747",
-                        "primary": "#ffffff", "primary-container": "#d4d4d4",
-                        "on-primary": "#1a1c1c", "secondary": "#c7c6c6",
-                        "error": "#ffb4ab",
+                        "templo-black": "#050505",
+                        "templo-dark": "#0a0a0a",
+                        "templo-gray": "#1a1a1a",
+                        "templo-border": "#262626",
                     },
-                    borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "0px" },
-                    fontFamily: { headline: ["Lexend"], body: ["Lexend"], label: ["Lexend"] }
+                    fontFamily: {
+                        headline: ["Lexend", "sans-serif"],
+                        body: ["Inter", "sans-serif"]
+                    }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Lexend', sans-serif; background-color: #131313; color: #e2e2e2; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #262626; }
+        ::-webkit-scrollbar-thumb:hover { background: #404040; }
+        
+        /* Select dropdown styling para dark mode (lo que permite el navegador) */
+        select option { background-color: #0a0a0a; color: #fff; }
+        select optgroup { background-color: #050505; color: #a1a1aa; font-style: normal; font-weight: 700; }
     </style>
 </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col md:flex-row pb-20 md:pb-0">
+<body class="bg-templo-black text-white font-body antialiased min-h-screen flex flex-col md:flex-row selection:bg-white selection:text-black">
 
-    <!-- SideNavBar Desktop -->
-    <nav class="hidden md:flex flex-col h-screen fixed left-0 top-0 w-64 border-r border-white/5 bg-[#131313] z-40">
-        <div class="p-6">
-            <h1 class="text-xl font-black italic text-white tracking-tighter">TEMPLO</h1>
-            <div class="mt-8 mb-12">
-                <p class="text-xs text-outline font-bold tracking-widest uppercase mb-1">SOCIO</p>
-                <h2 class="text-white font-bold text-lg">{{ socio.nombre.split()[0] }}</h2>
-                <p class="text-xs text-outline font-medium tracking-widest uppercase mt-1">{{ socio.plan }}</p>
+    <!-- Sidebar Desktop -->
+    <aside class="hidden md:flex flex-col w-64 bg-templo-black border-r border-templo-border h-screen fixed left-0 top-0 z-40">
+        <!-- Header Sidebar -->
+        <div class="p-8 border-b border-templo-border">
+            <h1 class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white mb-8">
+                Templo
+            </h1>
+            <!-- Bloque de Perfil -->
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
+                    {% if socio.foto %}
+                        <img src="{{ socio.foto }}" alt="Perfil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300">
+                    {% else %}
+                        <span class="material-symbols-outlined text-zinc-600">person</span>
+                    {% endif %}
+                </div>
+                <div class="overflow-hidden">
+                    <p class="font-headline text-xs font-bold text-white uppercase tracking-widest truncate">
+                        {{ socio.nombre.split()[0] }}
+                    </p>
+                    <p class="font-headline text-[9px] text-zinc-500 uppercase tracking-[0.2em] mt-1">
+                        Atleta
+                    </p>
+                </div>
             </div>
-            <ul class="space-y-6">
-                <li><a href="/dashboard/{{ socio.dni }}" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">grid_view</span>INICIO</a></li>
-                <li><a href="/rutina/{{ socio.dni }}" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">fitness_center</span>RUTINAS</a></li>
-                <li><a href="/fuerza/{{ socio.dni }}" class="flex items-center text-white border-l-4 border-white bg-surface-container-low pl-4 py-2 font-headline font-bold italic tracking-widest uppercase text-xs"><span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">monitoring</span>FUERZA</a></li>
-                <li><a href="/ranking" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">leaderboard</span>RANKING</a></li>
-                <li><a href="/perfil/{{ socio.dni }}" class="flex items-center text-outline pl-5 font-headline font-bold italic tracking-widest uppercase text-xs hover:bg-surface-container-high hover:text-white transition-all"><span class="material-symbols-outlined mr-4">person</span>PERFIL</a></li>
-            </ul>
         </div>
-        <div class="mt-auto p-6">
-            <a href="/logout" class="w-full block text-center bg-surface-container-low text-outline font-bold italic tracking-widest uppercase text-xs py-4 px-6 hover:bg-surface-container-high hover:text-white transition-colors border border-outline-variant">CERRAR SESIÓN</a>
-        </div>
-    </nav>
 
-    <!-- TopAppBar Mobile -->
-    <header class="md:hidden flex justify-between items-center w-full px-6 py-4 bg-[#131313] border-b border-white/5 sticky top-0 z-40">
-        <h1 class="text-2xl font-black italic tracking-tighter text-white uppercase">TEMPLO</h1>
-        <a href="/logout" class="text-outline hover:text-white transition-colors"><span class="material-symbols-outlined">logout</span></a>
+        <!-- Navegación -->
+        <nav class="flex-1 flex flex-col pt-6 px-4 gap-2">
+            <a href="/dashboard/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">grid_view</span>
+                Inicio
+            </a>
+            <a href="/rutina/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">fitness_center</span>
+                Rutina
+            </a>
+            <!-- Link Activo: Fuerza -->
+            <a href="/fuerza/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 bg-white text-black font-headline text-[10px] font-bold uppercase tracking-[0.2em] transition-all">
+                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+                Fuerza
+            </a>
+            <a href="/ranking" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">leaderboard</span>
+                Ranking
+            </a>
+            <a href="/perfil/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">person</span>
+                Perfil
+            </a>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-templo-border">
+            <a href="/logout" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">logout</span>
+                Salir
+            </a>
+        </div>
+    </aside>
+
+    <!-- Header Mobile -->
+    <header class="md:hidden fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border flex justify-between items-center px-6 py-4">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
+                {% if socio.foto %}
+                    <img src="{{ socio.foto }}" alt="Perfil" class="w-full h-full object-cover grayscale">
+                {% else %}
+                    <span class="material-symbols-outlined text-zinc-600 text-sm">person</span>
+                {% endif %}
+            </div>
+            <span class="font-headline font-black italic uppercase text-lg text-white tracking-tighter">Templo</span>
+        </div>
+        <a href="/logout" class="text-zinc-500 hover:text-white transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+        </a>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 md:ml-64 p-6 md:p-12 w-full max-w-5xl mx-auto">
-
-        <!-- Header -->
-        <header class="mb-12">
-            <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase leading-none">FUERZA</h2>
-            <p class="text-outline text-sm tracking-widest uppercase mt-4">REGISTRO DE MARCAS DE ALTO RENDIMIENTO</p>
+    <!-- Contenido Principal -->
+    <main class="flex-1 md:ml-64 pt-28 md:pt-16 pb-28 md:pb-16 px-6 lg:px-16 w-full max-w-[1400px] mx-auto flex flex-col">
+        
+        <!-- Header de Sección -->
+        <header class="mb-10 flex justify-between items-end">
+            <div>
+                <h1 class="font-headline font-black italic text-5xl md:text-7xl uppercase tracking-tighter text-white leading-none">
+                    Fuerza
+                </h1>
+                <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mt-4">
+                    Registro de marcas y progresión
+                </p>
+            </div>
+            <span class="material-symbols-outlined text-4xl text-zinc-800 hidden md:block">monitoring</span>
         </header>
 
+        <!-- Mensajes Flash -->
         {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-            <div class="mb-8 bg-surface-container-low border-l-4 border-primary p-4 text-xs uppercase font-bold tracking-widest text-white">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
+            {% if messages %}
+                <div class="mb-8 space-y-2">
+                {% for category, message in messages %}
+                    <div class="bg-templo-dark border {% if category == 'error' %}border-red-900{% else %}border-white/20{% endif %} px-6 py-4">
+                        <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] {% if category == 'error' %}text-red-500{% else %}text-white{% endif %}">
+                            {{ message }}
+                        </p>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
         {% endwith %}
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-            <!-- Left: Formulario -->
-            <section class="lg:col-span-7 space-y-8">
-                <div class="bg-surface-container-low p-8 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-br from-surface-container-high/20 to-transparent pointer-events-none"></div>
-                    <h3 class="text-2xl font-bold italic text-white mb-8 tracking-tighter">EJERCICIO DE HOY</h3>
-                    <form method="POST" class="space-y-6 relative z-10">
+            <!-- COLUMNA IZQUIERDA: Formulario & Calculadora -->
+            <section class="lg:col-span-5 space-y-8">
+                
+                <!-- Registro de Nuevo PR -->
+                <div class="bg-templo-dark border border-templo-border p-8 relative">
+                    <h2 class="font-headline font-black italic text-2xl uppercase tracking-tighter text-white mb-8 border-b border-templo-border pb-4">
+                        Añadir Marca
+                    </h2>
+
+                    <form method="POST" class="space-y-6">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <!-- Select Ejercicio -->
                         <div>
-                            <label class="block text-xs font-bold tracking-widest text-outline mb-3 uppercase">SELECCIONA MOVIMIENTO</label>
+                            <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">Movimiento</label>
                             <div class="relative">
-                                <select name="ejercicio" required class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-4 font-bold appearance-none focus:ring-0 focus:outline-none focus:bg-surface-container-highest transition-colors">
+                                <select name="ejercicio" required 
+                                        class="w-full bg-templo-black border border-templo-border text-white font-headline text-xs font-bold uppercase tracking-widest py-4 px-4 appearance-none focus:outline-none focus:border-white transition-colors cursor-pointer">
                                     <option value="" disabled selected>SELECCIONÁ...</option>
                                     <optgroup label="— PECHO —">
                                         <option value="Press de Banca Plano">PRESS DE BANCA PLANO</option>
@@ -119,153 +197,216 @@
                                         <option value="Tríceps en Polea">TRÍCEPS EN POLEA</option>
                                     </optgroup>
                                 </select>
-                                <span class="material-symbols-outlined absolute right-4 top-1/2 transform -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 transform -translate-y-1/2 text-zinc-500 pointer-events-none">expand_more</span>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-6">
+
+                        <!-- Peso y Reps (Grid) -->
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold tracking-widest text-outline mb-3 uppercase">PESO (KG)</label>
+                                <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">Peso (KG)</label>
                                 <input type="number" step="0.5" name="peso" required placeholder="0.0"
-                                    class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-4 font-black text-2xl placeholder-surface-container text-center focus:ring-0 focus:outline-none focus:bg-surface-container-highest transition-colors"/>
+                                       class="w-full bg-templo-black border border-templo-border text-white font-headline font-black italic text-2xl py-4 px-4 text-center placeholder-zinc-800 focus:outline-none focus:border-white transition-colors"/>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold tracking-widest text-outline mb-3 uppercase">REPETICIONES</label>
+                                <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">Reps</label>
                                 <input type="number" name="repeticiones" required placeholder="0"
-                                    class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-4 font-black text-2xl placeholder-surface-container text-center focus:ring-0 focus:outline-none focus:bg-surface-container-highest transition-colors"/>
+                                       class="w-full bg-templo-black border border-templo-border text-white font-headline font-black italic text-2xl py-4 px-4 text-center placeholder-zinc-800 focus:outline-none focus:border-white transition-colors"/>
                             </div>
                         </div>
-                        <div class="pt-6">
-                            <button type="submit" class="w-full bg-primary text-on-primary font-black italic tracking-widest uppercase py-5 px-8 text-lg hover:bg-primary-container transition-all flex items-center justify-center space-x-3 group relative overflow-hidden">
-                                <span class="relative z-10">REGISTRAR MARCA</span>
-                                <span class="material-symbols-outlined relative z-10 group-hover:translate-x-1 transition-transform" style="font-variation-settings: 'FILL' 1;">add_task</span>
-                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
+
+                        <!-- Botón Submit -->
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-white text-black font-headline font-black italic text-sm uppercase tracking-[0.2em] py-5 hover:bg-zinc-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+                                Registrar
+                                <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">add</span>
                             </button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Calculadora 1RM -->
-                <div class="bg-surface-container p-6 relative">
-                    <h3 class="text-sm font-bold italic text-white mb-6 tracking-widest uppercase">CALCULADORA 1RM</h3>
+                <div class="bg-templo-black border border-templo-border p-8">
+                    <h3 class="font-headline font-bold text-xs uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">calculate</span>
+                        Calculadora 1RM
+                    </h3>
+                    
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-bold tracking-widest text-outline mb-2 uppercase">KG Levantados</label>
-                            <input type="number" id="calcPeso" placeholder="Ej: 100"
-                                class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-3 font-bold focus:ring-0 focus:outline-none transition-colors text-sm"/>
+                            <input type="number" id="calcPeso" placeholder="Peso (KG)"
+                                   class="w-full bg-transparent border-0 border-b border-templo-border text-white font-body text-sm py-3 px-0 focus:outline-none focus:border-white transition-colors placeholder:text-zinc-600"/>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold tracking-widest text-outline mb-2 uppercase">Repeticiones</label>
-                            <input type="number" id="calcReps" placeholder="Ej: 2"
-                                class="w-full bg-surface-container-lowest border-0 border-b border-surface-container-highest focus:border-primary text-white p-3 font-bold focus:ring-0 focus:outline-none transition-colors text-sm"/>
+                            <input type="number" id="calcReps" placeholder="Reps"
+                                   class="w-full bg-transparent border-0 border-b border-templo-border text-white font-body text-sm py-3 px-0 focus:outline-none focus:border-white transition-colors placeholder:text-zinc-600"/>
                         </div>
                     </div>
-                    <button onclick="calcularRM()" class="w-full bg-surface-container-high text-white font-bold italic tracking-widest uppercase py-3 hover:bg-surface-container-highest transition-colors text-xs">ESTIMAR PESOS</button>
-                    <div id="resultadoRM" class="hidden mt-6">
-                        <p class="text-center text-xs font-bold text-outline uppercase tracking-widest mb-4">Tu Máximo Teórico (1RM): <span id="rmMax" class="text-white text-3xl font-black italic block mt-1"></span></p>
-                        <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono">
-                            <div class="bg-surface-container-lowest border border-outline-variant p-3"><span class="text-outline block mb-1">3 REPS</span><span id="rm3" class="font-bold text-white"></span></div>
-                            <div class="bg-surface-container-lowest border border-outline-variant p-3"><span class="text-outline block mb-1">5 REPS</span><span id="rm5" class="font-bold text-white"></span></div>
-                            <div class="bg-surface-container-lowest border border-outline-variant p-3"><span class="text-outline block mb-1">8 REPS</span><span id="rm8" class="font-bold text-white"></span></div>
+                    
+                    <button onclick="calcularRM()" class="w-full bg-templo-dark border border-templo-border text-white font-headline font-bold text-[10px] uppercase tracking-[0.2em] py-4 hover:border-white transition-colors">
+                        Estimar Pesos
+                    </button>
+                    
+                    <!-- Resultados 1RM -->
+                    <div id="resultadoRM" class="hidden mt-8 pt-6 border-t border-templo-border">
+                        <p class="text-center font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Máximo Teórico (1RM)</p>
+                        <p id="rmMax" class="text-center font-headline font-black italic text-4xl text-white tracking-tighter mb-6"></p>
+                        
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-templo-dark border border-templo-border p-3">
+                                <span class="block font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">3 REPS</span>
+                                <span id="rm3" class="font-headline font-bold italic text-white"></span>
+                            </div>
+                            <div class="bg-templo-dark border border-templo-border p-3">
+                                <span class="block font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">5 REPS</span>
+                                <span id="rm5" class="font-headline font-bold italic text-white"></span>
+                            </div>
+                            <div class="bg-templo-dark border border-templo-border p-3">
+                                <span class="block font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">8 REPS</span>
+                                <span id="rm8" class="font-headline font-bold italic text-white"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Right: PRs + Historial -->
-            <section class="lg:col-span-5 space-y-6">
-                <div class="flex items-end justify-between pb-4 border-b border-surface-container-high">
-                    <h3 class="text-xl font-bold italic text-white tracking-tighter">RÉCORDS (PRs)</h3>
-                    <span class="text-xs font-bold text-outline tracking-widest uppercase">HISTÓRICO</span>
-                </div>
+            <!-- COLUMNA DERECHA: PRs e Historial -->
+            <section class="lg:col-span-7 space-y-12">
+                
+                <!-- Sección PRs (Récords) -->
+                <div>
+                    <h2 class="font-headline font-black italic text-2xl uppercase tracking-tighter text-white mb-6 border-b border-templo-border pb-4 flex items-center justify-between">
+                        Récords Personales
+                        <span class="material-symbols-outlined text-zinc-700 text-3xl">workspace_premium</span>
+                    </h2>
 
-                {% for pr in prs %}
-                <div class="bg-surface-container p-6 {% if loop.first %}border-l-4 border-primary{% endif %} hover:bg-surface-container-low transition-colors group cursor-pointer">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-xs font-bold text-outline tracking-widest uppercase mb-1">PR ACTUAL</p>
-                            <h4 class="text-lg font-bold italic text-white tracking-tighter uppercase">{{ pr.ejercicio }}</h4>
-                        </div>
-                        {% if loop.first %}<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">emoji_events</span>{% endif %}
-                    </div>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="text-4xl font-black text-white tracking-tighter">{{ pr.max_peso }}</span>
-                        <span class="text-sm font-bold text-outline uppercase tracking-widest">KG</span>
-                    </div>
-                </div>
-                {% endfor %}
-
-                {% if not prs %}
-                <div class="bg-surface-container p-8 text-center">
-                    <span class="material-symbols-outlined text-4xl text-outline mb-4 block">monitoring</span>
-                    <p class="text-xs font-bold text-outline uppercase tracking-widest">Todavía no hay PRs registrados</p>
-                </div>
-                {% endif %}
-
-                <!-- Buscador + Historial -->
-                <div class="pt-4 border-t border-surface-container-high">
-                    <div class="flex items-end justify-between mb-4">
-                        <h3 class="text-sm font-bold italic text-white tracking-widest uppercase">DIARIO</h3>
-                    </div>
-                    <input type="text" id="buscadorFuerza" placeholder="BUSCAR EJERCICIO..."
-                        class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white p-3 font-bold text-xs uppercase tracking-widest focus:ring-0 focus:outline-none transition-colors mb-4"/>
-                    <div class="space-y-2 max-h-80 overflow-y-auto" id="listaEntrenamientos">
-                        {% for reg in registros %}
-                        <div class="registro-item flex justify-between items-center bg-surface-container p-4 hover:bg-surface-container-low transition-colors">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% for pr in prs %}
+                        <div class="bg-templo-dark border border-templo-border p-6 flex flex-col justify-between group hover:border-white transition-colors min-h-[140px] relative overflow-hidden">
+                            {% if loop.first %}
+                                <!-- Indicador visual para el PR más alto o primero de la lista -->
+                                <div class="absolute top-0 right-0 w-8 h-8 bg-white flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-black text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                                </div>
+                            {% endif %}
+                            
                             <div>
-                                <p class="ejercicio-nombre text-sm font-bold text-white italic">{{ reg.ejercicio }}</p>
-                                <p class="text-[10px] text-outline uppercase tracking-widest mt-1">{{ reg.fecha.strftime('%d/%m/%Y') }}</p>
+                                <p class="font-headline text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-1">Mejor Marca</p>
+                                <h4 class="font-headline font-bold italic text-white uppercase truncate pr-6">{{ pr.ejercicio }}</h4>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xl font-black text-white">{{ reg.peso }} <span class="text-xs text-outline font-normal">kg</span></p>
-                                <p class="text-[10px] text-outline uppercase tracking-widest">×{{ reg.repeticiones }} reps</p>
+                            
+                            <div class="mt-4 flex items-baseline gap-2">
+                                <span class="font-headline font-black italic text-4xl text-white tracking-tighter">{{ pr.max_peso }}</span>
+                                <span class="font-headline text-xs font-bold uppercase tracking-widest text-zinc-500">KG</span>
                             </div>
                         </div>
                         {% endfor %}
-                        {% if not registros %}
-                        <p class="text-xs text-outline italic p-4">Tu diario está vacío.</p>
+
+                        {% if not prs %}
+                        <div class="col-span-1 sm:col-span-2 border border-dashed border-templo-border p-12 text-center">
+                            <span class="material-symbols-outlined text-4xl text-zinc-700 mb-4 block">info</span>
+                            <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Aún no hay récords registrados.</p>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
+
+                <!-- Historial (Diario) -->
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-templo-border pb-4 mb-6 gap-4">
+                        <h2 class="font-headline font-black italic text-2xl uppercase tracking-tighter text-white">
+                            Diario de Fuerza
+                        </h2>
+                        
+                        <!-- Buscador -->
+                        <div class="relative w-full sm:w-64">
+                            <span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-zinc-600 text-sm">search</span>
+                            <input type="text" id="buscadorFuerza" placeholder="BUSCAR EJERCICIO..."
+                                   class="w-full bg-transparent border-0 border-b border-templo-border text-white font-headline text-[10px] font-bold uppercase tracking-widest pl-6 pr-0 py-2 focus:outline-none focus:border-white transition-colors placeholder:text-zinc-700"/>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2" id="listaEntrenamientos">
+                        {% for reg in registros %}
+                        <div class="registro-item flex justify-between items-center bg-templo-black border border-templo-border p-5 hover:bg-templo-dark transition-colors">
+                            <div>
+                                <p class="ejercicio-nombre font-headline font-bold italic text-white text-sm uppercase tracking-tight">{{ reg.ejercicio }}</p>
+                                <p class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 mt-1">{{ reg.fecha.strftime('%d/%m/%Y') }}</p>
+                            </div>
+                            <div class="text-right flex items-baseline gap-4">
+                                <div>
+                                    <span class="font-headline font-black italic text-2xl text-white">{{ reg.peso }}</span>
+                                    <span class="font-headline text-[10px] font-bold uppercase tracking-widest text-zinc-500">kg</span>
+                                </div>
+                                <div class="w-16 text-right">
+                                    <span class="font-headline font-bold text-sm text-zinc-400">×{{ reg.repeticiones }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% if not registros %}
+                        <div class="text-center p-8">
+                            <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">Tu diario está vacío.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
             </section>
         </div>
+
     </main>
 
-    <!-- BottomNavBar Mobile -->
-    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-[#131313]/90 backdrop-blur-xl border-t border-white/10">
-        <a href="/dashboard/{{ socio.dni }}" class="flex flex-col items-center justify-center text-outline w-16 group">
-            <span class="material-symbols-outlined mb-1 group-hover:text-white transition-colors">home</span>
-            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">INICIO</span>
+    <!-- Bottom Navigation Mobile -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-templo-black border-t border-templo-border flex justify-around items-center px-2 py-4">
+        <a href="/dashboard/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">grid_view</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Inicio</span>
         </a>
-        <a href="/rutina/{{ socio.dni }}" class="flex flex-col items-center justify-center text-outline w-16 group">
-            <span class="material-symbols-outlined mb-1 group-hover:text-white transition-colors">fitness_center</span>
-            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">RUTINAS</span>
+        <a href="/rutina/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">fitness_center</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Rutina</span>
         </a>
-        <a href="/fuerza/{{ socio.dni }}" class="flex flex-col items-center justify-center text-white scale-110 w-16">
-            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">legend_toggle</span>
-            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">RECORDS</span>
+        <!-- Link Activo: Fuerza -->
+        <a href="/fuerza/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-white">Fuerza</span>
         </a>
-        <a href="/perfil/{{ socio.dni }}" class="flex flex-col items-center justify-center text-outline w-16 group">
-            <span class="material-symbols-outlined mb-1 group-hover:text-white transition-colors">person</span>
-            <span class="font-headline font-medium text-[10px] tracking-widest uppercase">PERFIL</span>
+        <a href="/perfil/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">person</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Perfil</span>
         </a>
     </nav>
 
+    <!-- Scripts -->
     <script>
+        // Buscador Historial de Fuerza
         document.getElementById('buscadorFuerza').addEventListener('keyup', function() {
             let filtro = this.value.toLowerCase();
             document.querySelectorAll('.registro-item').forEach(function(el) {
                 el.style.display = el.querySelector('.ejercicio-nombre').textContent.toLowerCase().includes(filtro) ? 'flex' : 'none';
             });
         });
+
+        // Lógica de Calculadora 1RM
         function calcularRM() {
             let peso = parseFloat(document.getElementById('calcPeso').value);
             let reps = parseInt(document.getElementById('calcReps').value);
-            if (!peso || !reps || reps < 1) { alert("Ingresá peso y repeticiones válidas."); return; }
+            
+            if (!peso || !reps || reps < 1) { 
+                alert("Ingresá un peso y repeticiones válidas."); 
+                return; 
+            }
+            
+            // Fórmula de Epley
             let rm = peso * (1 + (reps / 30));
-            document.getElementById('rmMax').innerText = rm.toFixed(1) + ' kg';
-            document.getElementById('rm3').innerText = (rm * 0.93).toFixed(1) + ' kg';
-            document.getElementById('rm5').innerText = (rm * 0.87).toFixed(1) + ' kg';
-            document.getElementById('rm8').innerText = (rm * 0.80).toFixed(1) + ' kg';
+            
+            document.getElementById('rmMax').innerText = rm.toFixed(1) + ' KG';
+            document.getElementById('rm3').innerText = (rm * 0.93).toFixed(1) + ' KG';
+            document.getElementById('rm5').innerText = (rm * 0.87).toFixed(1) + ' KG';
+            document.getElementById('rm8').innerText = (rm * 0.80).toFixed(1) + ' KG';
+            
             document.getElementById('resultadoRM').classList.remove('hidden');
         }
     </script>

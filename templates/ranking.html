@@ -3,86 +3,194 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Ranking - Templo Fitness</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Lexend:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <title>Ranking | Templo Fitness</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "templo-black": "#050505",
+                        "templo-dark": "#0a0a0a",
+                        "templo-gray": "#1a1a1a",
+                        "templo-border": "#262626",
+                    },
+                    fontFamily: {
+                        headline: ["Lexend", "sans-serif"],
+                        body: ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #131313; color: #e5e2e1; }
-        .font-headline { font-family: 'Lexend', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased pb-24 md:pb-0">
+<body class="bg-templo-black text-white font-body antialiased min-h-screen flex flex-col md:flex-row selection:bg-white selection:text-black">
 
-    <header class="fixed top-0 w-full z-50 bg-[#131313]/90 backdrop-blur-xl border-b border-white/5 flex justify-between items-center px-6 h-16">
-        <a href="/dashboard/{{ socio_actual.dni }}" class="text-zinc-400 hover:text-white"><span class="material-symbols-outlined">arrow_back</span></a>
-        <span class="text-xl font-black italic tracking-tighter text-white font-headline uppercase">Ranking</span>
-        <div class="w-6"></div> </header>
+    <!-- Sidebar Desktop -->
+    <aside class="hidden md:flex flex-col w-64 bg-templo-black border-r border-templo-border h-screen fixed left-0 top-0 z-40">
+        <div class="p-8 border-b border-templo-border">
+            <h1 class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white mb-8">Templo</h1>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
+                    {% if socio_actual.foto %}
+                        <img src="{{ socio_actual.foto }}" alt="Perfil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300">
+                    {% else %}
+                        <span class="material-symbols-outlined text-zinc-600">person</span>
+                    {% endif %}
+                </div>
+                <div class="overflow-hidden">
+                    <p class="font-headline text-xs font-bold text-white uppercase tracking-widest truncate">{{ socio_actual.nombre.split()[0] }}</p>
+                    <p class="font-headline text-[9px] text-zinc-500 uppercase tracking-[0.2em] mt-1">Atleta</p>
+                </div>
+            </div>
+        </div>
 
-    <main class="pt-24 px-6 md:p-12 max-w-4xl mx-auto w-full">
-        <header class="mb-10 text-center">
-            <h1 class="text-5xl md:text-7xl font-headline font-black tracking-tighter uppercase italic text-white leading-none">TOP DE PESOS</h1>
-            <p class="text-zinc-500 mt-4 font-body text-xs leading-relaxed uppercase tracking-widest">El salón de la fama del Templo.</p>
+        <nav class="flex-1 flex flex-col pt-6 px-4 gap-2">
+            <a href="/dashboard/{{ socio_actual.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">grid_view</span> Inicio
+            </a>
+            <a href="/rutina/{{ socio_actual.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">fitness_center</span> Rutina
+            </a>
+            <a href="/fuerza/{{ socio_actual.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">monitoring</span> Fuerza
+            </a>
+            <!-- Link Activo -->
+            <a href="/ranking" class="flex items-center gap-4 px-4 py-4 bg-white text-black font-headline text-[10px] font-bold uppercase tracking-[0.2em] transition-all">
+                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">leaderboard</span> Ranking
+            </a>
+            <a href="/perfil/{{ socio_actual.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">person</span> Perfil
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-templo-border">
+            <a href="/logout" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">logout</span> Salir
+            </a>
+        </div>
+    </aside>
+
+    <!-- Header Mobile -->
+    <header class="md:hidden fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border flex justify-between items-center px-6 py-4">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
+                {% if socio_actual.foto %}
+                    <img src="{{ socio_actual.foto }}" alt="Perfil" class="w-full h-full object-cover grayscale">
+                {% else %}
+                    <span class="material-symbols-outlined text-zinc-600 text-sm">person</span>
+                {% endif %}
+            </div>
+            <span class="font-headline font-black italic uppercase text-lg text-white tracking-tighter">Templo</span>
+        </div>
+        <a href="/logout" class="text-zinc-500 hover:text-white transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+        </a>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 md:ml-64 pt-28 md:pt-16 pb-28 md:pb-16 px-6 lg:px-16 w-full max-w-5xl mx-auto flex flex-col">
+        
+        <header class="mb-12">
+            <h1 class="font-headline font-black italic text-5xl md:text-7xl uppercase tracking-tighter text-white leading-none">
+                Salón de Récords
+            </h1>
+            <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mt-4">
+                El Top Absoluto del Templo
+            </p>
         </header>
 
-        <div class="flex justify-center gap-2 mb-8">
-            <button onclick="cambiarGenero('MASCULINO')" id="btn-MASCULINO" class="px-6 py-2 bg-white text-black font-headline font-bold text-[10px] uppercase tracking-widest rounded-full transition-all tab-genero">Hombres</button>
-            <button onclick="cambiarGenero('FEMENINO')" id="btn-FEMENINO" class="px-6 py-2 bg-[#20201f] text-zinc-500 font-headline font-bold text-[10px] uppercase tracking-widest rounded-full border border-white/5 transition-all tab-genero">Mujeres</button>
+        <!-- Filtros -->
+        <div class="mb-12 space-y-4">
+            <!-- Género -->
+            <div class="flex gap-2">
+                <button onclick="cambiarGenero('MASCULINO')" id="btn-MASCULINO" class="w-full md:w-auto px-8 py-4 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all tab-genero">Hombres</button>
+                <button onclick="cambiarGenero('FEMENINO')" id="btn-FEMENINO" class="w-full md:w-auto px-8 py-4 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all tab-genero">Mujeres</button>
+            </div>
+
+            <!-- Ejercicio -->
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                <button onclick="cambiarEjercicio('Sentadilla Libre')" id="btn-Sentadilla Libre" class="px-8 py-4 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all whitespace-nowrap tab-ejercicio shrink-0">Sentadilla Libre</button>
+                <button onclick="cambiarEjercicio('Press de Banca Plano')" id="btn-Press de Banca Plano" class="px-8 py-4 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all whitespace-nowrap tab-ejercicio shrink-0">Press de Banca</button>
+                <button onclick="cambiarEjercicio('Peso Muerto')" id="btn-Peso Muerto" class="px-8 py-4 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all whitespace-nowrap tab-ejercicio shrink-0">Peso Muerto</button>
+            </div>
         </div>
 
-        <div class="flex gap-2 mb-10 overflow-x-auto pb-2 no-scrollbar justify-start md:justify-center">
-            <button onclick="cambiarEjercicio('Sentadilla Libre')" id="btn-Sentadilla Libre" class="px-6 py-3 bg-white text-black font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio">Sentadilla</button>
-            <button onclick="cambiarEjercicio('Press de Banca Plano')" id="btn-Press de Banca Plano" class="px-6 py-3 bg-[#20201f] text-zinc-500 border border-white/10 transition-all font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio">Banca</button>
-            <button onclick="cambiarEjercicio('Peso Muerto')" id="btn-Peso Muerto" class="px-6 py-3 bg-[#20201f] text-zinc-500 border border-white/10 transition-all font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio">Peso muerto</button>
-        </div>
-
+        <!-- Contenedor Dinámico -->
         <div id="contenedor-rankings">
             {% for genero, ejercicios in tops.items() %}
                 {% for ej_nombre, lista in ejercicios.items() %}
                     <div id="rank-{{ genero }}-{{ ej_nombre }}" class="seccion-ranking hidden">
                         
                         {% if lista|length == 0 %}
-                            <div class="text-center py-20 border border-dashed border-white/10 rounded-xl">
-                                <p class="text-zinc-500 uppercase tracking-widest text-xs font-bold">Todavía no hay récords acá.</p>
+                            <div class="bg-templo-dark border border-dashed border-templo-border p-12 text-center">
+                                <span class="material-symbols-outlined text-4xl text-zinc-700 mb-4 block">info</span>
+                                <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Aún no hay récords registrados.</p>
                             </div>
                         {% else %}
                             
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 items-end">
+                            <!-- PODIO TOP 3 -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 items-end">
+                                
+                                <!-- 2do Lugar -->
                                 {% if lista|length > 1 %}
-                                <div class="order-2 md:order-1 bg-[#20201f] border border-white/5 p-6 rounded-xl relative overflow-hidden group text-center">
-                                    <div class="absolute -right-2 -top-2 opacity-5 text-7xl font-black italic font-headline">2</div>
-                                    <div class="text-2xl mb-2">🥈</div>
-                                    <h3 class="font-headline font-bold text-lg text-white truncate">{{ lista[1].nombre }}</h3>
-                                    <div class="text-2xl font-headline font-black italic text-zinc-300 mt-2">{{ lista[1].peso }} KG</div>
+                                <div class="order-2 md:order-1 bg-templo-dark border border-templo-border p-8 relative overflow-hidden group text-center min-h-[160px] flex flex-col justify-center">
+                                    <div class="absolute -right-4 -top-6 text-zinc-800/30 text-8xl font-black italic font-headline">2</div>
+                                    <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Plata</p>
+                                    <h3 class="font-headline font-black italic text-xl text-white uppercase truncate">{{ lista[1].nombre }}</h3>
+                                    <div class="font-headline font-black italic text-3xl text-white mt-2">{{ lista[1].peso }} <span class="text-sm text-zinc-500 font-bold uppercase tracking-widest not-italic">KG</span></div>
                                 </div>
                                 {% endif %}
 
-                                <div class="order-1 md:order-2 bg-white p-8 rounded-xl relative overflow-hidden shadow-[0_20px_40px_rgba(255,255,255,0.15)] text-center md:-mt-6">
-                                    <div class="absolute -right-2 -top-2 opacity-10 text-black text-8xl font-black italic font-headline">1</div>
-                                    <div class="text-3xl mb-2">🥇</div>
-                                    <h3 class="font-headline font-black text-xl text-black uppercase tracking-tight truncate">{{ lista[0].nombre }}</h3>
-                                    <div class="text-4xl font-headline font-black italic text-black tracking-tighter mt-2">{{ lista[0].peso }} KG</div>
+                                <!-- 1er Lugar -->
+                                <div class="order-1 md:order-2 bg-white p-8 relative overflow-hidden text-center min-h-[200px] flex flex-col justify-center shadow-2xl z-10 md:-mt-4">
+                                    <div class="absolute -right-4 -top-6 text-black/5 text-[120px] font-black italic font-headline">1</div>
+                                    <p class="font-headline text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-2">Oro Absoluto</p>
+                                    <h3 class="font-headline font-black italic text-3xl text-black uppercase truncate">{{ lista[0].nombre }}</h3>
+                                    <div class="font-headline font-black italic text-5xl text-black mt-2">{{ lista[0].peso }} <span class="text-sm font-bold uppercase tracking-widest not-italic">KG</span></div>
                                 </div>
 
+                                <!-- 3er Lugar -->
                                 {% if lista|length > 2 %}
-                                <div class="order-3 bg-[#20201f] border border-white/5 p-6 rounded-xl relative overflow-hidden group text-center">
-                                    <div class="absolute -right-2 -top-2 opacity-5 text-7xl font-black italic font-headline">3</div>
-                                    <div class="text-2xl mb-2">🥉</div>
-                                    <h3 class="font-headline font-bold text-lg text-white truncate">{{ lista[2].nombre }}</h3>
-                                    <div class="text-2xl font-headline font-black italic text-zinc-300 mt-2">{{ lista[2].peso }} KG</div>
+                                <div class="order-3 bg-templo-dark border border-templo-border p-8 relative overflow-hidden group text-center min-h-[160px] flex flex-col justify-center">
+                                    <div class="absolute -right-4 -top-6 text-zinc-800/30 text-8xl font-black italic font-headline">3</div>
+                                    <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Bronce</p>
+                                    <h3 class="font-headline font-black italic text-xl text-white uppercase truncate">{{ lista[2].nombre }}</h3>
+                                    <div class="font-headline font-black italic text-3xl text-white mt-2">{{ lista[2].peso }} <span class="text-sm text-zinc-500 font-bold uppercase tracking-widest not-italic">KG</span></div>
                                 </div>
                                 {% endif %}
                             </div>
 
+                            <!-- RESTO DEL RANKING -->
                             <div class="space-y-2">
                                 {% for item in lista[3:] %}
-                                <div class="grid grid-cols-[40px_1fr_80px] items-center px-4 py-4 bg-[#1c1b1b] rounded-xl border border-white/5 {% if item.dni == socio_actual.dni %} border-white/30 bg-white/5 {% endif %}">
-                                    <span class="font-headline font-black italic text-zinc-500 text-sm">0{{ loop.index + 3 }}</span>
-                                    <p class="font-headline font-bold text-xs text-white uppercase tracking-tight truncate">
-                                        {{ item.nombre }} {% if item.dni == socio_actual.dni %}<span class="text-green-500">(VOS)</span>{% endif %}
-                                    </p>
-                                    <span class="font-headline font-black italic text-white text-right text-sm">{{ item.peso }}KG</span>
+                                <div class="flex items-center justify-between p-6 bg-templo-black border {% if item.dni == socio_actual.dni %}border-white{% else %}border-templo-border{% endif %}">
+                                    <div class="flex items-center gap-6">
+                                        <span class="font-headline font-black italic text-zinc-600 text-xl w-8">0{{ loop.index + 3 }}</span>
+                                        <div>
+                                            <p class="font-headline font-black italic text-sm text-white uppercase tracking-widest">
+                                                {{ item.nombre }}
+                                                {% if item.dni == socio_actual.dni %}
+                                                <span class="ml-2 text-[9px] bg-white text-black px-2 py-1 not-italic tracking-[0.2em]">TÚ</span>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="font-headline font-black italic text-2xl text-white">
+                                        {{ item.peso }} <span class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest not-italic">KG</span>
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -94,6 +202,31 @@
             {% endfor %}
         </div>
     </main>
+
+    <!-- Bottom Navigation Mobile -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-templo-black border-t border-templo-border flex justify-around items-center px-2 py-4">
+        <a href="/dashboard/{{ socio_actual.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">grid_view</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Inicio</span>
+        </a>
+        <a href="/rutina/{{ socio_actual.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">fitness_center</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Rutina</span>
+        </a>
+        <a href="/fuerza/{{ socio_actual.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">monitoring</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Fuerza</span>
+        </a>
+        <!-- Link Activo -->
+        <a href="/ranking" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-white">Ranking</span>
+        </a>
+        <a href="/perfil/{{ socio_actual.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">person</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Perfil</span>
+        </a>
+    </nav>
 
     <script>
         let generoActual = 'MASCULINO';
@@ -109,24 +242,25 @@
             if(elem) elem.classList.remove('hidden');
 
             // Estilos de botones de Género
-            document.querySelectorAll('.tab-genero').forEach(btn => {
-                btn.className = "px-6 py-2 bg-[#20201f] text-zinc-500 font-headline font-bold text-[10px] uppercase tracking-widest rounded-full border border-white/5 transition-all tab-genero";
-            });
+            const clsBtnInactivo = "w-full md:w-auto px-8 py-4 bg-templo-black border border-templo-border text-zinc-500 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all tab-genero";
+            const clsBtnActivo = "w-full md:w-auto px-8 py-4 bg-white border border-white text-black font-headline font-black italic text-[10px] uppercase tracking-[0.2em] transition-all tab-genero";
+            
+            document.querySelectorAll('.tab-genero').forEach(btn => btn.className = clsBtnInactivo);
             let btnGen = document.getElementById(`btn-${generoActual}`);
-            if(btnGen) btnGen.className = "px-6 py-2 bg-white text-black font-headline font-bold text-[10px] uppercase tracking-widest rounded-full transition-all tab-genero";
+            if(btnGen) btnGen.className = clsBtnActivo;
 
             // Estilos de botones de Ejercicio
-            document.querySelectorAll('.tab-ejercicio').forEach(btn => {
-                btn.className = "px-6 py-3 bg-[#20201f] text-zinc-500 border border-white/10 transition-all font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio";
-            });
+            const clsEjInactivo = "px-8 py-4 bg-templo-black border border-templo-border text-zinc-500 font-headline font-bold text-[10px] uppercase tracking-[0.2em] transition-all whitespace-nowrap tab-ejercicio shrink-0";
+            const clsEjActivo = "px-8 py-4 bg-white border border-white text-black font-headline font-black italic text-[10px] uppercase tracking-[0.2em] transition-all whitespace-nowrap tab-ejercicio shrink-0";
+
+            document.querySelectorAll('.tab-ejercicio').forEach(btn => btn.className = clsEjInactivo);
             let btnEj = document.getElementById(`btn-${ejercicioActual}`);
-            if(btnEj) btnEj.className = "px-6 py-3 bg-white text-black font-headline font-bold text-xs uppercase tracking-[0.2em] rounded-full whitespace-nowrap tab-ejercicio";
+            if(btnEj) btnEj.className = clsEjActivo;
         }
 
         function cambiarGenero(gen) { generoActual = gen; actualizarVista(); }
         function cambiarEjercicio(ej) { ejercicioActual = ej; actualizarVista(); }
 
-        // Inicializar
         actualizarVista();
     </script>
 </body>

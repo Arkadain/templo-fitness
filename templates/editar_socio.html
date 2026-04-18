@@ -3,213 +3,237 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>EDITAR SOCIO | ADMIN</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;500;700;800;900&display=swap" rel="stylesheet"/>
+    <title>Editar Socio | Admin Templo</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "surface": "#131313", "background": "#131313",
-                        "surface-container": "#1f1f1f",
-                        "surface-container-low": "#1b1b1b",
-                        "surface-container-lowest": "#0e0e0e",
-                        "surface-container-high": "#2a2a2a",
-                        "surface-container-highest": "#353535",
-                        "surface-variant": "#353535",
-                        "on-surface": "#e2e2e2",
-                        "on-surface-variant": "#c6c6c6",
-                        "outline": "#919191", "outline-variant": "#474747",
-                        "primary": "#ffffff", "primary-container": "#d4d4d4",
-                        "on-primary": "#1a1c1c",
+                        "templo-black": "#050505",
+                        "templo-dark": "#0a0a0a",
+                        "templo-gray": "#1a1a1a",
+                        "templo-border": "#262626",
                     },
-                    borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "9999px" },
-                    fontFamily: { headline: ["Lexend"], body: ["Lexend"], label: ["Lexend"] }
+                    fontFamily: {
+                        headline: ["Lexend", "sans-serif"],
+                        body: ["Inter", "sans-serif"]
+                    }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #131313; color: #e2e2e2; font-family: 'Lexend', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #131313; }
-        ::-webkit-scrollbar-thumb { background: #2a2a2a; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #262626; }
+        ::-webkit-scrollbar-thumb:hover { background: #404040; }
         textarea { resize: none; }
     </style>
 </head>
-<body class="bg-surface text-on-surface font-body">
+<body class="bg-templo-black text-white font-body antialiased min-h-screen flex selection:bg-white selection:text-black">
 
-    <aside class="fixed left-0 top-0 h-full w-64 flex flex-col py-10 z-50 overflow-hidden border-r border-white/5" style="background-color: #18181b;">
-        <div class="px-8 mb-12">
-            <h1 class="text-xl font-black italic text-white leading-none tracking-tighter">TEMPLO</h1>
-            <p class="font-headline text-[10px] font-medium tracking-[0.2em] text-zinc-500 mt-1 uppercase">ADMIN_PORTAL</p>
+    <!-- Sidebar Desktop -->
+    <aside class="hidden md:flex flex-col w-64 bg-templo-black border-r border-templo-border h-screen fixed left-0 top-0 z-40">
+        <!-- Header Sidebar -->
+        <div class="p-8 border-b border-templo-border">
+            <h1 class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white mb-1">
+                Templo
+            </h1>
+            <p class="font-headline text-[9px] text-zinc-500 uppercase tracking-[0.2em]">
+                Admin_Portal
+            </p>
         </div>
-        <nav class="flex-1 flex flex-col gap-1 px-4">
-            <a href="/admin" class="flex items-center gap-4 px-4 py-3 bg-white text-black font-bold italic font-headline text-xs tracking-widest uppercase">
-                <span class="material-symbols-outlined">group</span><span>Socios</span>
+
+        <!-- Navegación -->
+        <nav class="flex-1 flex flex-col pt-6 px-4 gap-2">
+            <a href="/admin" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">group</span>
+                Socios
             </a>
-            <a href="/nuevo_socio" class="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-headline text-xs font-medium tracking-widest uppercase">
-                <span class="material-symbols-outlined">person_add</span><span>Nuevo Socio</span>
+            <a href="/admin/nuevo" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">person_add</span>
+                Nuevo Socio
             </a>
         </nav>
-        <div class="mt-auto px-4 py-6 border-t border-zinc-800/30">
-            <a href="/logout" class="flex items-center gap-4 px-4 py-3 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all font-headline text-xs font-medium tracking-widest uppercase">
-                <span class="material-symbols-outlined">logout</span><span>Cerrar Sesión</span>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-templo-border">
+            <a href="/logout" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">logout</span>
+                Salir
             </a>
         </div>
     </aside>
 
-    <main class="ml-64 min-h-screen flex flex-col bg-surface">
+    <!-- Header Mobile -->
+    <header class="md:hidden fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border flex justify-between items-center px-6 py-4">
+        <span class="font-headline font-black italic uppercase text-lg text-white tracking-tighter">Templo Admin</span>
+        <div class="flex gap-4">
+            <a href="/admin" class="text-white"><span class="material-symbols-outlined">group</span></a>
+            <a href="/logout" class="text-zinc-500 hover:text-white"><span class="material-symbols-outlined">logout</span></a>
+        </div>
+    </header>
 
-        <header class="bg-zinc-950 text-white flex justify-between items-center w-full px-8 py-4 sticky top-0 z-40">
-            <div class="flex items-center gap-6">
-                <span class="text-2xl font-black italic text-white tracking-tighter uppercase">GESTIÓN DE TEMPLO</span>
-                <span class="h-6 w-px bg-zinc-800"></span>
-                <a href="/admin" class="text-zinc-500 hover:text-white font-headline uppercase tracking-[0.05em] font-bold italic text-xs transition-colors">← VOLVER</a>
+    <!-- Contenido Principal -->
+    <main class="flex-1 md:ml-64 pt-24 md:pt-12 pb-12 px-6 lg:px-12 w-full max-w-[1400px] mx-auto flex flex-col">
+
+        <!-- Volver y Título -->
+        <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <a href="/admin" class="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-headline text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    Volver al Panel
+                </a>
+                <h1 class="font-headline font-black italic text-5xl tracking-tighter uppercase text-white leading-none">
+                    Editar Perfil
+                </h1>
+                <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mt-4">
+                    DNI: <span class="text-white">{{ socio.dni }}</span>
+                </p>
             </div>
-        </header>
-
-        <section class="p-12 max-w-6xl w-full mx-auto">
-
-            <div class="mb-12 flex items-end justify-between">
-                <div>
-                    <h2 class="text-6xl font-black italic tracking-tighter uppercase leading-none">EDITAR SOCIO</h2>
-                    <p class="text-zinc-500 font-medium tracking-[0.3em] uppercase text-xs mt-4">DNI: {{ socio.dni }}</p>
-                </div>
-                <div class="bg-surface-container-low px-6 py-4 flex flex-col items-end">
-                    <span class="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">SOCIO</span>
-                    <span class="text-xl font-black italic tracking-tight">{{ socio.nombre.split()[0] }}</span>
-                </div>
+            <!-- Badge Identificador -->
+            <div class="bg-templo-dark border border-templo-border px-8 py-4 flex flex-col items-end">
+                <span class="font-headline text-[9px] text-zinc-500 uppercase tracking-[0.2em] mb-1">Atleta</span>
+                <span class="font-headline font-black italic text-xl tracking-tight text-white uppercase">{{ socio.nombre.split()[0] }}</span>
             </div>
+        </div>
 
-            <form method="POST" action="/editar_socio/{{ socio.dni }}" class="grid grid-cols-12 gap-8">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <!-- Formulario de Edición -->
+        <form method="POST" action="/admin/editar/{{ socio.dni }}" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                <div class="col-span-12 lg:col-span-4 space-y-8">
-                    <div class="bg-surface-container-low p-8 space-y-6">
-                        <div>
-                            <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">PLAN DE AFILIACIÓN</label>
-                            <div class="relative">
-                                <select name="plan" id="planSelect" required class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white font-bold py-4 px-4 focus:ring-0 focus:outline-none transition-colors appearance-none">
-                                    <option value="MENSUAL" {% if socio.plan == 'MENSUAL' %}selected{% endif %}>Plan Mensual</option>
-                                    <option value="TRIMESTRAL" {% if socio.plan == 'TRIMESTRAL' %}selected{% endif %}>Plan Trimestral</option>
-                                    <option value="SEMESTRAL" {% if socio.plan == 'SEMESTRAL' %}selected{% endif %}>Plan Semestral</option>
-                                    <option value="ANUAL" {% if socio.plan == 'ANUAL' %}selected{% endif %}>Plan Anual</option>
-                                </select>
-                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">expand_more</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">GÉNERO</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button type="button" onclick="setGenero('MASCULINO')" id="btnMasculino"
-                                    class="{% if socio.genero == 'MASCULINO' %}bg-white text-black{% else %}bg-surface-container-lowest text-zinc-500 hover:text-white{% endif %} font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors">
-                                    MASCULINO
-                                </button>
-                                <button type="button" onclick="setGenero('FEMENINO')" id="btnFemenino"
-                                    class="{% if socio.genero == 'FEMENINO' %}bg-white text-black{% else %}bg-surface-container-lowest text-zinc-500 hover:text-white{% endif %} font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors">
-                                    FEMENINO
-                                </button>
-                            </div>
-                            <input type="hidden" name="genero" id="generoInput" value="{{ socio.genero }}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-span-12 lg:col-span-8 space-y-12">
-
-                    <div class="space-y-8">
-                        <div class="flex items-center gap-4">
-                            <span class="h-px flex-1 bg-zinc-800"></span>
-                            <h3 class="text-xs font-black italic tracking-[0.3em] text-zinc-400 uppercase">DATOS GENERALES</h3>
-                        </div>
-                        <div class="grid grid-cols-2 gap-8">
-                            <div class="col-span-2">
-                                <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">NOMBRE COMPLETO</label>
-                                <input type="text" name="nombre" value="{{ socio.nombre }}" required
-                                    class="w-full bg-transparent border-0 border-b-2 border-zinc-800 focus:border-white text-2xl font-black italic tracking-tight py-4 px-0 focus:ring-0 focus:outline-none transition-colors text-white"/>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">FECHA DE VENCIMIENTO</label>
-                                <input type="date" name="vence" id="venceInput" value="{{ vence_html }}" required style="color-scheme: dark;"
-                                    class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white font-bold py-4 px-4 focus:ring-0 focus:outline-none transition-colors"/>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-zinc-500 tracking-[0.2em] uppercase mb-3">NUEVA CONTRASEÑA <span class="text-zinc-700 normal-case">(vacío = sin cambios)</span></label>
-                                <input type="password" name="password" placeholder="••••••••"
-                                    class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary text-white font-bold py-4 px-4 focus:ring-0 focus:outline-none transition-colors"/>
-                            </div>
+            <!-- COLUMNA IZQUIERDA: Configuración (4 columnas) -->
+            <div class="col-span-1 lg:col-span-4 space-y-6">
+                <div class="bg-templo-dark border border-templo-border p-8 space-y-8">
+                    
+                    <!-- Select Plan -->
+                    <div>
+                        <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">Plan de Afiliación</label>
+                        <div class="relative">
+                            <select name="plan" id="planSelect" required 
+                                    class="w-full bg-templo-black border border-templo-border text-white font-headline text-xs font-bold uppercase tracking-widest py-4 px-4 appearance-none focus:outline-none focus:border-white transition-colors cursor-pointer">
+                                <option value="MENSUAL" {% if socio.plan == 'MENSUAL' %}selected{% endif %}>Plan Mensual</option>
+                                <option value="TRIMESTRAL" {% if socio.plan == 'TRIMESTRAL' %}selected{% endif %}>Plan Trimestral</option>
+                                <option value="SEMESTRAL" {% if socio.plan == 'SEMESTRAL' %}selected{% endif %}>Plan Semestral</option>
+                                <option value="ANUAL" {% if socio.plan == 'ANUAL' %}selected{% endif %}>Plan Anual</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">expand_more</span>
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-4">
-                            <span class="h-px flex-1 bg-zinc-800"></span>
-                            <h3 class="text-xs font-black italic tracking-[0.3em] text-zinc-400 uppercase">PLANIFICACIÓN DE RUTINAS</h3>
+                    <!-- Vencimiento -->
+                    <div>
+                        <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">Fecha de Vencimiento</label>
+                        <input type="date" name="vence" id="venceInput" value="{{ vence_html }}" required style="color-scheme: dark;"
+                               class="w-full bg-templo-black border border-templo-border text-white font-body text-sm py-4 px-4 focus:outline-none focus:border-white transition-colors"/>
+                    </div>
+
+                    <!-- Género -->
+                    <div>
+                        <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">Género (Ranking)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="setGenero('MASCULINO')" id="btnMasculino"
+                                class="w-full {% if socio.genero == 'MASCULINO' %}bg-white text-black{% else %}bg-templo-black border border-templo-border text-zinc-500 hover:text-white{% endif %} font-headline font-black italic text-[10px] uppercase tracking-[0.2em] py-4 transition-colors">
+                                Hombre
+                            </button>
+                            <button type="button" onclick="setGenero('FEMENINO')" id="btnFemenino"
+                                class="w-full {% if socio.genero == 'FEMENINO' %}bg-white text-black{% else %}bg-templo-black border border-templo-border text-zinc-500 hover:text-white{% endif %} font-headline font-black italic text-[10px] uppercase tracking-[0.2em] py-4 transition-colors">
+                                Mujer
+                            </button>
                         </div>
+                        <input type="hidden" name="genero" id="generoInput" value="{{ socio.genero }}">
+                    </div>
+
+                    <!-- Nueva Contraseña -->
+                    <div>
+                        <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-3">
+                            Nueva Contraseña <span class="text-zinc-700 normal-case tracking-normal block mt-1">(Dejar vacío para no cambiar)</span>
+                        </label>
+                        <input type="password" name="password" placeholder="••••••••"
+                               class="w-full bg-templo-black border border-templo-border text-white font-body text-sm py-4 px-4 focus:outline-none focus:border-white transition-colors placeholder:text-zinc-700"/>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: Rutinas y Nombre (8 columnas) -->
+            <div class="col-span-1 lg:col-span-8 flex flex-col gap-8">
+                
+                <!-- Nombre Completo -->
+                <div class="bg-templo-dark border border-templo-border p-8">
+                    <label class="block font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Nombre Completo</label>
+                    <input type="text" name="nombre" value="{{ socio.nombre }}" required
+                           class="w-full bg-transparent border-0 border-b-2 border-templo-border text-white font-headline font-black italic text-3xl md:text-5xl uppercase tracking-tighter py-4 px-0 focus:ring-0 focus:outline-none focus:border-white transition-colors"/>
+                </div>
+
+                <!-- Planificación de Rutinas -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <span class="h-px flex-1 bg-templo-border"></span>
+                        <h3 class="font-headline text-[10px] font-black italic tracking-[0.3em] text-zinc-400 uppercase">Planificación de Rutinas</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Lógica Jinja para iterar rutinas -->
+                        {% set dias = [ 
+                            ('lunes', socio.rutina_lunes), 
+                            ('martes', socio.rutina_martes), 
+                            ('miercoles', socio.rutina_miercoles), 
+                            ('jueves', socio.rutina_jueves), 
+                            ('viernes', socio.rutina_viernes), 
+                            ('sabado', socio.rutina_sabado) 
+                        ] %}
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {% set dias = [ 
-                                ('lunes', socio.rutina_lunes), 
-                                ('martes', socio.rutina_martes), 
-                                ('miercoles', socio.rutina_miercoles), 
-                                ('jueves', socio.rutina_jueves), 
-                                ('viernes', socio.rutina_viernes), 
-                                ('sabado', socio.rutina_sabado) 
-                            ] %}
-                            
-                            {% for nombre_dia, valor in dias %}
-                            <div class="bg-surface-container-low p-6">
-                                <div class="flex justify-between items-center mb-4">
-                                    <span class="text-[10px] font-black italic tracking-[0.2em] text-white uppercase">{{ nombre_dia | upper }}</span>
-                                    <span class="material-symbols-outlined text-zinc-600 text-sm">fitness_center</span>
-                                </div>
-                                <textarea name="rutina_{{ nombre_dia }}" placeholder="Definir ejercicios..." rows="3"
-                                    class="w-full bg-transparent border-none p-0 focus:ring-0 text-sm text-zinc-400 font-medium placeholder:text-zinc-700">{{ valor if valor else '' }}</textarea>
+                        {% for nombre_dia, valor in dias %}
+                        <div class="bg-templo-dark border border-templo-border p-6 flex flex-col group focus-within:border-white transition-colors">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="font-headline text-[10px] font-black italic tracking-[0.2em] text-white uppercase">{{ nombre_dia }}</span>
+                                <span class="material-symbols-outlined text-zinc-600 text-sm">fitness_center</span>
                             </div>
-                            {% endfor %}
+                            <textarea name="rutina_{{ nombre_dia }}" placeholder="Definir ejercicios..." rows="4"
+                                      class="w-full bg-templo-black border border-templo-border p-4 text-sm text-zinc-300 font-body placeholder:text-zinc-700 focus:outline-none focus:border-white transition-colors">{{ valor if valor else '' }}</textarea>
                         </div>
-                    </div>
-
-                    <div class="pt-8 flex flex-col gap-4">
-                        <button type="submit" class="w-full bg-white text-black font-black italic text-sm tracking-[0.4em] py-6 hover:bg-zinc-200 active:scale-[0.98] transition-all uppercase">
-                            GUARDAR CAMBIOS DEL SOCIO
-                        </button>
-                        <a href="/admin" class="w-full text-center text-zinc-600 font-bold italic text-[10px] tracking-[0.2em] py-4 hover:text-white transition-colors uppercase">
-                            DESCARTAR Y VOLVER
-                        </a>
+                        {% endfor %}
                     </div>
                 </div>
-            </form>
-        </section>
+
+                <!-- Botones de Acción -->
+                <div class="pt-4 flex flex-col gap-4">
+                    <button type="submit" class="w-full bg-white text-black font-headline font-black italic text-sm tracking-[0.2em] py-6 hover:bg-zinc-200 active:scale-[0.99] transition-all uppercase flex justify-center items-center gap-2">
+                        <span class="material-symbols-outlined">save</span>
+                        Guardar Cambios del Atleta
+                    </button>
+                    <a href="/admin" class="w-full text-center bg-templo-dark border border-templo-border text-zinc-500 font-headline font-bold text-[10px] tracking-[0.2em] py-5 hover:text-white hover:border-white transition-colors uppercase">
+                        Descartar y Volver
+                    </a>
+                </div>
+
+            </div>
+        </form>
     </main>
 
     <script>
+        // Función para cambiar de género visualmente y en el input oculto
         function setGenero(valor) {
             document.getElementById('generoInput').value = valor;
-            document.getElementById('btnMasculino').className = (valor === 'MASCULINO')
-                ? 'bg-white text-black font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors'
-                : 'bg-surface-container-lowest text-zinc-500 hover:text-white font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors';
-            document.getElementById('btnFemenino').className = (valor === 'FEMENINO')
-                ? 'bg-white text-black font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors'
-                : 'bg-surface-container-lowest text-zinc-500 hover:text-white font-black italic py-3 text-[10px] tracking-widest uppercase transition-colors';
+            
+            // Clases base y activas
+            const activeClasses = 'w-full bg-white text-black font-headline font-black italic text-[10px] uppercase tracking-[0.2em] py-4 transition-colors';
+            const inactiveClasses = 'w-full bg-templo-black border border-templo-border text-zinc-500 hover:text-white font-headline font-black italic text-[10px] uppercase tracking-[0.2em] py-4 transition-colors';
+            
+            document.getElementById('btnMasculino').className = (valor === 'MASCULINO') ? activeClasses : inactiveClasses;
+            document.getElementById('btnFemenino').className = (valor === 'FEMENINO') ? activeClasses : inactiveClasses;
         }
-        
-        // Esta función está comentada para evitar que sobreescriba la fecha original sin querer al cargar la página
-        /*
-        document.getElementById('planSelect').addEventListener('change', function() {
-            let meses = { 'MENSUAL': 1, 'TRIMESTRAL': 3, 'SEMESTRAL': 6, 'ANUAL': 12 };
-            let hoy = new Date();
-            hoy.setMonth(hoy.getMonth() + (meses[this.value] || 1));
-            let dd = String(hoy.getDate()).padStart(2, '0');
-            let mm = String(hoy.getMonth() + 1).padStart(2, '0');
-            document.getElementById('venceInput').value = hoy.getFullYear() + '-' + mm + '-' + dd;
-        });
-        */
     </script>
 </body>
 </html>

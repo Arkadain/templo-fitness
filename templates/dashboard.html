@@ -3,144 +3,226 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Dashboard - {{ socio.nombre.split()[0] }}</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <title>Dashboard | {{ socio.nombre.split()[0] }}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        background: "#131313",
-                        surface: "#131313",
-                        "surface-variant": "#353535",
-                        "surface-container": "#20201f",
-                        "on-surface": "#e5e2e1",
-                        "on-surface-variant": "#c2cab0",
+                        "templo-black": "#050505",
+                        "templo-dark": "#0a0a0a",
+                        "templo-gray": "#1a1a1a",
+                        "templo-border": "#262626",
                     },
                     fontFamily: {
                         headline: ["Lexend", "sans-serif"],
-                        body: ["Inter", "sans-serif"],
-                        label: ["Inter", "sans-serif"]
+                        body: ["Inter", "sans-serif"]
                     }
                 }
             }
         }
     </script>
-    <style>
-        body { background-color: #131313; color: #e5e2e1; min-height: 100vh; }
-        .kinetic-btn { background: linear-gradient(135deg, #e5e2e1 0%, #888 100%); }
-    </style>
 </head>
-<body class="font-body antialiased flex flex-col pb-24 md:pb-0 md:pl-64">
+<body class="bg-templo-black text-white font-body antialiased min-h-screen flex flex-col md:flex-row selection:bg-white selection:text-black">
 
-    <aside class="hidden md:flex flex-col w-64 bg-[#131313] border-r border-white/5 h-screen fixed left-0 top-0 p-6 z-40">
-        <div class="flex items-center gap-3 mb-10">
-            <div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden flex items-center justify-center border border-white/10">
-                <span class="text-xl">👤</span>
+    <!-- Sidebar Desktop -->
+    <aside class="hidden md:flex flex-col w-64 bg-templo-black border-r border-templo-border h-screen fixed left-0 top-0 z-40">
+        <!-- Header Sidebar -->
+        <div class="p-8 border-b border-templo-border">
+            <h1 class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white mb-8">
+                Templo
+            </h1>
+            <!-- Bloque de Perfil -->
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
+                    {% if socio.foto %}
+                        <img src="{{ socio.foto }}" alt="Perfil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300">
+                    {% else %}
+                        <span class="material-symbols-outlined text-zinc-600">person</span>
+                    {% endif %}
+                </div>
+                <div class="overflow-hidden">
+                    <p class="font-headline text-xs font-bold text-white uppercase tracking-widest truncate">
+                        {{ socio.nombre.split()[0] }}
+                    </p>
+                    <p class="font-headline text-[9px] text-zinc-500 uppercase tracking-[0.2em] mt-1">
+                        Atleta
+                    </p>
+                </div>
             </div>
-            <span class="font-headline font-black tracking-tighter uppercase text-lg text-white">Templo</span>
         </div>
-        <div class="space-y-2 flex-1">
-            <a href="/dashboard/{{ socio.dni }}" class="flex items-center gap-3 px-4 py-3 bg-white/10 rounded-xl text-white font-headline text-sm uppercase tracking-tight">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span> Inicio
+
+        <!-- Navegación -->
+        <nav class="flex-1 flex flex-col pt-6 px-4 gap-2">
+            <a href="/dashboard/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 bg-white text-black font-headline text-[10px] font-bold uppercase tracking-[0.2em] transition-all">
+                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+                Inicio
             </a>
-            <a href="/rutina/{{ socio.dni }}" class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl font-headline text-sm uppercase tracking-tight transition-all">
-                <span class="material-symbols-outlined">event_note</span> Rutina
+            <a href="/rutina/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">fitness_center</span>
+                Rutina
             </a>
-            <a href="/fuerza/{{ socio.dni }}" class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl font-headline text-sm uppercase tracking-tight transition-all">
-                <span class="material-symbols-outlined">fitness_center</span> Fuerza
+            <a href="/fuerza/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">monitoring</span>
+                Fuerza
             </a>
-            <a href="/ranking" class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl font-headline text-sm uppercase tracking-tight transition-all">
-                <span class="material-symbols-outlined">leaderboard</span> Ranking
+            <a href="/ranking" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">leaderboard</span>
+                Ranking
             </a>
-            <a href="/perfil/{{ socio.dni }}" class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl font-headline text-sm uppercase tracking-tight transition-all">
-                <span class="material-symbols-outlined">person</span> Perfil
+            <a href="/perfil/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">person</span>
+                Perfil
+            </a>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-templo-border">
+            <a href="/logout" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
+                <span class="material-symbols-outlined text-lg">logout</span>
+                Salir
             </a>
         </div>
-        <a href="/logout" class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl font-headline text-sm uppercase tracking-tight transition-all mt-auto">
-            <span class="material-symbols-outlined">logout</span> Salir
-        </a>
     </aside>
 
-    <header class="md:hidden fixed top-0 w-full z-50 bg-[#131313]/90 backdrop-blur-md flex justify-between items-center px-6 py-4 border-b border-white/5">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden flex items-center justify-center border border-white/10">
-                <span class="text-xl">👤</span>
+    <!-- Header Mobile -->
+    <header class="md:hidden fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border flex justify-between items-center px-6 py-4">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
+                {% if socio.foto %}
+                    <img src="{{ socio.foto }}" alt="Perfil" class="w-full h-full object-cover grayscale">
+                {% else %}
+                    <span class="material-symbols-outlined text-zinc-600 text-sm">person</span>
+                {% endif %}
             </div>
-            <span class="font-headline font-bold uppercase text-lg text-white italic">Templo Fitness</span>
+            <span class="font-headline font-black italic uppercase text-lg text-white tracking-tighter">Templo</span>
         </div>
-        <a href="/logout" class="text-red-500"><span class="material-symbols-outlined">logout</span></a>
+        <a href="/logout" class="text-zinc-500 hover:text-white transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+        </a>
     </header>
 
-    <main class="flex-1 px-6 pt-24 md:pt-10 space-y-8 flex flex-col max-w-4xl mx-auto w-full">
+    <!-- Contenido Principal -->
+    <main class="flex-1 md:ml-64 pt-28 md:pt-16 pb-28 md:pb-16 px-6 lg:px-16 w-full max-w-5xl mx-auto flex flex-col">
+        
+        <!-- Mensajes Flash -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
+                <div class="mb-8 space-y-2">
                 {% for category, message in messages %}
-                <div class="bg-surface-container border border-white/10 text-white px-4 py-3 text-xs uppercase tracking-widest rounded-xl text-center">
-                    {{ message }}
-                </div>
+                    <div class="bg-templo-dark border {% if category == 'error' %}border-red-900{% else %}border-white/20{% endif %} px-6 py-4">
+                        <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] {% if category == 'error' %}text-red-500{% else %}text-white{% endif %}">
+                            {{ message }}
+                        </p>
+                    </div>
                 {% endfor %}
+                </div>
             {% endif %}
         {% endwith %}
 
-        <section class="space-y-4">
-            <div>
-                <h1 class="font-headline font-black text-5xl tracking-tighter text-white uppercase leading-none italic">HOLA,<br/>{{ socio.nombre.split()[0] }}</h1>
-                <p class="font-body text-on-surface-variant mt-2 text-sm uppercase tracking-widest">Racha Total: <span class="text-white font-bold">{{ racha }} Semanas 🔥</span></p>
-            </div>
-            
+        <!-- Saludo -->
+        <section class="mb-12">
+            <h1 class="font-headline font-black italic text-5xl md:text-7xl uppercase tracking-tighter text-white leading-[0.9]">
+                Hola,<br>
+                <span class="text-zinc-400">{{ socio.nombre.split()[0] }}</span>
+            </h1>
+        </section>
+
+        <!-- Botón Dar Presente -->
+        <section class="mb-12">
             <form action="/asistencia/presente" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="w-full kinetic-btn text-[#131313] font-headline font-black text-lg py-4 rounded-xl uppercase tracking-widest hover:opacity-90 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined">bolt</span> Dar Presente
+                <button type="submit" class="w-full bg-white text-black border border-white font-headline font-black italic text-sm md:text-lg uppercase tracking-[0.2em] py-8 hover:bg-transparent hover:text-white transition-all duration-300 flex items-center justify-center gap-4 group shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-none">
+                    <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    Dar Presente
                 </button>
             </form>
         </section>
 
-        <section class="flex flex-col md:grid md:grid-cols-2 gap-4">
-            <a href="/ranking" class="relative bg-surface-container h-40 rounded-xl overflow-hidden group border border-white/5 md:col-span-2">
-                <div class="absolute inset-0 bg-gradient-to-r from-[#131313] to-transparent z-10"></div>
-                <div class="absolute bottom-4 left-4 z-20 flex justify-between items-end w-[calc(100%-2rem)]">
-                    <div>
-                        <h3 class="font-headline font-black text-3xl uppercase tracking-tighter text-white italic">Ranking</h3>
-                        <p class="text-xs uppercase tracking-widest text-zinc-400">Salón de la Fama</p>
-                    </div>
-                    <span class="material-symbols-outlined text-white bg-surface-variant/50 p-2 rounded-full backdrop-blur-md">leaderboard</span>
+        <!-- Status del Atleta -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <div class="bg-templo-dark border border-templo-border p-8 flex flex-col justify-between min-h-[180px] relative overflow-hidden">
+                <div class="flex justify-between items-start w-full relative z-10">
+                    <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Dedicación</p>
+                    <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
                 </div>
-            </a>
+                
+                <div class="mt-8 relative z-10 flex flex-col sm:flex-row gap-6 sm:gap-12">
+                    <div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="font-headline font-black italic text-5xl md:text-6xl tracking-tighter text-white">{{ racha }}</span>
+                            <span class="font-headline text-[10px] font-bold uppercase tracking-widest text-zinc-400">Semanas</span>
+                        </div>
+                        <p class="font-body text-[10px] text-zinc-500 mt-1 uppercase tracking-widest">Racha Activa</p>
+                    </div>
 
-            <a href="/rutina/{{ socio.dni }}" class="bg-surface-container rounded-xl p-6 flex flex-col justify-between border border-white/5 hover:border-white/20 transition-all h-32 group">
-                <span class="material-symbols-outlined text-zinc-500 group-hover:text-white transition-all text-2xl">event_note</span>
-                <h3 class="font-headline font-bold text-lg uppercase tracking-tight text-white">Mi Rutina</h3>
-            </a>
+                    <div class="hidden sm:block w-[1px] bg-templo-border"></div>
 
-            <a href="/fuerza/{{ socio.dni }}" class="bg-surface-container rounded-xl p-6 flex flex-col justify-between border border-white/5 hover:border-white/20 transition-all h-32 group">
-                <span class="material-symbols-outlined text-zinc-500 group-hover:text-white transition-all text-2xl">fitness_center</span>
-                <h3 class="font-headline font-bold text-lg uppercase tracking-tight text-white">Fuerza</h3>
-            </a>
+                    <div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="font-headline font-black italic text-5xl md:text-6xl tracking-tighter text-white">{{ total_entrenamientos }}</span>
+                            <span class="font-headline text-[10px] font-bold uppercase tracking-widest text-zinc-400">Sesiones</span>
+                        </div>
+                        <p class="font-body text-[10px] text-zinc-500 mt-1 uppercase tracking-widest">Completadas</p>
+                    </div>
+                </div>
+            </div>
+
+            {% set dias = restan_dias(socio.vence) %}
+            <div class="bg-templo-dark border border-templo-border p-8 flex flex-col justify-between min-h-[180px] relative overflow-hidden group">
+                <div class="flex justify-between items-start w-full relative z-10">
+                    <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Membresía</p>
+                    <span class="bg-templo-border text-white px-3 py-1 font-headline text-[9px] font-black italic uppercase tracking-widest">{{ socio.plan }}</span>
+                </div>
+                
+                <div class="mt-8 relative z-10">
+                    <div class="flex items-baseline gap-3">
+                        {% if dias > 0 %}
+                            <span class="font-headline font-black italic text-5xl md:text-6xl tracking-tighter text-white">{{ dias }}</span>
+                            <span class="font-headline text-xs font-bold uppercase tracking-widest text-zinc-400">Días</span>
+                        {% else %}
+                            <span class="font-headline font-black italic text-5xl md:text-6xl tracking-tighter text-red-500">0</span>
+                            <span class="font-headline text-xs font-bold uppercase tracking-widest text-red-500">Vencido</span>
+                        {% endif %}
+                    </div>
+                    <p class="font-body text-xs text-zinc-500 mt-2">Vencimiento: <strong class="text-white font-normal">{{ socio.vence }}</strong></p>
+                </div>
+            </div>
+
         </section>
+
     </main>
 
-    <nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-8 pt-4 bg-[#131313]/90 backdrop-blur-xl border-t border-white/5 z-50">
-        <a href="/dashboard/{{ socio.dni }}" class="flex flex-col items-center justify-center text-white scale-105 transition-all gap-1">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-            <span class="font-body text-[10px] font-bold uppercase tracking-widest">Inicio</span>
+    <!-- Bottom Navigation Mobile -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-templo-black border-t border-templo-border flex justify-around items-center px-2 py-4">
+        <a href="/dashboard/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-white">Inicio</span>
         </a>
-        <a href="/rutina/{{ socio.dni }}" class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-all gap-1">
-            <span class="material-symbols-outlined">event_note</span>
-            <span class="font-body text-[10px] font-bold uppercase tracking-widest">Rutina</span>
+        <a href="/rutina/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">fitness_center</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Rutina</span>
         </a>
-        <a href="/fuerza/{{ socio.dni }}" class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-all gap-1">
-            <span class="material-symbols-outlined">fitness_center</span>
-            <span class="font-body text-[10px] font-bold uppercase tracking-widest">Fuerza</span>
+        <a href="/fuerza/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">monitoring</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Fuerza</span>
         </a>
-        <a href="/perfil/{{ socio.dni }}" class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-all gap-1">
-            <span class="material-symbols-outlined">person</span>
-            <span class="font-body text-[10px] font-bold uppercase tracking-widest">Perfil</span>
+        <a href="/perfil/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
+            <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">person</span>
+            <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Perfil</span>
         </a>
     </nav>
+
 </body>
 </html>
