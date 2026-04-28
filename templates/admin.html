@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Admin Panel | Templo</title>
+    <title>Admin Panel | Tu Gimnasio</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,7 +57,7 @@
         <!-- Header Sidebar -->
         <div class="p-8 border-b border-templo-border">
             <h1 class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white mb-1">
-                Templo
+                Tu Gimnasio
             </h1>
             <p class="font-headline text-[9px] text-zinc-500 uppercase tracking-[0.2em]">
                 Admin_Portal
@@ -87,7 +87,7 @@
 
     <!-- Header Mobile -->
     <header class="md:hidden fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border flex justify-between items-center px-6 py-4">
-        <span class="font-headline font-black italic uppercase text-lg text-white tracking-tighter">Templo Admin</span>
+        <span class="font-headline font-black italic uppercase text-lg text-white tracking-tighter">Tu Gimnasio Admin</span>
         <div class="flex gap-4">
             <a href="/admin/nuevo" class="text-white"><span class="material-symbols-outlined">person_add</span></a>
             <a href="/logout" class="text-zinc-500 hover:text-white"><span class="material-symbols-outlined">logout</span></a>
@@ -230,7 +230,7 @@
                                     <span class="material-symbols-outlined text-sm">edit</span>
                                 </a>
                                 <!-- Formulario Eliminar -->
-                                <form method="POST" action="/eliminar/{{ socio.dni }}" onsubmit="return confirm('¿Seguro que querés eliminar a {{ socio.nombre }} del Templo? Esta acción no se puede deshacer.');" class="inline-block">
+                                <form method="POST" action="/eliminar/{{ socio.dni }}" onsubmit="return confirm('¿Seguro que querés eliminar a {{ socio.nombre }} del Tu Gimnasio? Esta acción no se puede deshacer.');" class="inline-block">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" title="Eliminar"
                                             class="w-10 h-10 flex items-center justify-center bg-templo-black border border-templo-border text-zinc-500 hover:text-red-500 hover:border-red-900 transition-colors">
