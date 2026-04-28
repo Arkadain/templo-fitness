@@ -5,13 +5,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Rutina | {{ socio.nombre.split()[0] }}</title>
     
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lexend:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -35,7 +33,6 @@
 </head>
 <body class="bg-templo-black text-white font-body antialiased min-h-screen flex flex-col md:flex-row selection:bg-white selection:text-black">
 
-    <!-- Sidebar Desktop -->
     <aside class="hidden md:flex flex-col w-64 bg-templo-black border-r border-templo-border h-screen fixed left-0 top-0 z-40">
         <div class="p-8 border-b border-templo-border">
             <h1 class="font-headline font-black italic text-2xl tracking-tighter uppercase text-white mb-8">Tu Gimnasio</h1>
@@ -58,7 +55,6 @@
             <a href="/dashboard/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 text-zinc-500 hover:text-white hover:bg-templo-dark border border-transparent hover:border-templo-border transition-all font-headline text-[10px] font-bold uppercase tracking-[0.2em]">
                 <span class="material-symbols-outlined text-lg">grid_view</span> Inicio
             </a>
-            <!-- Link Activo -->
             <a href="/rutina/{{ socio.dni }}" class="flex items-center gap-4 px-4 py-4 bg-white text-black font-headline text-[10px] font-bold uppercase tracking-[0.2em] transition-all">
                 <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">fitness_center</span> Rutina
             </a>
@@ -80,7 +76,6 @@
         </div>
     </aside>
 
-    <!-- Header Mobile -->
     <header class="md:hidden fixed top-0 w-full z-50 bg-templo-black/90 backdrop-blur-xl border-b border-templo-border flex justify-between items-center px-6 py-4">
         <div class="flex items-center gap-4">
             <div class="w-10 h-10 bg-templo-dark border border-templo-border flex items-center justify-center overflow-hidden shrink-0">
@@ -97,18 +92,30 @@
         </a>
     </header>
 
-    <!-- Contenido Principal -->
     <main class="flex-1 md:ml-64 pt-28 md:pt-16 pb-28 md:pb-16 px-6 lg:px-16 w-full max-w-4xl mx-auto flex flex-col min-h-screen">
 
-        <!-- Header de Sección -->
         <header class="mb-12 border-b border-templo-border pb-8">
             <p class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Entrenamiento de hoy</p>
-            <h1 class="font-headline font-black italic text-6xl md:text-8xl uppercase tracking-tighter text-white leading-none">
+            <h1 class="font-headline font-black italic text-6xl md:text-8xl uppercase tracking-tighter text-white leading-none mb-8">
                 {{ dia }}
             </h1>
+            
+            <div class="flex flex-wrap gap-2">
+                {% set dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'] %}
+                {% for d in dias %}
+                    <a href="/rutina/{{ socio.dni }}?dia={{ d }}" 
+                       class="font-headline text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 border transition-all duration-300
+                       {% if dia == d %}
+                           bg-white text-black border-white
+                       {% else %}
+                           bg-templo-dark text-zinc-500 border-templo-border hover:text-white hover:border-white
+                       {% endif %}">
+                        {{ d }}
+                    </a>
+                {% endfor %}
+            </div>
         </header>
 
-        <!-- Contenido de la Rutina -->
         {% if rutina_hoy and rutina_hoy.strip() %}
 
             <div class="flex flex-col gap-4 w-full flex-1">
@@ -120,7 +127,6 @@
                             <span class="font-headline font-bold italic tracking-wide uppercase text-sm md:text-base text-white group-hover:text-white transition-colors">{{ linea.strip() }}</span>
                         </div>
                         
-                        <!-- Checkbox Nativo Tailwind -->
                         <div class="relative flex items-center shrink-0">
                             <input type="checkbox" class="peer sr-only">
                             <div class="w-8 h-8 bg-templo-black border-2 border-templo-border peer-checked:bg-white peer-checked:border-white transition-colors flex items-center justify-center">
@@ -139,7 +145,6 @@
 
         {% else %}
 
-            <!-- Estado Vacío: Día de Descanso -->
             <div class="flex-1 flex flex-col justify-center items-center w-full min-h-[50vh]">
                 <div class="bg-templo-dark border border-templo-border p-12 w-full text-center flex flex-col items-center">
                     <span class="material-symbols-outlined text-6xl text-zinc-800 mb-6" style="font-variation-settings: 'FILL' 1;">battery_charging_full</span>
@@ -154,13 +159,11 @@
 
     </main>
 
-    <!-- Bottom Navigation Mobile -->
     <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-templo-black border-t border-templo-border flex justify-around items-center px-2 py-4">
         <a href="/dashboard/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
             <span class="material-symbols-outlined text-zinc-600 group-hover:text-white transition-colors">grid_view</span>
             <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-zinc-600 group-hover:text-white transition-colors">Inicio</span>
         </a>
-        <!-- Link Activo -->
         <a href="/rutina/{{ socio.dni }}" class="flex flex-col items-center justify-center gap-1 group w-16">
             <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
             <span class="font-headline text-[9px] font-bold uppercase tracking-widest text-white">Rutina</span>

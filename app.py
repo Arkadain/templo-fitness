@@ -242,15 +242,27 @@ def rutina(id_socio):
         
     socio = Socio.query.get(id_socio)
     dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    
+    # Calculamos el día actual por defecto
     dia_hoy_nombre = dias_semana[fecha_hoy_argentina().weekday()]
+
+    # Atrapamos el día elegido en la URL. Si no hay, usa el de hoy
+    dia_elegido = request.args.get('dia', dia_hoy_nombre)
+
+    # Validación de seguridad
+    if dia_elegido not in dias_semana:
+        dia_elegido = dia_hoy_nombre
 
     rutinas = {
         "Lunes": socio.rutina_lunes, "Martes": socio.rutina_martes,
         "Miércoles": socio.rutina_miercoles, "Jueves": socio.rutina_jueves,
         "Viernes": socio.rutina_viernes, "Sábado": socio.rutina_sabado
     }
-    rutina_hoy = rutinas.get(dia_hoy_nombre, "")
-    return render_template('rutina.html', socio=socio, rutina_hoy=rutina_hoy, dia=dia_hoy_nombre)
+    
+    # Obtenemos la rutina del día elegido
+    rutina_mostrar = rutinas.get(dia_elegido, "")
+    
+    return render_template('rutina.html', socio=socio, rutina_hoy=rutina_mostrar, dia=dia_elegido)
 
 @app.route('/fuerza/<id_socio>', methods=['GET', 'POST'])
 def fuerza(id_socio):
